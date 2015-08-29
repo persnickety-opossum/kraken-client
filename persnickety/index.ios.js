@@ -5,7 +5,7 @@
 'use strict';
 
 var React = require('react-native');
-var MessagesTab = require('./app/tabs/EventView');
+var MessagesTab = require('./app/Event/event.index');
 
 var {
   AppRegistry,
