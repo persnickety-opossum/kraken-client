@@ -5,7 +5,8 @@
 'use strict';
 
 var React = require('react-native');
-var MapTab = require('./app/Event/event.index');
+var MapTab = require('./app/Map/map.index');
+var VenueTab = require('./app/Venue/venue.index');
 
 var {
   AppRegistry,
@@ -39,12 +40,12 @@ var persnickety = React.createClass({
           <MapTab />
         </TabBarIOS.Item>
         <TabBarIOS.Item
-          title="Messages"
+          title="Venue"
           icon={ require('image!messages') }
-          onPress={ () => this.changeTab('messages') }
-          selected={ this.state.selectedTab === 'messages' }>
+          onPress={ () => this.changeTab('venue') }
+          selected={ this.state.selectedTab === 'venue' }>
           <View style={ styles.pageView }>
-            <Text>Messages</Text>
+            <VenueTab />
           </View>
         </TabBarIOS.Item>
         <TabBarIOS.Item
