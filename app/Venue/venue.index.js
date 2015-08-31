@@ -43,7 +43,7 @@ var VenueTab = React.createClass({
 
   render() {
     var venue;
-    fetch('http://localhost:8000/api/venues/55e394d6c2b4e82b48390473') //doesnt work yet.
+    fetch('http://localhost:8000/api/venues/55e394d6c2b4e82b48390473')
       .then(response => response.json())
       .then(json => this._handleResponse(json));
     return (
@@ -57,12 +57,12 @@ var VenueTab = React.createClass({
         <Text style={styles.text} >
           Overall rating: {this.state.overallRating}/10
         </Text>
-        <Text style={styles.text} >
+        <Text style={[styles.text, styles.yourRating]} >
           Your rating: {this.state.voteValue}
         </Text>
         <SliderIOS
           style={styles.slider}
-          onValueChange={(voteValue) => this.setRoundVoteValue(voteValue)} />
+          onValueChange={(voteValue) => this.setState({voteValue: Math.round(voteValue*10)})} />
 
       </View>
     );
@@ -92,6 +92,9 @@ var styles = StyleSheet.create({
     textAlign: 'center',
     fontWeight: '500',
     margin: 10,
+  },
+  yourRating: {
+    marginTop: -10
   },
 });
 
