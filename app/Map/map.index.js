@@ -81,17 +81,30 @@ var MapTab = React.createClass({
         <Text style={styles.text} onPress={() => this.setCenterCoordinateZoomLevelAnimated(mapRef, 35.68829, 139.77492, 14)}>
           Go to Tokyo at fixed zoom level 14
         </Text>
-        <Text style={styles.text} onPress={() => this.addAnnotations(mapRef, [{
-          latitude: 40.73312,
-          longitude:  -73.989,
-          title: 'This is a new marker'
-          }])}>
+        <Text style={styles.text} onPress={() => {
+          var newAnnotations = this.state.annotations.slice();
+          newAnnotations.push({
+            latitude: 40.73312,
+            longitude:  -73.989,
+            title: 'This is a new marker',
+            annotationImage: {
+              url: 'https://cldup.com/CnRLZem9k9.png',
+              height: 25,
+              width: 25
+            }
+          });
+          this.setState({annotations: newAnnotations});
+        }}>
           Add new marker
         </Text>
         <Text style={styles.text} onPress={() => this.selectAnnotationAnimated(mapRef, 0)}>
           Open first popup
         </Text>
-        <Text style={styles.text} onPress={() => this.removeAnnotation(mapRef, 0)}>
+        <Text style={styles.text} onPress={() => {
+          this.setState({
+            annotations: this.state.annotations.slice(1, this.state.annotations.length)
+          });
+        }}>
           Remove first annotation
         </Text>
         <MapboxGLMap
