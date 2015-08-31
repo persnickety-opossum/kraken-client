@@ -430,7 +430,7 @@
 						TestTargetID = 13B07F861A680F5B00A75B9A;
 					};
 					13B07F861A680F5B00A75B9A = {
-						DevelopmentTeam = ZH9MLA6FW4;
+						DevelopmentTeam = G94YC2Z5HH;
 					};
 				};
 			};
@@ -698,12 +698,14 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"$(SRCROOT)/../../React/**",
 					"$(SRCROOT)/../node_modules/react-native/React/**",
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/persnickety/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.4;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.persnickety-ccdd";
 				PRODUCT_NAME = persnickety;
 				PROVISIONING_PROFILE = "";
 			};
@@ -719,12 +721,14 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"$(SRCROOT)/../../React/**",
 					"$(SRCROOT)/../node_modules/react-native/React/**",
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/persnickety/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.4;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.persnickety-ccdd";
 				PRODUCT_NAME = persnickety;
 				PROVISIONING_PROFILE = "";
 			};
