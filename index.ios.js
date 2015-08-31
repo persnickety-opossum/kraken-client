@@ -5,8 +5,13 @@
 'use strict';
 
 var React = require('react-native');
+<<<<<<< HEAD
 var MapTab = require('./app/Map/map.index');
 var VenueTab = require('./app/Venue/venue.index');
+=======
+var MapTab = require('./app/Event/event.index');
+var WebTab = require('./app/MapView/map.index');
+>>>>>>> (feat) Add googlemap WebView
 
 var {
   AppRegistry,
@@ -30,7 +35,7 @@ var persnickety = React.createClass({
   },
   render: function() {
     return (
-      
+      <View style={styles.container}>
         <TabBarIOS>
         <TabBarIOS.Item
           title="Map"
@@ -49,16 +54,16 @@ var persnickety = React.createClass({
           </View>
         </TabBarIOS.Item>
         <TabBarIOS.Item
-          title="Settings"
+          title="G-Map"
           icon={ require('image!settings') }
           onPress={ () => this.changeTab('settings') }
           selected={ this.state.selectedTab === 'settings' }>
           <View style={ styles.pageView }>
-            <Text>Settings</Text>
+            <WebTab />
           </View>
         </TabBarIOS.Item>
       </TabBarIOS>
-      
+    </View>
     );
   }
 });
@@ -66,15 +71,9 @@ var persnickety = React.createClass({
 var styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F5FCFF',
+    alignItems: 'stretch',
   },
-  welcome: {
-    fontSize: 20,
-    textAlign: 'center',
-    margin: 20
-  },
+
   instructions: {
     textAlign: 'center',
     color: '#333333',

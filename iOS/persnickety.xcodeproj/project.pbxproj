@@ -430,7 +430,11 @@
 						TestTargetID = 13B07F861A680F5B00A75B9A;
 					};
 					13B07F861A680F5B00A75B9A = {
+<<<<<<< HEAD
 						DevelopmentTeam = G94YC2Z5HH;
+=======
+						DevelopmentTeam = B52F73DL99;
+>>>>>>> (feat) Add googlemap WebView
 					};
 				};
 			};
@@ -705,9 +709,14 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 8.4;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				OTHER_LDFLAGS = "-ObjC";
+<<<<<<< HEAD
 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.persnickety-ccdd";
+=======
+				PRODUCT_BUNDLE_IDENTIFIER = org.persnickety.kraken;
+>>>>>>> (feat) Add googlemap WebView
 				PRODUCT_NAME = persnickety;
 				PROVISIONING_PROFILE = "";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -728,9 +737,14 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 8.4;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				OTHER_LDFLAGS = "-ObjC";
+<<<<<<< HEAD
 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.persnickety-ccdd";
+=======
+				PRODUCT_BUNDLE_IDENTIFIER = org.persnickety.kraken;
+>>>>>>> (feat) Add googlemap WebView
 				PRODUCT_NAME = persnickety;
 				PROVISIONING_PROFILE = "";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};
