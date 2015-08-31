@@ -14,33 +14,56 @@ var VenueTab = React.createClass({
   getInitialState() {
     return {
       voteValue: 0,
-      venue: 'initial venue'
+      venue: 'initial venue',
+      overallRating: 0
     };
   },
 
   _handleResponse(response) {
+    console.log('ok');
     this.setState({venue: response});
+    this.getOverallRating();
+  },
+
+  getOverallRating() {
+    var ratings = this.state.venue.ratings;
+    var sum = 0;
+    for (var i = 0; i < ratings.length; i++) {
+      sum += ratings[i];
+    }
+    var average = Math.round(sum / ratings.length);
+    this.setState({overallRating: average});
+  },
+
+  setRoundVoteValue(voteValue) {
+    voteValue *= 10;
+    voteValue = Math.round(voteValue);
+    this.setState({voteValue: voteValue})
   },
 
   render() {
     var venue;
-    fetch('http://localhost:8000/api/venues/55e3a524bc3b937b5c6fd30d') //doesnt work yet.
+    fetch('http://localhost:8000/api/venues/55e394d6c2b4e82b48390473') //doesnt work yet.
       .then(response => response.json())
-      .then(json => this._handleResponse(json.response));
+      .then(json => this._handleResponse(json));
     return (
       <View>
         <Text style={styles.header}>
           Waz Kraken
         </Text>
         <Text style={styles.venueName}>
-          {this.state.venue}
+          {this.state.venue.title}
         </Text>
         <Text style={styles.text} >
-          Kraken Rating: {this.state.voteValue}
+          Overall rating: {this.state.overallRating}/10
+        </Text>
+        <Text style={styles.text} >
+          Your rating: {this.state.voteValue}
         </Text>
         <SliderIOS
           style={styles.slider}
-          onValueChange={(voteValue) => this.setState({voteValue: voteValue})} />
+          onValueChange={(voteValue) => this.setRoundVoteValue(voteValue)} />
+
       </View>
     );
   }
@@ -56,10 +79,12 @@ var styles = StyleSheet.create({
   header: {
     fontSize: 22,
     textAlign: 'center',
-    marginTop: 20
+    marginTop: 20,
+    backgroundColor: '#000000',
+    color: '#ffffff'
   },
   venueName: {
-    fontSize: 18,
+    fontSize: 20,
     textAlign: 'center'
   },
   text: {

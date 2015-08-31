@@ -20,7 +20,7 @@
   /**
    * Loading JavaScript code - uncomment the one you want.
    *
-   * OPTION 1
+   * OPTION 1 t
    * Load from development server. Start the server from the repository root:
    *
    * $ npm start
