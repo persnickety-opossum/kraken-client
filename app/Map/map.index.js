@@ -1,238 +1,134 @@
 'use strict';
 
 var React = require('react-native');
+var MapboxGLMap = require('react-native-mapbox-gl');
+var mapRef = 'mapRef';
 var {
-  MapView,
+  AppRegistry,
   StyleSheet,
   Text,
-  TextInput,
-  View
-  } = React;
-
-var regionText = {
-  latitude: '0',
-  longitude: '0',
-  latitudeDelta: '0',
-  longitudeDelta: '0',
-};
-
-var MapRegionInput = React.createClass({
-
-  propTypes: {
-    region: React.PropTypes.shape({
-      latitude: React.PropTypes.number.isRequired,
-      longitude: React.PropTypes.number.isRequired,
-      latitudeDelta: React.PropTypes.number.isRequired,
-      longitudeDelta: React.PropTypes.number.isRequired,
-    }),
-    onChange: React.PropTypes.func.isRequired,
-  },
-
-  getInitialState: function() {
-    return {
-      region: {
-        latitude: 0,
-        longitude: 0,
-        latitudeDelta: 0,
-        longitudeDelta: 0,
-      }
-    };
-  },
-
-  componentWillReceiveProps: function(nextProps) {
-    this.setState({
-      region: nextProps.region || this.getInitialState().region
-    });
-  },
-
-  render: function() {
-    var region = this.state.region || this.getInitialState().region;
-    return (
-      <View>
-        <View style={styles.row}>
-          <Text>
-            {'Latitude'}
-          </Text>
-          <TextInput
-            value={'' + region.latitude}
-            style={styles.textInput}
-            onChange={this._onChangeLatitude}
-            selectTextOnFocus={true}
-          />
-        </View>
-        <View style={styles.row}>
-          <Text>
-            {'Longitude'}
-          </Text>
-          <TextInput
-            value={'' + region.longitude}
-            style={styles.textInput}
-            onChange={this._onChangeLongitude}
-            selectTextOnFocus={true}
-          />
-        </View>
-        <View style={styles.row}>
-          <Text>
-            {'Latitude delta'}
-          </Text>
-          <TextInput
-            value={'' + region.latitudeDelta}
-            style={styles.textInput}
-            onChange={this._onChangeLatitudeDelta}
-            selectTextOnFocus={true}
-          />
-        </View>
-        <View style={styles.row}>
-          <Text>
-            {'Longitude delta'}
-          </Text>
-          <TextInput
-            value={'' + region.longitudeDelta}
-            style={styles.textInput}
-            onChange={this._onChangeLongitudeDelta}
-            selectTextOnFocus={true}
-          />
-        </View>
-        <View style={styles.changeButton}>
-          <Text onPress={this._change}>
-            {'Change'}
-          </Text>
-        </View>
-      </View>
-    );
-  },
-
-  _onChangeLatitude: function(e) {
-    regionText.latitude = e.nativeEvent.text;
-  },
-
-  _onChangeLongitude: function(e) {
-    regionText.longitude = e.nativeEvent.text;
-  },
-
-  _onChangeLatitudeDelta: function(e) {
-    regionText.latitudeDelta = e.nativeEvent.text;
-  },
-
-  _onChangeLongitudeDelta: function(e) {
-    regionText.longitudeDelta = e.nativeEvent.text;
-  },
-
-  _change: function() {
-    this.setState({
-      latitude: parseFloat(regionText.latitude),
-      longitude: parseFloat(regionText.longitude),
-      latitudeDelta: parseFloat(regionText.latitudeDelta),
-      longitudeDelta: parseFloat(regionText.longitudeDelta),
-    });
-    this.props.onChange(this.state.region);
-  },
-
-});
+  StatusBarIOS,
+  View,
+} = React;
 
 var MapTab = React.createClass({
-
+  mixins: [MapboxGLMap.Mixin],
   getInitialState() {
     return {
-      mapRegion: null,
-      mapRegionInput: null,
-      annotations: null,
-      isFirstLoad: true,
-    };
+       center: {
+         latitude: 40.72052634,
+         longitude: -73.97686958312988
+       },
+       zoom: 11,
+       annotations: [{
+         latitude: 40.72052634,
+         longitude:  -73.97686958312988,
+         title: 'This is marker 1',
+         subtitle: 'It has a rightCalloutAccessory too',
+         rightCalloutAccessory: {
+             url: 'https://cldup.com/9Lp0EaBw5s.png',
+             height: 25,
+             width: 25
+         },
+         annotationImage: {
+           url: 'https://cldup.com/CnRLZem9k9.png',
+           height: 25,
+           width: 25
+         },
+         id: 'marker1'
+       },{
+         latitude: 40.714541341726175,
+         longitude:  -74.00579452514648,
+         title: 'Important!',
+         subtitle: 'Neat, this is a custom annotation image',
+         annotationImage: {
+           url: 'https://cldup.com/7NLZklp8zS.png',
+           height: 25,
+           width: 25
+         },
+         id: 'marker2'
+       }]
+     };
   },
-
-  render() {
+  onRegionChange(location) {
+    this.setState({ currentZoom: location.zoom });
+  },
+  onRegionWillChange(location) {
+    console.log(location);
+  },
+  onUpdateUserLocation(location) {
+    console.log(location);
+  },
+  onOpenAnnotation(annotation) {
+    console.log(annotation);
+  },
+  onRightAnnotationTapped(e) {
+    console.log(e);
+  },
+  render: function() {
+    StatusBarIOS.setHidden(true);
     return (
-      <View>
-        <MapView
+      <View style={styles.container}>
+        <Text style={styles.text} onPress={() => this.setDirectionAnimated(mapRef, 0)}>
+          Set direction to 0
+        </Text>
+        <Text style={styles.text} onPress={() => this.setZoomLevelAnimated(mapRef, 6)}>
+          Zoom out to zoom level 6
+        </Text>
+        <Text style={styles.text} onPress={() => this.setCenterCoordinateAnimated(mapRef, 48.8589, 2.3447)}>
+          Go to Paris at current zoom level {parseInt(this.state.currentZoom)}
+        </Text>
+        <Text style={styles.text} onPress={() => this.setCenterCoordinateZoomLevelAnimated(mapRef, 35.68829, 139.77492, 14)}>
+          Go to Tokyo at fixed zoom level 14
+        </Text>
+        <Text style={styles.text} onPress={() => this.addAnnotations(mapRef, [{
+          latitude: 40.73312,
+          longitude:  -73.989,
+          title: 'This is a new marker'
+          }])}>
+          Add new marker
+        </Text>
+        <Text style={styles.text} onPress={() => this.selectAnnotationAnimated(mapRef, 0)}>
+          Open first popup
+        </Text>
+        <Text style={styles.text} onPress={() => this.removeAnnotation(mapRef, 0)}>
+          Remove first annotation
+        </Text>
+        <MapboxGLMap
           style={styles.map}
-          onRegionChange={this._onRegionChange}
-          onRegionChangeComplete={this._onRegionChangeComplete}
-          region={this.state.mapRegion || undefined}
-          annotations={this.state.annotations || undefined}/>
-        <MapRegionInput
-          onChange={this._onRegionInputChanged}
-          region={this.state.mapRegionInput || undefined}
-        />
+          direction={0}
+          rotateEnabled={true}
+          scrollEnabled={true}
+          zoomEnabled={true}
+          showsUserLocation={true}
+          ref={mapRef}
+          accessToken={'pk.eyJ1IjoibWFyeW1hc29uIiwiYSI6IjM1NGVhNWZmNzQ5Yjk5NTczMDFhMzc3Zjg2ZGEyYzI0In0.7IdD26iFQhD2b6LbTIw_Sw'}
+          styleURL={'asset://styles/mapbox-streets-v7.json'}
+          centerCoordinate={this.state.center}
+          userLocationVisible={true}
+          zoomLevel={this.state.zoom}
+          onRegionChange={this.onRegionChange}
+          onRegionWillChange={this.onRegionWillChange}
+          annotations={this.state.annotations}
+          onOpenAnnotation={this.onOpenAnnotation}
+          onRightAnnotationTapped={this.onRightAnnotationTapped}
+          onUpdateUserLocation={this.onUpdateUserLocation} />
       </View>
     );
-  },
-
-  _getAnnotations(region) {
-    return [{
-      longitude: region.longitude,
-      latitude: region.latitude,
-      title: 'You Are Here',
-    }];
-  },
-
-  _onRegionChange(region) {
-    this.setState({
-      mapRegionInput: region,
-    });
-  },
-
-  _onRegionChangeComplete(region) {
-    if (this.state.isFirstLoad) {
-      this.setState({
-        mapRegionInput: region,
-        annotations: this._getAnnotations(region),
-        isFirstLoad: false,
-      });
-    }
-  },
-
-  _onRegionInputChanged(region) {
-    this.setState({
-      mapRegion: region,
-      mapRegionInput: region,
-      annotations: this._getAnnotations(region),
-    });
-  },
-
+  }
 });
 
 var styles = StyleSheet.create({
+  container: {
+    flexDirection: 'column',
+    flex: 1
+  },
   map: {
-    height: 300,
-    margin: 30,
-    borderColor: '#000000',
+    flex: 5
   },
-  row: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  textInput: {
-    width: 150,
-    height: 20,
-    borderWidth: 0.5,
-    borderColor: '#aaaaaa',
-    fontSize: 13,
-    padding: 4,
-  },
-  changeButton: {
-    alignSelf: 'center',
-    marginTop: 5,
-    padding: 3,
-    borderWidth: 0.5,
-    borderColor: '#777777',
-  },
-});
-
-exports.displayName = (undefined: ?string);
-exports.title = '<MapView>';
-exports.description = 'Base component to display maps';
-exports.examples = [
-  {
-    title: 'Map',
-    render(): ReactElement { return <MapViewExample />; }
-  },
-  {
-    title: 'Map shows user location',
-    render() {
-      return  <MapView style={styles.map} showsUserLocation={true} />;
-    }
+  text: {
+    padding: 2
   }
-];
+});
 
 module.exports = MapTab;
