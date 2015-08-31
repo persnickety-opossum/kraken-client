@@ -1,92 +1,134 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- */
 'use strict';
 
 var React = require('react-native');
-var MapTab = require('./app/Map/map.index');
-var VenueTab = require('./app/Venue/venue.index');
-
+var MapboxGLMap = require('react-native-mapbox-gl');
+var mapRef = 'mapRef';
 var {
   AppRegistry,
   StyleSheet,
   Text,
+  StatusBarIOS,
   View,
-  MapView,
-  TabBarIOS
 } = React;
 
 var persnickety = React.createClass({
+  mixins: [MapboxGLMap.Mixin],
   getInitialState() {
     return {
-      selectedTab: 'map'
-    }
+       center: {
+         latitude: 40.72052634,
+         longitude: -73.97686958312988
+       },
+       zoom: 11,
+       annotations: [{
+         latitude: 40.72052634,
+         longitude:  -73.97686958312988,
+         title: 'This is marker 1',
+         subtitle: 'It has a rightCalloutAccessory too',
+         rightCalloutAccessory: {
+             url: 'https://cldup.com/9Lp0EaBw5s.png',
+             height: 25,
+             width: 25
+         },
+         annotationImage: {
+           url: 'https://cldup.com/CnRLZem9k9.png',
+           height: 25,
+           width: 25
+         },
+         id: 'marker1'
+       },{
+         latitude: 40.714541341726175,
+         longitude:  -74.00579452514648,
+         title: 'Important!',
+         subtitle: 'Neat, this is a custom annotation image',
+         annotationImage: {
+           url: 'https://cldup.com/7NLZklp8zS.png',
+           height: 25,
+           width: 25
+         },
+         id: 'marker2'
+       }]
+     };
   },
-  changeTab(tabName) {
-    this.setState({
-      selectedTab: tabName
-    });
+  onRegionChange(location) {
+    this.setState({ currentZoom: location.zoom });
+  },
+  onRegionWillChange(location) {
+    console.log(location);
+  },
+  onUpdateUserLocation(location) {
+    console.log(location);
+  },
+  onOpenAnnotation(annotation) {
+    console.log(annotation);
+  },
+  onRightAnnotationTapped(e) {
+    console.log(e);
   },
   render: function() {
+    StatusBarIOS.setHidden(true);
     return (
-      
-        <TabBarIOS>
-        <TabBarIOS.Item
-          title="Map"
-          icon={ require('image!map') }
-          onPress={ () => this.changeTab('map') }
-          selected={ this.state.selectedTab === 'map' }>
-          <MapTab />
-        </TabBarIOS.Item>
-        <TabBarIOS.Item
-          title="Venue"
-          icon={ require('image!messages') }
-          onPress={ () => this.changeTab('venue') }
-          selected={ this.state.selectedTab === 'venue' }>
-          <View style={ styles.pageView }>
-            <VenueTab />
-          </View>
-        </TabBarIOS.Item>
-        <TabBarIOS.Item
-          title="Settings"
-          icon={ require('image!settings') }
-          onPress={ () => this.changeTab('settings') }
-          selected={ this.state.selectedTab === 'settings' }>
-          <View style={ styles.pageView }>
-            <Text>Settings</Text>
-          </View>
-        </TabBarIOS.Item>
-      </TabBarIOS>
-      
+      <View style={styles.container}>
+        <Text style={styles.text} onPress={() => this.setDirectionAnimated(mapRef, 0)}>
+          Set direction to 0
+        </Text>
+        <Text style={styles.text} onPress={() => this.setZoomLevelAnimated(mapRef, 6)}>
+          Zoom out to zoom level 6
+        </Text>
+        <Text style={styles.text} onPress={() => this.setCenterCoordinateAnimated(mapRef, 48.8589, 2.3447)}>
+          Go to Paris at current zoom level {parseInt(this.state.currentZoom)}
+        </Text>
+        <Text style={styles.text} onPress={() => this.setCenterCoordinateZoomLevelAnimated(mapRef, 35.68829, 139.77492, 14)}>
+          Go to Tokyo at fixed zoom level 14
+        </Text>
+        <Text style={styles.text} onPress={() => this.addAnnotations(mapRef, [{
+          latitude: 40.73312,
+          longitude:  -73.989,
+          title: 'This is a new marker'
+          }])}>
+          Add new marker
+        </Text>
+        <Text style={styles.text} onPress={() => this.selectAnnotationAnimated(mapRef, 0)}>
+          Open first popup
+        </Text>
+        <Text style={styles.text} onPress={() => this.removeAnnotation(mapRef, 0)}>
+          Remove first annotation
+        </Text>
+        <MapboxGLMap
+          style={styles.map}
+          direction={0}
+          rotateEnabled={true}
+          scrollEnabled={true}
+          zoomEnabled={true}
+          showsUserLocation={true}
+          ref={mapRef}
+          accessToken={'pk.eyJ1IjoibWFyeW1hc29uIiwiYSI6IjM1NGVhNWZmNzQ5Yjk5NTczMDFhMzc3Zjg2ZGEyYzI0In0.7IdD26iFQhD2b6LbTIw_Sw'}
+          styleURL={'asset://styles/mapbox-streets-v7.json'}
+          centerCoordinate={this.state.center}
+          userLocationVisible={true}
+          zoomLevel={this.state.zoom}
+          onRegionChange={this.onRegionChange}
+          onRegionWillChange={this.onRegionWillChange}
+          annotations={this.state.annotations}
+          onOpenAnnotation={this.onOpenAnnotation}
+          onRightAnnotationTapped={this.onRightAnnotationTapped}
+          onUpdateUserLocation={this.onUpdateUserLocation} />
+      </View>
     );
   }
 });
 
 var styles = StyleSheet.create({
   container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F5FCFF',
-  },
-  welcome: {
-    fontSize: 20,
-    textAlign: 'center',
-    margin: 20
-  },
-  instructions: {
-    textAlign: 'center',
-    color: '#333333',
-    marginBottom: 5,
+    flexDirection: 'column',
+    flex: 1
   },
   map: {
-    position: 'absolute',
-    right: 0,
-    left: 0,
-    top: 50,
-    bottom: 100,
+    flex: 5
   },
+  text: {
+    padding: 2
+  }
 });
 
 AppRegistry.registerComponent('persnickety', () => persnickety);
