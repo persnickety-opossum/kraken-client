@@ -36,6 +36,18 @@
 		651D1C181B9503CC003CF605 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 651D1C171B9503CC003CF605 /* libz.tbd */; };
 		657F56071B9506FA00952A20 /* MapboxGL.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 657F56061B9506FA00952A20 /* MapboxGL.bundle */; };
 		832341BD1AAA6AB300B99B32 /* libRCTText.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 832341B51AAA6A8300B99B32 /* libRCTText.a */; };
+		D3D5A0031B94DC700011E48C /* libRCTMapboxGL.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D3D5A0001B94DBD50011E48C /* libRCTMapboxGL.a */; };
+		D3D5A0051B94DCDB0011E48C /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = D3D5A0041B94DCDB0011E48C /* Settings.bundle */; };
+		D3D5A0071B94DE2A0011E48C /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D3D5A0061B94DE2A0011E48C /* CoreTelephony.framework */; };
+		D3D5A0091B94DE370011E48C /* GLKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D3D5A0081B94DE370011E48C /* GLKit.framework */; };
+		D3D5A00B1B94DE460011E48C /* ImageIO.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D3D5A00A1B94DE460011E48C /* ImageIO.framework */; };
+		D3D5A00D1B94DE530011E48C /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D3D5A00C1B94DE530011E48C /* MobileCoreServices.framework */; };
+		D3D5A00F1B94DE5D0011E48C /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D3D5A00E1B94DE5D0011E48C /* QuartzCore.framework */; };
+		D3D5A0111B94DE730011E48C /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D3D5A0101B94DE730011E48C /* SystemConfiguration.framework */; };
+		D3D5A0131B94DFC60011E48C /* libc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = D3D5A0121B94DFC60011E48C /* libc++.tbd */; };
+		D3D5A0151B94DFD80011E48C /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = D3D5A0141B94DFD80011E48C /* libsqlite3.tbd */; };
+		D3D5A0171B94E0130011E48C /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = D3D5A0161B94E0130011E48C /* libz.tbd */; };
+		D3D5A0191B94E2F80011E48C /* MapboxGL.bundle in Resources */ = {isa = PBXBuildFile; fileRef = D3D5A0181B94E2F80011E48C /* MapboxGL.bundle */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -130,6 +142,20 @@
 			remoteGlobalIDString = 58B5119B1A9E6C1200147676;
 			remoteInfo = RCTText;
 		};
+		D3D59FFF1B94DBD50011E48C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D3D59FFA1B94DBD50011E48C /* RCTMapboxGL.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = C5DBB3401AF2EF2B00E611A9;
+			remoteInfo = RCTMapboxGL;
+		};
+		D3D5A0011B94DBD50011E48C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D3D59FFA1B94DBD50011E48C /* RCTMapboxGL.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = C5DBB34B1AF2EF2B00E611A9;
+			remoteInfo = RCTMapboxGLTests;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
@@ -167,6 +193,18 @@
 		657F56061B9506FA00952A20 /* MapboxGL.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = MapboxGL.bundle; sourceTree = "<group>"; };
 		78C398B01ACF4ADC00677621 /* RCTLinking.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTLinking.xcodeproj; path = "../node_modules/react-native/Libraries/LinkingIOS/RCTLinking.xcodeproj"; sourceTree = "<group>"; };
 		832341B01AAA6A8300B99B32 /* RCTText.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTText.xcodeproj; path = "../node_modules/react-native/Libraries/Text/RCTText.xcodeproj"; sourceTree = "<group>"; };
+		D3D59FFA1B94DBD50011E48C /* RCTMapboxGL.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTMapboxGL.xcodeproj; path = "../node_modules/react-native-mapbox-gl/RCTMapboxGL.xcodeproj"; sourceTree = "<group>"; };
+		D3D5A0041B94DCDB0011E48C /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = Settings.bundle; path = "../node_modules/react-native-mapbox-gl/RCTMapboxGL/Settings.bundle"; sourceTree = "<group>"; };
+		D3D5A0061B94DE2A0011E48C /* CoreTelephony.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreTelephony.framework; path = System/Library/Frameworks/CoreTelephony.framework; sourceTree = SDKROOT; };
+		D3D5A0081B94DE370011E48C /* GLKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLKit.framework; path = System/Library/Frameworks/GLKit.framework; sourceTree = SDKROOT; };
+		D3D5A00A1B94DE460011E48C /* ImageIO.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ImageIO.framework; path = System/Library/Frameworks/ImageIO.framework; sourceTree = SDKROOT; };
+		D3D5A00C1B94DE530011E48C /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
+		D3D5A00E1B94DE5D0011E48C /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		D3D5A0101B94DE730011E48C /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
+		D3D5A0121B94DFC60011E48C /* libc++.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libc++.tbd"; path = "usr/lib/libc++.tbd"; sourceTree = SDKROOT; };
+		D3D5A0141B94DFD80011E48C /* libsqlite3.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.tbd; path = usr/lib/libsqlite3.tbd; sourceTree = SDKROOT; };
+		D3D5A0161B94E0130011E48C /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
+		D3D5A0181B94E2F80011E48C /* MapboxGL.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = MapboxGL.bundle; path = "../node_modules/react-native-mapbox-gl/RCTMapboxGL/MapboxGL.bundle"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -378,6 +416,15 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		D3D59FFB1B94DBD50011E48C /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				D3D5A0001B94DBD50011E48C /* libRCTMapboxGL.a */,
+				D3D5A0021B94DBD50011E48C /* RCTMapboxGLTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -430,11 +477,7 @@
 						TestTargetID = 13B07F861A680F5B00A75B9A;
 					};
 					13B07F861A680F5B00A75B9A = {
-<<<<<<< HEAD
-						DevelopmentTeam = G94YC2Z5HH;
-=======
 						DevelopmentTeam = B52F73DL99;
->>>>>>> (feat) Add googlemap WebView
 					};
 				};
 			};
@@ -588,6 +631,20 @@
 			remoteRef = 832341B41AAA6A8300B99B32 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
+		D3D5A0001B94DBD50011E48C /* libRCTMapboxGL.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libRCTMapboxGL.a;
+			remoteRef = D3D59FFF1B94DBD50011E48C /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		D3D5A0021B94DBD50011E48C /* RCTMapboxGLTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = RCTMapboxGLTests.xctest;
+			remoteRef = D3D5A0011B94DBD50011E48C /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 /* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
@@ -702,21 +759,14 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"$(SRCROOT)/../../React/**",
 					"$(SRCROOT)/../node_modules/react-native/React/**",
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/persnickety/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.4;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				OTHER_LDFLAGS = "-ObjC";
-<<<<<<< HEAD
-				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.persnickety-ccdd";
-=======
-				PRODUCT_BUNDLE_IDENTIFIER = org.persnickety.kraken;
->>>>>>> (feat) Add googlemap WebView
+				PRODUCT_BUNDLE_IDENTIFIER = org.persnickety.mapbox;
 				PRODUCT_NAME = persnickety;
 				PROVISIONING_PROFILE = "";
-				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -730,21 +780,14 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"$(SRCROOT)/../../React/**",
 					"$(SRCROOT)/../node_modules/react-native/React/**",
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/persnickety/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.4;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				OTHER_LDFLAGS = "-ObjC";
-<<<<<<< HEAD
-				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.persnickety-ccdd";
-=======
-				PRODUCT_BUNDLE_IDENTIFIER = org.persnickety.kraken;
->>>>>>> (feat) Add googlemap WebView
+				PRODUCT_BUNDLE_IDENTIFIER = org.persnickety.mapbox;
 				PRODUCT_NAME = persnickety;
 				PROVISIONING_PROFILE = "";
-				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};
@@ -767,6 +810,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
+				ENABLE_BITCODE = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -788,7 +832,7 @@
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"$(SRCROOT)/../node_modules/react-native/React/**",
 				);
-				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.4;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -814,6 +858,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = YES;
+				ENABLE_BITCODE = NO;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -828,7 +873,7 @@
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"$(SRCROOT)/../node_modules/react-native/React/**",
 				);
-				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.4;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;
