@@ -1,35 +1,76 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- */
 'use strict';
 
 var React = require('react-native');
 var MapTab = require('./app/Map/map.index');
 var VenueTab = require('./app/Venue/venue.index');
 var WebTab = require('./app/GMap/gmap.index');
+var MapboxGLMap = require('react-native-mapbox-gl');
+var mapRef = 'mapRef';
 
 var {
   AppRegistry,
   StyleSheet,
   Text,
+  StatusBarIOS,
   View,
-  MapView,
-  TabBarIOS
 } = React;
 
 var persnickety = React.createClass({
+  mixins: [MapboxGLMap.Mixin],
   getInitialState() {
     return {
-      selectedTab: 'map'
-    }
+       center: {
+         latitude: 40.72052634,
+         longitude: -73.97686958312988
+       },
+       zoom: 11,
+       annotations: [{
+         latitude: 40.72052634,
+         longitude:  -73.97686958312988,
+         title: 'This is marker 1',
+         subtitle: 'It has a rightCalloutAccessory too',
+         rightCalloutAccessory: {
+             url: 'https://cldup.com/9Lp0EaBw5s.png',
+             height: 25,
+             width: 25
+         },
+         annotationImage: {
+           url: 'https://cldup.com/CnRLZem9k9.png',
+           height: 25,
+           width: 25
+         },
+         id: 'marker1'
+       },{
+         latitude: 40.714541341726175,
+         longitude:  -74.00579452514648,
+         title: 'Important!',
+         subtitle: 'Neat, this is a custom annotation image',
+         annotationImage: {
+           url: 'https://cldup.com/7NLZklp8zS.png',
+           height: 25,
+           width: 25
+         },
+         id: 'marker2'
+       }]
+     };
   },
-  changeTab(tabName) {
-    this.setState({
-      selectedTab: tabName
-    });
+  onRegionChange(location) {
+    this.setState({ currentZoom: location.zoom });
+  },
+  onRegionWillChange(location) {
+    console.log(location);
+  },
+  onUpdateUserLocation(location) {
+    console.log(location);
+  },
+  onOpenAnnotation(annotation) {
+    console.log(annotation);
+  },
+  onRightAnnotationTapped(e) {
+    console.log(e);
   },
   render: function() {
+    StatusBarIOS.setHidden(true);
     return (
       <View style={styles.container}>
         <TabBarIOS>
@@ -77,14 +118,15 @@ var styles = StyleSheet.create({
     textAlign: 'center',
     color: '#333333',
     marginBottom: 5,
+    flexDirection: 'column',
+    flex: 1
   },
   map: {
-    position: 'absolute',
-    right: 0,
-    left: 0,
-    top: 50,
-    bottom: 100,
+    flex: 5
   },
+  text: {
+    padding: 2
+  }
 });
 
 AppRegistry.registerComponent('persnickety', () => persnickety);
