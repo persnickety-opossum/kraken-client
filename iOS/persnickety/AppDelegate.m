@@ -31,7 +31,15 @@
    * on the same Wi-Fi network.
    */
 
+<<<<<<< HEAD
   jsCodeLocation = [NSURL URLWithString:@"http://localhost:8081/index.ios.bundle"];
+=======
+<<<<<<< HEAD
+  jsCodeLocation = [NSURL URLWithString:@"http://10.8.1.113:8081/index.ios.bundle"];
+=======
+  jsCodeLocation = [NSURL URLWithString:@"http://10.8.1.120:8081/index.ios.bundle"];
+>>>>>>> (feat) Add googlemap WebView
+>>>>>>> (feat) Add googlemap WebView
 
   /**
    * OPTION 2
