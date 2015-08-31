@@ -194,7 +194,7 @@ var MapTab = React.createClass({
 
 var styles = StyleSheet.create({
   map: {
-    height: 400,
+    height: 300,
     margin: 30,
     borderColor: '#000000',
   },
