@@ -32,6 +32,7 @@
    */
 
 <<<<<<< HEAD
+<<<<<<< HEAD
   jsCodeLocation = [NSURL URLWithString:@"http://localhost:8081/index.ios.bundle"];
 =======
 <<<<<<< HEAD
@@ -40,6 +41,9 @@
   jsCodeLocation = [NSURL URLWithString:@"http://10.8.1.120:8081/index.ios.bundle"];
 >>>>>>> (feat) Add googlemap WebView
 >>>>>>> (feat) Add googlemap WebView
+=======
+  jsCodeLocation = [NSURL URLWithString:@"http://localhost:8081/index.ios.bundle"];
+>>>>>>> (feat) Working googlemap with circles
 
   /**
    * OPTION 2

@@ -5,13 +5,9 @@
 'use strict';
 
 var React = require('react-native');
-<<<<<<< HEAD
 var MapTab = require('./app/Map/map.index');
 var VenueTab = require('./app/Venue/venue.index');
-=======
-var MapTab = require('./app/Event/event.index');
-var WebTab = require('./app/MapView/map.index');
->>>>>>> (feat) Add googlemap WebView
+var WebTab = require('./app/GMap/gmap.index');
 
 var {
   AppRegistry,
@@ -73,7 +69,10 @@ var styles = StyleSheet.create({
     flex: 1,
     alignItems: 'stretch',
   },
-
+  pageView: {
+    flex: 1,
+  
+  },
   instructions: {
     textAlign: 'center',
     color: '#333333',
