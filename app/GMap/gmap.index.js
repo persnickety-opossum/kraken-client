@@ -18,7 +18,6 @@ var TEXT_INPUT_REF = 'urlInput';
 var WEBVIEW_REF = 'webview';
 var DEFAULT_URL = 'googlemap.html';
 
-var test = '50.0'
 var DEFAULT_HTML = `
       <html>
 
@@ -43,17 +42,7 @@ var DEFAULT_HTML = `
                   radius: 200,
                   strokeColor: "#DB3918",
                   strokeOpacity: 0.8,
-                  strokeWeight: 2,
-                  fillColor: "#DB3918",
-                  fillOpacity: 0.4
-              });
-
-              var myCity = new google.maps.Circle({
-                  center: sanfran,
-                  radius: 200,
-                  strokeColor: "#DB3918",
-                  strokeOpacity: 0.8,
-                  strokeWeight: 2,
+                  strokeWeight: 0.0,
                   fillColor: "#DB3918",
                   fillOpacity: 0.4
               });
