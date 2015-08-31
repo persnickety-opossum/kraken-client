@@ -27,13 +27,13 @@ var MapTab = React.createClass({
          subtitle: 'It has a rightCalloutAccessory too',
          rightCalloutAccessory: {
              url: 'https://cldup.com/9Lp0EaBw5s.png',
-             height: 25,
-             width: 25
+             height: 1000,
+             width: 100
          },
          annotationImage: {
            url: 'https://cldup.com/CnRLZem9k9.png',
-           height: 25,
-           width: 25
+           height: 100,
+           width: 100
          },
          id: 'marker1'
        },{
