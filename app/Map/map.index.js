@@ -88,7 +88,7 @@ var MapTab = React.createClass({
     StatusBarIOS.setHidden(true);
     return (
       <View style={styles.container}>
-        <Text style={styles.text} onPress={() => this.setDirectionAnimated(mapRef, 0)}>
+        {/* <Text style={styles.text} onPress={() => this.setDirectionAnimated(mapRef, 0)}>
           Set direction to 0
         </Text>
         <Text style={styles.text} onPress={() => this.setZoomLevelAnimated(mapRef, 6)}>
@@ -125,7 +125,7 @@ var MapTab = React.createClass({
           });
         }}>
           Remove first annotation
-        </Text>
+        </Text>  */}
         <MapboxGLMap
           style={styles.map}
           direction={0}
@@ -135,7 +135,7 @@ var MapTab = React.createClass({
           showsUserLocation={true}
           ref={mapRef}
           accessToken={'pk.eyJ1IjoibWFyeW1hc29uIiwiYSI6IjM1NGVhNWZmNzQ5Yjk5NTczMDFhMzc3Zjg2ZGEyYzI0In0.7IdD26iFQhD2b6LbTIw_Sw'}
-          styleURL={'asset://styles/mapbox-streets-v7.json'}
+          styleURL={'asset://styles/dark-v7.json'}
           centerCoordinate={this.state.center}
           userLocationVisible={true}
           zoomLevel={this.state.zoom}
