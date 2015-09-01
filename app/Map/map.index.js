@@ -29,12 +29,6 @@ var MapTab = React.createClass({
       annotations: []
      };
   },
-  componentWillMount: function() {
-    this.eventEmitter = this.props.eventEmitter;
-    fetch('http://10.8.1.113:8000/api/venues')
-      .then(response => response.json())
-      .then(json => this._handleresponse(json));
-  },
   onRegionChange(location) {
     this.setState({
       currentZoom: location.zoom,
@@ -63,6 +57,12 @@ var MapTab = React.createClass({
     //  longitude: -73.97686958312988 }
 
 
+  },
+  componentWillMount: function() {
+    this.eventEmitter = this.props.eventEmitter;
+    fetch('http://10.8.1.113:8000/api/venues')
+      .then(response => response.json())
+      .then(json => this._handleresponse(json));
   },
   _handleresponse: function (venues) {
     console.log(venues);
