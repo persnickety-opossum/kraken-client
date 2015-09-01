@@ -6,8 +6,10 @@ var mapRef = 'mapRef';
 var {
   AppRegistry,
   StyleSheet,
-  Text,
   StatusBarIOS,
+  Text,
+  TextInput,
+  TouchableHighlight,
   View,
 } = React;
 
@@ -19,7 +21,7 @@ var MapTab = React.createClass({
          latitude: 37.783585,
          longitude: -122.408955
        },
-       zoom: 11,
+       zoom: 13,
        annotations: [{
          latitude: 40.72052634,
          longitude:  -73.97686958312988,
@@ -88,7 +90,7 @@ var MapTab = React.createClass({
     StatusBarIOS.setHidden(true);
     return (
       <View style={styles.container}>
-        {/* <Text style={styles.text} onPress={() => this.setDirectionAnimated(mapRef, 0)}>
+        {/*<Text style={styles.text} onPress={() => this.setDirectionAnimated(mapRef, 0)}>
           Set direction to 0
         </Text>
         <Text style={styles.text} onPress={() => this.setZoomLevelAnimated(mapRef, 6)}>
@@ -103,8 +105,8 @@ var MapTab = React.createClass({
         <Text style={styles.text} onPress={() => {
           var newAnnotations = this.state.annotations.slice();
           newAnnotations.push({
-            latitude: 40.73312,
-            longitude:  -73.989,
+            latitude: 37.783585,
+            longitude: -122.408955,
             title: 'This is a new marker',
             annotationImage: {
               url: 'https://cldup.com/CnRLZem9k9.png',
@@ -125,7 +127,7 @@ var MapTab = React.createClass({
           });
         }}>
           Remove first annotation
-        </Text>  */}
+        </Text> */}
         <MapboxGLMap
           style={styles.map}
           direction={0}
@@ -135,7 +137,7 @@ var MapTab = React.createClass({
           showsUserLocation={true}
           ref={mapRef}
           accessToken={'pk.eyJ1IjoibWFyeW1hc29uIiwiYSI6IjM1NGVhNWZmNzQ5Yjk5NTczMDFhMzc3Zjg2ZGEyYzI0In0.7IdD26iFQhD2b6LbTIw_Sw'}
-          styleURL={'asset://styles/dark-v7.json'}
+          styleURL={'asset://styles/mapbox-streets-v7.json'}
           centerCoordinate={this.state.center}
           userLocationVisible={true}
           zoomLevel={this.state.zoom}
@@ -145,6 +147,11 @@ var MapTab = React.createClass({
           onOpenAnnotation={this.onOpenAnnotation}
           onRightAnnotationTapped={this.onRightAnnotationTapped}
           onUpdateUserLocation={this.onUpdateUserLocation} />
+        <View style={styles.flowRight}>
+          <TextInput
+            style={styles.searchInput}
+            placeholder='Search'/>
+        </View>    
       </View>
     );
   }
@@ -153,13 +160,29 @@ var MapTab = React.createClass({
 var styles = StyleSheet.create({
   container: {
     flexDirection: 'column',
-    flex: 1
+    flex: 1,
   },
   map: {
     flex: 5
   },
-  text: {
-    padding: 2
+  flowRight: {
+    position: 'absolute',
+    top: 0,
+    flexDirection: 'row',
+    alignItems: 'center',
+    alignSelf: 'stretch'
+  },
+  searchInput: {
+    position: 'absolute',
+    margin: 4,
+    top: 10,
+    height: 36,
+    width: 300,
+    padding: 4,
+    fontSize: 12,
+    borderWidth: 0.5,
+    borderColor: '#81FF42',
+    color: '#81FF42'
   }
 });
 
