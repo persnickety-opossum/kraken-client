@@ -149,8 +149,11 @@ var MapTab = React.createClass({
         <View style={styles.flowRight}>
           <TextInput
             style={styles.searchInput}
+<<<<<<< HEAD
             value={this.state.searchString}
             onChange={this._onSearchTextChanged}
+=======
+>>>>>>> (feat) Add search box
             placeholder='Search'/>
         </View>    
       </View>
