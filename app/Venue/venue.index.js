@@ -14,7 +14,7 @@ var VenueTab = React.createClass({
   getInitialState() {
     return {
       voteValue: 0,
-      venue: 'initial venue',
+      venue: this.props.venue,
       overallRating: 0
     };
   },
@@ -41,8 +41,13 @@ var VenueTab = React.createClass({
     this.setState({voteValue: voteValue})
   },
 
+  findVenue() {
+
+  },
+
   render() {
     var venue;
+    //this.findVenue();
     fetch('http://localhost:8000/api/venues/55e394d6c2b4e82b48390473')
       .then(response => response.json())
       .then(json => this._handleResponse(json));

@@ -3,6 +3,8 @@
 var React = require('react-native');
 var MapboxGLMap = require('react-native-mapbox-gl');
 var mapRef = 'mapRef';
+var EventEmitter = require('EventEmitter');
+var Subscribable = require('Subscribable');
 
 var {
   AppRegistry,
@@ -27,6 +29,12 @@ var MapTab = React.createClass({
       annotations: []
      };
   },
+  componentWillMount: function() {
+    this.eventEmitter = this.props.eventEmitter;
+    fetch('http://localhost:8000/api/venues')
+      .then(response => response.json())
+      .then(json => this._handleresponse(json));
+  },
   onRegionChange(location) {
     this.setState({
       currentZoom: location.zoom,
@@ -44,13 +52,15 @@ var MapTab = React.createClass({
     console.log(annotation);
   },
   onRightAnnotationTapped(e) {
-    console.log(e);
-  },
+    //console.log(e);
+    this.eventEmitter.emit('annotationTapped', { venue: e });
+    //{ id: 'marker1',
+    //  title: 'This is marker 1',
+    //  latitude: 40.72052634,
+    //  subtitle: 'It has a rightCalloutAccessory too',
+    //  longitude: -73.97686958312988 }
 
-  componentWillMount: function() {
-    fetch('http://localhost:8000/api/venues')
-    .then(response => response.json())
-    .then(json => this._handleresponse(json));
+
   },
 
   _handleresponse: function (venues) {

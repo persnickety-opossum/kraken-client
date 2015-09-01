@@ -1,6 +1,8 @@
 'use strict';
 
 var React = require('react-native');
+var EventEmitter = require('EventEmitter');
+var Subscribable = require('Subscribable');
 var MapTab = require('./app/Map/map.index');
 var VenueTab = require('./app/Venue/venue.index');
 var WebTab = require('./app/GMap/gmap.index');
@@ -16,58 +18,30 @@ var {
 } = React;
 
 var persnickety = React.createClass({
-  mixins: [MapboxGLMap.Mixin],
+  mixins: [MapboxGLMap.Mixin, Subscribable.Mixin],
   getInitialState() {
     return {
-       center: {
-         latitude: 40.72052634,
-         longitude: -73.97686958312988
-       },
-       zoom: 11,
-       annotations: [{
-         latitude: 40.72052634,
-         longitude:  -73.97686958312988,
-         title: 'This is marker 1',
-         subtitle: 'It has a rightCalloutAccessory too',
-         rightCalloutAccessory: {
-             url: 'https://cldup.com/9Lp0EaBw5s.png',
-             height: 25,
-             width: 25
-         },
-         annotationImage: {
-           url: 'https://cldup.com/CnRLZem9k9.png',
-           height: 25,
-           width: 25
-         },
-         id: 'marker1'
-       },{
-         latitude: 40.714541341726175,
-         longitude:  -74.00579452514648,
-         title: 'Important!',
-         subtitle: 'Neat, this is a custom annotation image',
-         annotationImage: {
-           url: 'https://cldup.com/7NLZklp8zS.png',
-           height: 25,
-           width: 25
-         },
-         id: 'marker2'
-       }]
-     };
+      selectedTab: 'map',
+      venue: 'default venue'
+    }
   },
-  onRegionChange(location) {
-    this.setState({ currentZoom: location.zoom });
+  componentWillMount: function() {
+    this.eventEmitter = new EventEmitter();
   },
-  onRegionWillChange(location) {
-    console.log(location);
+  componentDidMount: function() {
+    this.addListenerOn(this.eventEmitter, 'annotationTapped', this.selectVenue);
   },
-  onUpdateUserLocation(location) {
-    console.log(location);
+
+  selectVenue: function(venue) {
+    console.log('Event successfully emitted!', venue);
+    this.changeTab('venue');
+    this.setState({venue: venue});
   },
-  onOpenAnnotation(annotation) {
-    console.log(annotation);
-  },
-  onRightAnnotationTapped(e) {
-    console.log(e);
+
+  changeTab(tabName) {
+    this.setState({
+      selectedTab: tabName
+    });
   },
   render: function() {
     StatusBarIOS.setHidden(true);
@@ -79,7 +53,7 @@ var persnickety = React.createClass({
           icon={ require('image!map') }
           onPress={ () => this.changeTab('map') }
           selected={ this.state.selectedTab === 'map' }>
-          <MapTab />
+          <MapTab eventEmitter={this.eventEmitter}/>
         </TabBarIOS.Item>
         <TabBarIOS.Item
           title="Venue"
@@ -87,7 +61,7 @@ var persnickety = React.createClass({
           onPress={ () => this.changeTab('venue') }
           selected={ this.state.selectedTab === 'venue' }>
           <View style={ styles.pageView }>
-            <VenueTab />
+            <VenueTab venue={this.state.venue}/>
           </View>
         </TabBarIOS.Item>
         <TabBarIOS.Item
