@@ -51,7 +51,11 @@ var MapTab = React.createClass({
      };
   },
   onRegionChange(location) {
-    this.setState({ currentZoom: location.zoom });
+    this.setState({
+      currentZoom: location.zoom,
+      latitude: location.latitude,
+      longitude: location.longitude
+    });
   },
   onRegionWillChange(location) {
     console.log(location);
@@ -84,6 +88,10 @@ var MapTab = React.createClass({
     });
     this.setState({annotations: venues});
   },
+  annotate: function (newAnnotations) {
+    var annotations = this.state.annotations.concat(newAnnotations);
+    this.setState({annotations: annotations});
+  },
   render: function() {
     StatusBarIOS.setHidden(true);
     return (
@@ -101,10 +109,9 @@ var MapTab = React.createClass({
           Go to Tokyo at fixed zoom level 14
         </Text>
         <Text style={styles.text} onPress={() => {
-          var newAnnotations = this.state.annotations.slice();
-          newAnnotations.push({
-            latitude: 40.73312,
-            longitude:  -73.989,
+          this.annotate({
+            latitude: this.state.latitude,
+            longitude:  this.state.longitude,
             title: 'This is a new marker',
             annotationImage: {
               url: 'https://cldup.com/CnRLZem9k9.png',
@@ -112,7 +119,6 @@ var MapTab = React.createClass({
               width: 25
             }
           });
-          this.setState({annotations: newAnnotations});
         }}>
           Add new marker
         </Text>
