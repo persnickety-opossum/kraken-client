@@ -28,7 +28,11 @@ var MapTab = React.createClass({
      };
   },
   onRegionChange(location) {
-    this.setState({ currentZoom: location.zoom });
+    this.setState({
+      currentZoom: location.zoom,
+      latitude: location.latitude,
+      longitude: location.longitude
+    });
   },
   onRegionWillChange(location) {
     console.log(location);
@@ -101,8 +105,8 @@ var MapTab = React.createClass({
         </Text>
         <Text style={styles.text} onPress={() => {
           this.annotate({
-            latitude: 37.778931,
-            longitude:  -122.410914,
+            latitude: this.state.latitude,
+            longitude:  this.state.longitude,
             title: 'This is a new marker',
             annotationImage: {
               url: 'https://cldup.com/CnRLZem9k9.png',
