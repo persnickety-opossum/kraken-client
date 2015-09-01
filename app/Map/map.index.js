@@ -31,7 +31,7 @@ var MapTab = React.createClass({
   },
   componentWillMount: function() {
     this.eventEmitter = this.props.eventEmitter;
-    fetch('http://localhost:8000/api/venues')
+    fetch('http://10.8.1.113:8000/api/venues')
       .then(response => response.json())
       .then(json => this._handleresponse(json));
   },
@@ -54,7 +54,9 @@ var MapTab = React.createClass({
   onRightAnnotationTapped(e) {
     //console.log(e);
     this.eventEmitter.emit('annotationTapped', { venue: e });
-    //{ id: 'marker1',
+    console.log(e);
+    //{ _id: 'hopefullythiswillbemongoID',
+    // id: 'marker1',
     //  title: 'This is marker 1',
     //  latitude: 40.72052634,
     //  subtitle: 'It has a rightCalloutAccessory too',
@@ -62,7 +64,6 @@ var MapTab = React.createClass({
 
 
   },
-
   _handleresponse: function (venues) {
     console.log(venues);
     venues.forEach(function (venue) {
@@ -75,7 +76,14 @@ var MapTab = React.createClass({
         height: 25,
         width: 25
       };
+      venue.rightCalloutAccessory = {
+        url: 'https://cldup.com/9Lp0EaBw5s.png',
+          height: 25,
+          width: 25
+      };
+      venue.id = venue._id;
     });
+    console.log(venues);
     this.setState({annotations: venues});
   },
 

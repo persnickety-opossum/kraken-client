@@ -18,17 +18,6 @@ var VenueTab = React.createClass({
       overallRating: 0
     };
   },
-  componentWillMount: function() {
-    //fetch('http://localhost:8000/api/venues/55e50ac764f476c995ec117a')
-    //  .then(response => response.json())
-    //  .then(json => this._handleResponse(json));
-  },
-
-  _handleResponse(response) {
-    console.log('ok sfad sadf sda dsa adasdfadsffsfdasdsfasf f ad');
-    this.setState({venue: response});
-    this.getOverallRating();
-  },
 
   getOverallRating() {
     var ratings = this.state.venue.ratings;
@@ -46,24 +35,14 @@ var VenueTab = React.createClass({
     this.setState({voteValue: voteValue})
   },
 
-  findVenue() {
-
-  },
-
   render() {
-    //var venue;
-    //this.findVenue();
-    fetch('http://localhost:8000/api/venues/55e50ac764f476c995ec117b')
-      .then(response => response.json())
-      .then(json => this._handleResponse(json));
-
     return (
       <View>
         <Text style={styles.header}>
           Waz Kraken
         </Text>
         <Text style={styles.venueName}>
-          {this.state.venue.title}
+          {this.props.venue.title}
         </Text>
         <Text style={styles.text} >
           Overall rating: {this.state.overallRating}/10

@@ -32,9 +32,19 @@ var persnickety = React.createClass({
     this.addListenerOn(this.eventEmitter, 'annotationTapped', this.selectVenue);
   },
 
+  findVenue() {
+    fetch('http://192.168.1.101:8000/api/venues/55e52c557ff1b2bc95e920ba')
+      .then(response => response.json())
+      .then(json => this._handleResponse(json));
+  },
+
+  _handleResponse(response) {
+    this.setState({venue: response});
+    this.getOverallRating();
+  },
+
   selectVenue: function(venue) {
-    //console.log('Event successfully emitted!', venue);
-    this.setState({venue: venue});
+    this.setState({venue: venue.venue});
     this.changeTab('venue');
   },
 
@@ -55,6 +65,7 @@ var persnickety = React.createClass({
           selected={ this.state.selectedTab === 'map' }>
           <MapTab eventEmitter={this.eventEmitter}/>
         </TabBarIOS.Item>
+
         <TabBarIOS.Item
           title="Venue"
           icon={ require('image!messages') }
@@ -64,6 +75,7 @@ var persnickety = React.createClass({
             <VenueTab venue={this.state.venue}/>
           </View>
         </TabBarIOS.Item>
+
         <TabBarIOS.Item
           title="G-Map"
           icon={ require('image!settings') }
