@@ -32,11 +32,11 @@ var persnickety = React.createClass({
     this.addListenerOn(this.eventEmitter, 'annotationTapped', this.selectVenue);
   },
 
-  findVenue() {
-    fetch('http://192.168.1.101:8000/api/venues/55e52c557ff1b2bc95e920ba')
-      .then(response => response.json())
-      .then(json => this._handleResponse(json));
-  },
+  //findVenue() {
+  //  fetch('http://192.168.1.101:8000/api/venues/55e52c557ff1b2bc95e920ba')
+  //    .then(response => response.json())
+  //    .then(json => this._handleResponse(json));
+  //},
 
   _handleResponse(response) {
     this.setState({venue: response});
