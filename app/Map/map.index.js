@@ -87,6 +87,19 @@ var MapTab = React.createClass({
     this.setState({annotations: annotations});
   },
 
+  _onSearchTextChanged: function (event) {
+    console.log('onSearchTextChanged');
+    this.setState({ searchString: event.nativeEvent.text });
+    console.log(this.state.searchString, this.state.center.longitude, this.state.searchString);
+
+    fetch('http://10.8.1.120:8000/api/search/query/'+this.state.searchString+'/'+this.state.center.latitude+','+this.state.center.longitude)
+    .then(response => response.json())
+    .then(json => this._handleresponse(json))
+    .catch(function(e) {
+      console.log(e);
+    });
+  },
+
   render: function() {
     StatusBarIOS.setHidden(true);
     return (
@@ -149,11 +162,8 @@ var MapTab = React.createClass({
         <View style={styles.flowRight}>
           <TextInput
             style={styles.searchInput}
-<<<<<<< HEAD
             value={this.state.searchString}
             onChange={this._onSearchTextChanged}
-=======
->>>>>>> (feat) Add search box
             placeholder='Search'/>
         </View>    
       </View>
