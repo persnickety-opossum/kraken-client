@@ -86,6 +86,11 @@ var MapTab = React.createClass({
     });
   },
 
+  annotate: function (newAnnotations) {
+    var annotations = this.state.annotations.concat(newAnnotations);
+    this.setState({annotations: annotations});
+  },
+
   render: function() {
     StatusBarIOS.setHidden(true);
     return (
