@@ -33,9 +33,9 @@ var persnickety = React.createClass({
   },
 
   selectVenue: function(venue) {
-    console.log('Event successfully emitted!', venue);
-    this.changeTab('venue');
+    //console.log('Event successfully emitted!', venue);
     this.setState({venue: venue});
+    this.changeTab('venue');
   },
 
   changeTab(tabName) {
