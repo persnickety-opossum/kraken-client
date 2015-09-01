@@ -84,6 +84,10 @@ var MapTab = React.createClass({
     });
     this.setState({annotations: venues});
   },
+  annotate: function (newAnnotations) {
+    var annotations = this.state.annotations.concat(newAnnotations);
+    this.setState({annotations: annotations});
+  },
   render: function() {
     StatusBarIOS.setHidden(true);
     return (
@@ -101,10 +105,9 @@ var MapTab = React.createClass({
           Go to Tokyo at fixed zoom level 14
         </Text>
         <Text style={styles.text} onPress={() => {
-          var newAnnotations = this.state.annotations.slice();
-          newAnnotations.push({
-            latitude: 40.73312,
-            longitude:  -73.989,
+          this.annotate({
+            latitude: 37.778931,
+            longitude:  -122.410914,
             title: 'This is a new marker',
             annotationImage: {
               url: 'https://cldup.com/CnRLZem9k9.png',
@@ -112,7 +115,6 @@ var MapTab = React.createClass({
               width: 25
             }
           });
-          this.setState({annotations: newAnnotations});
         }}>
           Add new marker
         </Text>
