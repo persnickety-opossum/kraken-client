@@ -8,6 +8,8 @@ var VenueTab = require('./app/Venue/venue.index');
 var WebTab = require('./app/GMap/gmap.index');
 var MapboxGLMap = require('react-native-mapbox-gl');
 var mapRef = 'mapRef';
+var moment = require('moment');
+moment().format();
 
 var {
   AppRegistry,
@@ -40,7 +42,25 @@ var persnickety = React.createClass({
   },
 
   selectVenue: function(venue) {
-    this.setState({venue: venue.venue});
+    var venue = venue.venue;
+    var newVenue = venue;
+    //var currDateTime = venue.venue.datetime;
+
+    //var currDateTime = new Date(venue.venue.datetime);
+    //var currYear = currDateTime.getFullYear();
+    //var currMonth = currDateTime.getMonth();
+    //var currDay = currDateTime.getDate();
+    //var currHour = currDateTime.getHours();
+    //var currMinute = currDateTime.getMinutes();
+
+    //get correct datemin format
+    //$scope.datemin = currDateTime.toISOString().split('T')[0] + 'T00:00:00';
+    //venue.venue.datetime = new Date(currYear, currMonth, currDay, currHour, currMinute);
+    //venue.venue.datetime = venue.venue.datetime.split('T')[0]
+    //for (var i = 0; i < newVenue.comments.length;i++) {
+    //  newVenue.comments[i].datetime = moment(newVenue.comments[i].datetime).fromNow();
+    //}
+    this.setState({venue: newVenue});
     this.changeTab('venue');
   },
 
