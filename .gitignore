@@ -61,5 +61,6 @@ DerivedData
 *.ipa
 *.xcuserstate
 project.xcworkspace
-
 iOS/
+persnickety.xcodeproj
+

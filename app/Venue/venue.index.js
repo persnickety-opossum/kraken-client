@@ -2,6 +2,8 @@
 
 var React = require('react-native');
 //var venue = require('./venueMock');
+var moment = require('moment');
+moment().format();
 var {
   SliderIOS,
   Text,
@@ -22,25 +24,36 @@ var VenueTab = React.createClass({
       dataSource: ds.cloneWithRows(this.props.venue.comments),
     };
   },
+
   //componentDidMount: function() {
   //  this.setState({venue: this.props.venue});
   //  this.setState({dataSource: ds.cloneWithRows(this.props.venue.comments)})
   //},
+
   reloadComments() {
   //  //return ArticleStore.reload() // returns a Promise of reload completion
-    console.log(this.state.venue);
     var route = 'http://10.8.1.113:8000/api/venues/' + this.state.venue._id;
     fetch(route)
       .then(response => response.json())
+      .then(function(res) {
+        for (var i = 0; i < res.comments.length; i++) {
+          res.comments[i].datetime = moment(res.comments[i].datetime).fromNow();
+        }
+        return res;
+      })
       .then(json => this.setState({venue: json, dataSource: ds.cloneWithRows(json.comments)}))
   },
 
   componentWillReceiveProps: function(nextProps) {
     var venue = nextProps.venue;
-    this.setState({
-      venue: venue,
-      dataSource: ds.cloneWithRows(venue.comments)
-    });
+    var route = 'http://10.8.1.113:8000/api/venues/' + venue._id;
+    fetch(route)
+      .then(response => response.json())
+      .then(json => this.setState({venue: json, dataSource: ds.cloneWithRows(json.comments)}))
+    //this.setState({
+    //  venue: venue,
+    //  dataSource: ds.cloneWithRows(venue.comments)
+    //});
   },
 
   getOverallRating() {
@@ -130,10 +143,14 @@ var styles = StyleSheet.create({
     height: 20,
     marginLeft: 40,
     marginRight: 40,
+    marginBottom: 10,
     flex: 0.5
   },
   listView: {
-    margin: 10
+    margin: 10,
+    flex: 1,
+    bottom: 0,
+    height: 500
   }
 });
 
