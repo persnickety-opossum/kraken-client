@@ -15,6 +15,9 @@ var {
   Text,
   StatusBarIOS,
   View,
+  MapView,
+  TabBarIOS,
+  StatusBarIOS
 } = React;
 
 var persnickety = React.createClass({
@@ -95,6 +98,10 @@ var styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'stretch',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#F5FCFF',
+    marginTop: 20
   },
   pageView: {
     flex: 1,

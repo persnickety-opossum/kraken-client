@@ -47,8 +47,13 @@ var MapTab = React.createClass({
   },
   onRightAnnotationTapped(e) {
     //console.log(e);
-    this.eventEmitter.emit('annotationTapped', { venue: e });
-    console.log(e);
+    var id = e.id;
+    for (var i = 0; i < this.state.annotations.length; i++) {
+      if (this.state.annotations[i].id === id) {
+        this.eventEmitter.emit('annotationTapped', { venue: this.state.annotations[i] });
+        break;
+      }
+    }
     //{ _id: 'hopefullythiswillbemongoID',
     // id: 'marker1',
     //  title: 'This is marker 1',
@@ -82,8 +87,13 @@ var MapTab = React.createClass({
           width: 25
       };
       venue.id = venue._id;
+      var ratingsSum = 0;
+      for (var i = 0; i < venue.ratings.length; i++) {
+        ratingsSum += venue.ratings[i];
+      }
+      venue.overallRating = Math.round(ratingsSum / venue.ratings.length);
+      console.log(venue);
     });
-    console.log(venues);
     this.setState({annotations: venues});
   },
 
@@ -106,7 +116,7 @@ var MapTab = React.createClass({
   },
 
   render: function() {
-    StatusBarIOS.setHidden(true);
+    //StatusBarIOS.setHidden(true);
     return (
       <View style={styles.container}>
         {/*<Text style={styles.text} onPress={() => this.setDirectionAnimated(mapRef, 0)}>
@@ -180,6 +190,7 @@ var styles = StyleSheet.create({
   container: {
     flexDirection: 'column',
     flex: 1,
+    marginTop: 20
   },
   map: {
     flex: 5
