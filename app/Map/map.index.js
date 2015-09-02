@@ -151,6 +151,7 @@ var MapTab = React.createClass({
     console.log(this.state.searchString);
     this.setState({searchPins: []});
     fetch(config.serverURL + '/api/search/query/'+this.state.searchString+'/'+this.state.center.latitude+','+this.state.center.longitude)
+    fetch('http://10.8.1.113:8000/api/search/query/'+this.state.searchString+'/'+this.state.center.latitude+','+this.state.center.longitude)
     .then(response => response.json())
     .then(json => this._handleResponse(json, false))
     .catch(function(err) {
