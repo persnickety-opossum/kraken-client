@@ -8,7 +8,6 @@ var Subscribable = require('Subscribable');
 var moment = require('moment');
 moment().format();
 var Display = require('react-native-device-display');
-
 var config = require('../config');
 
 var {
