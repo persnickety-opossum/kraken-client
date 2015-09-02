@@ -3,6 +3,8 @@
 var React = require('react-native');
 var MapboxGLMap = require('react-native-mapbox-gl');
 var mapRef = 'mapRef';
+var EventEmitter = require('EventEmitter');
+var Subscribable = require('Subscribable');
 
 var {
   AppRegistry,
@@ -44,15 +46,29 @@ var MapTab = React.createClass({
     console.log(annotation);
   },
   onRightAnnotationTapped(e) {
-    console.log(e);
-  },
+    //console.log(e);
+    var id = e.id;
+    for (var i = 0; i < this.state.annotations.length; i++) {
+      if (this.state.annotations[i].id === id) {
+        this.eventEmitter.emit('annotationTapped', { venue: this.state.annotations[i] });
+        break;
+      }
+    }
+    //{ _id: 'hopefullythiswillbemongoID',
+    // id: 'marker1',
+    //  title: 'This is marker 1',
+    //  latitude: 40.72052634,
+    //  subtitle: 'It has a rightCalloutAccessory too',
+    //  longitude: -73.97686958312988 }
 
+
+  },
   componentWillMount: function() {
-    fetch('http://localhost:8000/api/venues')
-    .then(response => response.json())
-    .then(json => this._handleresponse(json));
+    this.eventEmitter = this.props.eventEmitter;
+    fetch('http://10.8.1.113:8000/api/venues')
+      .then(response => response.json())
+      .then(json => this._handleresponse(json));
   },
-
   _handleresponse: function (venues) {
     console.log(venues);
     venues.forEach(function (venue) {
@@ -65,6 +81,18 @@ var MapTab = React.createClass({
         height: 25,
         width: 25
       };
+      venue.rightCalloutAccessory = {
+        url: 'https://cldup.com/9Lp0EaBw5s.png',
+          height: 25,
+          width: 25
+      };
+      venue.id = venue._id;
+      var ratingsSum = 0;
+      for (var i = 0; i < venue.ratings.length; i++) {
+        ratingsSum += venue.ratings[i];
+      }
+      venue.overallRating = Math.round(ratingsSum / venue.ratings.length);
+      console.log(venue);
     });
     this.setState({annotations: venues});
   },
@@ -79,7 +107,7 @@ var MapTab = React.createClass({
     this.setState({ searchString: event.nativeEvent.text });
     console.log(this.state.searchString, this.state.center.longitude, this.state.searchString);
 
-    fetch('http://10.8.1.120:8000/api/search/query/'+this.state.searchString+'/'+this.state.center.latitude+','+this.state.center.longitude)
+    fetch('http://10.8.1.113:8000/api/search/query/'+this.state.searchString+'/'+this.state.center.latitude+','+this.state.center.longitude)
     .then(response => response.json())
     .then(json => this._handleresponse(json))
     .catch(function(e) {
@@ -88,7 +116,7 @@ var MapTab = React.createClass({
   },
 
   render: function() {
-    StatusBarIOS.setHidden(true);
+    //StatusBarIOS.setHidden(true);
     return (
       <View style={styles.container}>
         {/*<Text style={styles.text} onPress={() => this.setDirectionAnimated(mapRef, 0)}>
@@ -162,6 +190,7 @@ var styles = StyleSheet.create({
   container: {
     flexDirection: 'column',
     flex: 1,
+    marginTop: 20
   },
   map: {
     flex: 5

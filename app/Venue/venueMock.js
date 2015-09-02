@@ -1,6 +1,4 @@
-Sample Venue Object:
-
-{
+module.exports = {
   _id: '2343289439843',
   title: 'Hack Reactor',
   attendees: 20,
@@ -15,4 +13,3 @@ Sample Venue Object:
   creator: 'thisIsAToken4555',
   datetime: '2015-11-30T06:20:46.000Z'
 }
-
