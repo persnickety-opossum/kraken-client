@@ -10,6 +10,8 @@ var {
   ListView
   } = React;
 
+var config = require('../config');
+
 var RefreshableListView = require('react-native-refreshable-listview');
 var ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
 
@@ -29,7 +31,7 @@ var VenueTab = React.createClass({
   reloadComments() {
   //  //return ArticleStore.reload() // returns a Promise of reload completion
     console.log(this.state.venue);
-    var route = 'http://10.8.1.113:8000/api/venues/' + this.state.venue._id;
+    var route = config.serverURL + '/api/venues/' + this.state.venue._id;
     fetch(route)
       .then(response => response.json())
       .then(json => this.setState({venue: json, dataSource: ds.cloneWithRows(json.comments)}))
