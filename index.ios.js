@@ -17,7 +17,6 @@ var {
   View,
   MapView,
   TabBarIOS,
-  StatusBarIOS
 } = React;
 
 var persnickety = React.createClass({
@@ -35,12 +34,6 @@ var persnickety = React.createClass({
     this.addListenerOn(this.eventEmitter, 'annotationTapped', this.selectVenue);
   },
 
-  //findVenue() {
-  //  fetch('http://192.168.1.101:8000/api/venues/55e52c557ff1b2bc95e920ba')
-  //    .then(response => response.json())
-  //    .then(json => this._handleResponse(json));
-  //},
-
   _handleResponse(response) {
     this.setState({venue: response});
     this.getOverallRating();
@@ -57,7 +50,7 @@ var persnickety = React.createClass({
     });
   },
   render: function() {
-    StatusBarIOS.setHidden(true);
+    //StatusBarIOS.setHidden(true);
     return (
       <View style={styles.container}>
         <TabBarIOS>
@@ -99,7 +92,7 @@ var styles = StyleSheet.create({
     flex: 1,
     alignItems: 'stretch',
     justifyContent: 'center',
-    alignItems: 'center',
+    //alignItems: 'center',
     backgroundColor: '#F5FCFF',
     marginTop: 20
   },
