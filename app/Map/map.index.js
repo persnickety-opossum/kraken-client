@@ -6,6 +6,8 @@ var mapRef = 'mapRef';
 var EventEmitter = require('EventEmitter');
 var Subscribable = require('Subscribable');
 
+var config = require('../config');
+
 var {
   AppRegistry,
   StyleSheet,
@@ -69,7 +71,7 @@ var MapTab = React.createClass({
   },
   componentWillMount: function() {
     this.eventEmitter = this.props.eventEmitter;
-    fetch('http://10.8.1.120:8000/api/venues')
+    fetch(config.serverURL + '/api/venues')
       .then(response => response.json())
       .then(json => this._handleResponse(json, true));
   },
@@ -135,7 +137,7 @@ var MapTab = React.createClass({
     console.log('submitted');
     console.log(this.state.searchString);
     this.setState({searchPins: []});
-    fetch('http://localhost:8000/api/search/query/'+this.state.searchString+'/'+this.state.center.latitude+','+this.state.center.longitude)
+    fetch(config.serverURL + '/api/search/query/'+this.state.searchString+'/'+this.state.center.latitude+','+this.state.center.longitude)
     .then(response => response.json())
     .then(json => this._handleResponse(json, false))
     .catch(function(err) {

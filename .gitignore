@@ -2,7 +2,8 @@
 #
 .DS_Store
 
-
+# Server URL config
+app/config.js
 
 # node.js
 #
@@ -62,4 +63,4 @@ DerivedData
 *.xcuserstate
 project.xcworkspace
 
-iOS/
+iOS/persnickety/AppDelegate.m
