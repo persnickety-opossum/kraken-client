@@ -62,5 +62,7 @@ DerivedData
 *.ipa
 *.xcuserstate
 project.xcworkspace
-
 iOS/persnickety/AppDelegate.m
+iOS/
+persnickety.xcodeproj
+
