@@ -69,15 +69,9 @@ var MapTab = React.createClass({
   },
   componentWillMount: function() {
     this.eventEmitter = this.props.eventEmitter;
-    fetch('http://192.168.1.16:8000/api/venues')
+    fetch('http://10.8.1.120:8000/api/venues')
       .then(response => response.json())
-      .then(json => this._handleresponse(json));
-  },
-  _handleresponse: function (venues) {
-    console.log(venues);
-    fetch('http://192.168.1.16:8000/api/venues')
-    .then(response => response.json())
-    .then(json => this._handleResponse(json, true));
+      .then(json => this._handleResponse(json, true));
   },
 
   _handleResponse: function (venues, inDb) {
@@ -89,33 +83,30 @@ var MapTab = React.createClass({
 
       venue.latitude = parseFloat(coords[0]);
       venue.longitude = parseFloat(coords[1]);
-      venue.subtitle = venue.description;
       venue.rightCalloutAccessory = {
-        url: 'https://cldup.com/9Lp0EaBw5s.png',
+        url: 'image!arrow',
           height: 25,
           width: 25
       };
-      venue.id = venue._id;
-      var ratingsSum = 0;
-      for (var i = 0; i < venue.ratings.length; i++) {
-        ratingsSum += venue.ratings[i];
-      }
-      venue.overallRating = Math.round(ratingsSum / venue.ratings.length);
 
       if(inDb) {
+        venue.subtitle = venue.description;
+        venue.id = venue._id;
+        var ratingsSum = 0;
+        for (var i = 0; i < venue.ratings.length; i++) {
+          ratingsSum += venue.ratings[i];
+        }
+        venue.overallRating = Math.round(ratingsSum / venue.ratings.length);
         venue.annotationImage = {
           url: 'image!pin',
           height: 25,
           width: 25
         };
-        console.log(that.state.venuePins);
         tempArray = that.state.venuePins.slice(0);
-        console.log(venue);
         tempArray.push(venue);
         that.setState({venuePins: tempArray});
-        console.log(tempArray);
-        console.log('added');
       } else {
+        console.log(that.state);
         venue.annotationImage = {
           url: 'image!searchPin',
           height: 25,
@@ -140,9 +131,11 @@ var MapTab = React.createClass({
     this.setState({ searchString: event.nativeEvent.text });
   },
 
-  _onSearchTextSubmit: function (event) {
+  _onSearchTextSubmit: function () {
+    console.log('submitted');
+    console.log(this.state.searchString);
     this.setState({searchPins: []});
-    fetch('http://192.168.1.16:8000/api/search/query/'+this.state.searchString+'/'+this.state.center.latitude+','+this.state.center.longitude)
+    fetch('http://localhost:8000/api/search/query/'+this.state.searchString+'/'+this.state.center.latitude+','+this.state.center.longitude)
     .then(response => response.json())
     .then(json => this._handleResponse(json, false))
     .catch(function(err) {
@@ -215,7 +208,6 @@ var MapTab = React.createClass({
             onChange={this._onSearchTextChanged}
             onSubmitEditing={this._onSearchTextSubmit}
             returnKeyType='search'
-            enablesReturnKeyAutomatically={true}
             placeholder='Search'/>
         </View>    
       </View>
@@ -227,7 +219,6 @@ var styles = StyleSheet.create({
   container: {
     flexDirection: 'column',
     flex: 1,
-    marginTop: 20
   },
   beer:{
 
