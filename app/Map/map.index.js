@@ -16,8 +16,10 @@ var {
   View,
 } = React;
 
+// create MapTab class
 var MapTab = React.createClass({
   mixins: [MapboxGLMap.Mixin],
+  //initialize class with base states
   getInitialState() {
     return {
       searchString: '',
@@ -26,6 +28,8 @@ var MapTab = React.createClass({
       longitude: -122.408955
       },
       zoom: 13,
+      venuePins: [],
+      searchPins: [],
       annotations: []
      };
   },
@@ -65,22 +69,27 @@ var MapTab = React.createClass({
   },
   componentWillMount: function() {
     this.eventEmitter = this.props.eventEmitter;
-    fetch('http://10.8.1.113:8000/api/venues')
+    fetch('http://192.168.1.16:8000/api/venues')
       .then(response => response.json())
       .then(json => this._handleresponse(json));
   },
   _handleresponse: function (venues) {
     console.log(venues);
+    fetch('http://192.168.1.16:8000/api/venues')
+    .then(response => response.json())
+    .then(json => this._handleResponse(json, true));
+  },
+
+  _handleResponse: function (venues, inDb) {
+    var that = this;
     venues.forEach(function (venue) {
+    console.log(that.state);
       var coords = venue.coordinates.split(',');
+      var tempArray = [];
+
       venue.latitude = parseFloat(coords[0]);
       venue.longitude = parseFloat(coords[1]);
       venue.subtitle = venue.description;
-      venue.annotationImage = {
-        url: 'image!pin',
-        height: 25,
-        width: 25
-      };
       venue.rightCalloutAccessory = {
         url: 'https://cldup.com/9Lp0EaBw5s.png',
           height: 25,
@@ -92,26 +101,52 @@ var MapTab = React.createClass({
         ratingsSum += venue.ratings[i];
       }
       venue.overallRating = Math.round(ratingsSum / venue.ratings.length);
-      console.log(venue);
+
+      if(inDb) {
+        venue.annotationImage = {
+          url: 'image!pin',
+          height: 25,
+          width: 25
+        };
+        console.log(that.state.venuePins);
+        tempArray = that.state.venuePins.slice(0);
+        console.log(venue);
+        tempArray.push(venue);
+        that.setState({venuePins: tempArray});
+        console.log(tempArray);
+        console.log('added');
+      } else {
+        venue.annotationImage = {
+          url: 'image!searchPin',
+          height: 25,
+          width: 25
+        };
+        tempArray = that.state.searchPins;
+        tempArray.push(venue);
+        that.setState({searchPins: tempArray});
+      }
     });
-    this.setState({annotations: venues});
+    this._displayPins();
   },
 
-  annotate: function (newAnnotations) {
-    var annotations = this.state.annotations.concat(newAnnotations);
-    this.setState({annotations: annotations});
+  _displayPins: function () {
+    var pins = this.state.venuePins.concat(this.state.searchPins);
+    console.log(pins);
+    this.setState({annotations: pins});
   },
 
   _onSearchTextChanged: function (event) {
     console.log('onSearchTextChanged');
     this.setState({ searchString: event.nativeEvent.text });
-    console.log(this.state.searchString, this.state.center.longitude, this.state.searchString);
+  },
 
-    fetch('http://10.8.1.113:8000/api/search/query/'+this.state.searchString+'/'+this.state.center.latitude+','+this.state.center.longitude)
+  _onSearchTextSubmit: function (event) {
+    this.setState({searchPins: []});
+    fetch('http://192.168.1.16:8000/api/search/query/'+this.state.searchString+'/'+this.state.center.latitude+','+this.state.center.longitude)
     .then(response => response.json())
-    .then(json => this._handleresponse(json))
-    .catch(function(e) {
-      console.log(e);
+    .then(json => this._handleResponse(json, false))
+    .catch(function(err) {
+      console.log(err);
     });
   },
 
@@ -164,7 +199,7 @@ var MapTab = React.createClass({
           showsUserLocation={true}
           ref={mapRef}
           accessToken={'pk.eyJ1IjoibWFyeW1hc29uIiwiYSI6IjM1NGVhNWZmNzQ5Yjk5NTczMDFhMzc3Zjg2ZGEyYzI0In0.7IdD26iFQhD2b6LbTIw_Sw'}
-          styleURL={'asset://styles/mapbox-streets-v7.json'}
+          styleURL={'asset://styles/emerald-v7.json'}
           centerCoordinate={this.state.center}
           userLocationVisible={true}
           zoomLevel={this.state.zoom}
@@ -177,8 +212,10 @@ var MapTab = React.createClass({
         <View style={styles.flowRight}>
           <TextInput
             style={styles.searchInput}
-            value={this.state.searchString}
             onChange={this._onSearchTextChanged}
+            onSubmitEditing={this._onSearchTextSubmit}
+            returnKeyType='search'
+            enablesReturnKeyAutomatically={true}
             placeholder='Search'/>
         </View>    
       </View>
@@ -192,6 +229,9 @@ var styles = StyleSheet.create({
     flex: 1,
     marginTop: 20
   },
+  beer:{
+
+  },
   map: {
     flex: 5
   },
@@ -204,7 +244,7 @@ var styles = StyleSheet.create({
   },
   searchInput: {
     position: 'absolute',
-    top: 10,
+    top: 0,
     height: 36,
     width: 320,
     padding: 4,
