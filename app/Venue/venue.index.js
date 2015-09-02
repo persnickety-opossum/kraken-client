@@ -8,7 +8,6 @@ moment().format();
 var Display = require('react-native-device-display');
 var KeyboardEvents = require('react-native-keyboardevents');
 var KeyboardEventEmitter = KeyboardEvents.Emitter;
-
 var {
   SliderIOS,
   Text,
