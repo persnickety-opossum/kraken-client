@@ -24,6 +24,12 @@ var ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
 
 var VenueTab = React.createClass({
   getInitialState() {
+    KeyboardEventEmitter.on(KeyboardEvents.KeyboardDidShowEvent, (frames) => {
+      this.setState({keyboardSpace: frames.end.height});
+    });
+    KeyboardEventEmitter.on(KeyboardEvents.KeyboardWillHideEvent, (frames) => {
+      this.setState({keyboardSpace: 0});
+    });
     return {
       voteValue: 0,
       venue: this.props.venue,
@@ -128,7 +134,11 @@ var VenueTab = React.createClass({
           style={styles.slider}
           onValueChange={(voteValue) => this.setState({voteValue: Math.round(voteValue*10)})}
           maximumTrackTintColor='red'/>
-
+        <TextInput
+          style={{height: 40, borderColor: 'gray', borderWidth: 1}}
+          onChangeText={(text) => this.setState({text})}
+          value={this.state.text}
+          />
         <RefreshableListView
           style={styles.listView}
           dataSource={this.state.dataSource}
@@ -136,11 +146,7 @@ var VenueTab = React.createClass({
           loadData={this.reloadComments}
           refreshDescription="Refreshing comments"
           />
-        <TextInput
-          style={{height: 40, borderColor: 'gray', borderWidth: 1}}
-          onChangeText={(text) => this.setState({text})}
-          value={this.state.text}
-          />
+
 
         <View style={{height: this.state.keyboardSpace}}></View>
       </View>
