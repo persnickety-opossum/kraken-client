@@ -123,7 +123,7 @@ var styles = StyleSheet.create({
   },
   pageView: {
     flex: 1,
-  
+
   },
   instructions: {
     textAlign: 'center',
