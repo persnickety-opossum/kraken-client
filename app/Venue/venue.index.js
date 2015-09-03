@@ -261,7 +261,6 @@ var VenueTab = React.createClass({
           loadData={this.reloadComments}
           refreshDescription="Refreshing comments"
           />
-
         <View style={{height: this.state.keyboardSpace}}></View>
       </View>
 
