@@ -88,7 +88,7 @@ var VenueTab = React.createClass({
     var ratings = this.state.venue.ratings;
     var sum = 0;
     for (var i = 0; i < ratings.length; i++) {
-      sum += ratings[i];
+      sum += ratings[i].rating;
     }
     var average = Math.round(sum / ratings.length);
     this.setState({overallRating: average});

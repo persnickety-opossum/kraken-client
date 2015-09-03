@@ -104,7 +104,7 @@ var MapTab = React.createClass({
 
       if (venue.ratings) {
         for (var i = 0; i < venue.ratings.length; i++) {
-          ratingsSum += venue.ratings[i];
+          ratingsSum += venue.ratings[i].rating;
         }
         venue.overallRating = Math.round(ratingsSum / venue.ratings.length);
       } else {
