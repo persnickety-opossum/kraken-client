@@ -16,6 +16,8 @@
     "mongoose": "^4.1.3",
     "q": "^1.4.1",
     "react-native": "^0.10.1",
+    "react-native-device-display": "^1.0.4",
+    "react-native-keyboardevents": "^0.4.5",
     "react-native-mapbox-gl": "^0.4.1",
     "react-native-refreshable-listview": "^1.3.0",
     "react-script-loader": "0.0.1"
