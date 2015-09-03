@@ -72,7 +72,7 @@ var VenueTab = React.createClass({
 
   componentWillReceiveProps: function(nextProps) {
     var venue = nextProps.venue;
-    var route = config.serverURL + '/api/venues/' + venue._id;
+    var route = config.serverURL + '/api/venues/' + venue.id;
     fetch(route)
       .then(response => response.json())
       .then(json => this.setState({venue: json, dataSource: ds.cloneWithRows(json.comments)}))
@@ -214,6 +214,9 @@ var VenueTab = React.createClass({
           style={styles.textInput}
           onChangeText={(text) => this.setState({text})}
           value={this.state.text}
+          onSubmitEditing={this.submitComment}
+          returnKeyType='send'
+          placeholder='Add comment'
         />
         <Button style={styles.commentButton} onPress={this.submitComment}>
           Submit Comment
