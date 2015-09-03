@@ -56,45 +56,40 @@ var MapTab = React.createClass({
   onOpenAnnotation(annotation) {
     console.log(annotation);
   },
-  onRightAnnotationTapped(venue) {
-    var id = venue.id;
-    var that = this;
-    for (var i = 0; i < this.state.venuePins.length; i++) {
-      if (this.state.venuePins[i].id === id) {
-        this.eventEmitter.emit('annotationTapped', { venue: this.state.venuePins[i] });
-        break;
-      }
-    }
-    for (var j = 0; j < this.state.searchPins.length; j++) {
-      if (this.state.searchPins[j].id === id) {
-        var newVenue = this.state.searchPins[j]
-        fetch('http://10.8.1.120:5000/api/venues/', {
-          method: 'POST',
-          body: JSON.stringify({
-            'title': newVenue.title,
-            'description': '',
-            'address': 'test address',
-            'coordinates': newVenue.coordinates,
-            'creator': 'TEST',
-            'datetime': new Date().toISOString() 
-          })
-        })
-          .then(function(){that.eventEmitter.emit('annotationTapped', { venue: newVenue });})
-          .catch(function(err) {
-            console.log('error');
-            console.log(newVenue);
-            console.log(err);
-          });
-      }
-    }
-    //{ _id: 'hopefullythiswillbemongoID',
-    // id: 'marker1',
-    //  title: 'This is marker 1',
-    //  latitude: 40.72052634,
-    //  subtitle: 'It has a rightCalloutAccessory too',
-    //  longitude: -73.97686958312988 }
 
+  onRightAnnotationTapped(venue) {
+    //console.log(e);
+    var id = venue.id;
+    var title = venue.title
+    var that = this;
+    console.log(venue);
+    if(venue.description) {
+      this.eventEmitter.emit('annotationTapped', { venue: venue });
+    } else {
+      fetch(config.serverURL+'/api/venues', {
+        method: 'POST',
+        headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+         title: venue.title,
+         description: 'test',
+         address: 'test Address',
+         coordinates: venue.latitude+','+venue.longitude,
+         creator: '55e7301b6df4ceb7721b41cb',
+         datetime: new Date().toISOString(),
+        })
+      })
+        .then(function(){that.eventEmitter.emit('annotationTapped', { venue: venue });})
+        .catch(function(err) {
+          console.log('error');
+          console.log(newVenue);
+          console.log(err);
+        });
+    }
   },
+
   componentWillMount: function() {
     navigator.geolocation.getCurrentPosition(
       (initialPosition) =>  this.setState({
@@ -119,7 +114,6 @@ var MapTab = React.createClass({
   _handleResponse: function (venues, inDb) {
     var that = this;
     venues.forEach(function (venue) {
-      console.log(that.state);
       var coords = venue.coordinates.split(',');
       var tempArray = [];
 
@@ -153,7 +147,6 @@ var MapTab = React.createClass({
       tempArray.push(venue);
       that.setState({venuePins: tempArray});
       } else {
-        console.log(that.state);
         venue.annotationImage = {
           url: 'image!searchPin',
           height: 25,
@@ -171,7 +164,7 @@ var MapTab = React.createClass({
 
   _displayPins: function () {
     var pins = this.state.venuePins.concat(this.state.searchPins);
-    console.log(pins);
+    console.log('Displaying Pins');
     this.setState({annotations: pins});
   },
 
@@ -181,8 +174,7 @@ var MapTab = React.createClass({
   },
 
   _onSearchTextSubmit: function () {
-    console.log('submitted');
-    console.log(this.state.searchString);
+    console.log('onSearchTextChanged');
     this.setState({searchPins: []});
     fetch(config.serverURL + '/api/search/query/'+this.state.searchString+'/'+this.state.center.latitude+','+this.state.center.longitude)
     .then(response => response.json())
@@ -194,7 +186,7 @@ var MapTab = React.createClass({
 
   // method for changing style of map on button press - NOT in working state because new map style covers old pins
   _onStylePressed: function () {
-    console.log(this.state);
+    console.log('onStylePressed');
     if(this.state.currentMap === 4) {
       this.setState({currentMap: 0});
     } else {

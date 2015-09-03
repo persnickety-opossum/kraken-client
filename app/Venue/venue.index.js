@@ -58,8 +58,9 @@ var VenueTab = React.createClass({
   reloadComments() {
   //  //return ArticleStore.reload() // returns a Promise of reload completion
     console.log(this.state.venue);
+
     console.log('device height:     ', Display.height);
-    var route = config.serverURL + '/api/venues/' + this.state.venue._id;
+    var route = config.serverURL + '/api/venues/' + this.state.venue.id;
     fetch(route)
       .then(response => response.json())
       .then(function(res) {
