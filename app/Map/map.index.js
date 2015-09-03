@@ -57,36 +57,37 @@ var MapTab = React.createClass({
     console.log(annotation);
   },
 
-  onRightAnnotationTapped(venue) {
-    //console.log(e);
-    var id = venue.id;
-    var title = venue.title
+  onRightAnnotationTapped(rightAnnot) {
     var that = this;
-    console.log(venue);
-    if(venue.description) {
-      this.eventEmitter.emit('annotationTapped', { venue: venue });
-    } else {
-      fetch(config.serverURL+'/api/venues', {
-        method: 'POST',
-        headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-         title: venue.title,
-         description: 'test',
-         address: 'test Address',
-         coordinates: venue.latitude+','+venue.longitude,
-         creator: '55e7301b6df4ceb7721b41cb',
-         datetime: new Date().toISOString(),
-        })
-      })
-        .then(function(){that.eventEmitter.emit('annotationTapped', { venue: venue });})
-        .catch(function(err) {
-          console.log('error');
-          console.log(newVenue);
-          console.log(err);
-        });
+    for(var i = 0; i < this.state.annotations.length; i++) {
+      if(this.state.annotations[i].id === rightAnnot.id) {
+        if(this.state.annotations[i].description) {
+          this.eventEmitter.emit('annotationTapped', { venue: this.state.annotations[i] });
+        } else {
+          fetch(config.serverURL+'/api/venues', {
+            method: 'POST',
+            headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+             title: this.state.annotations[i].title,
+             description: 'test',
+             address: 'test Address',
+             coordinates: this.state.annotations[i].coordinates,
+             creator: '55e7301b6df4ceb7721b41cb',
+             datetime: new Date().toISOString(),
+            })
+          })
+            .then(response => response.json())
+            .then(json => this.eventEmitter.emit('annotationTapped', { venue: json}))
+            .catch(function(err) {
+              console.log('error');
+              console.log(newVenue);
+              console.log(err);
+            });
+        } 
+      }
     }
   },
 
@@ -152,6 +153,7 @@ var MapTab = React.createClass({
           height: 25,
           width: 25
         };
+        venue.comments = [];
         tempArray = that.state.searchPins;
         tempArray.push(venue);
         that.setState({searchPins: tempArray});

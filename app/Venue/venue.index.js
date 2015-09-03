@@ -35,7 +35,6 @@ var VenueTab = React.createClass({
       venue: this.props.venue,
       overallRating: 0,
       dataSource: ds.cloneWithRows(this.props.venue.comments),
-
       keyboardSpace: 0
     };
   },
@@ -146,8 +145,8 @@ var VenueTab = React.createClass({
   },
 
   renderComments(comments) {
-    //return <Text>{comments.datetime}: {comments.content}</Text>
-    return <Text>{comments}</Text>
+    return <Text>{comments.datetime}: {comments.content}</Text>
+    // return <Text>{comments}</Text>
   },
 
   render() {
@@ -209,6 +208,9 @@ var VenueTab = React.createClass({
           style={{height: 40, borderColor: 'gray', borderWidth: 1}}
           onChangeText={(text) => this.setState({text})}
           value={this.state.text}
+          onSubmitEditing={this._onSearchTextSubmit}
+          returnKeyType='search'
+          placeholder='Search'
           />
         <RefreshableListView
           style={styles.listView}
