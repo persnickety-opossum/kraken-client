@@ -105,6 +105,7 @@ var VenueTab = React.createClass({
     var distance = this.calculateDistance(coords, venue);
     this.setState({atVenue: distance < 100});
 
+
     fetch(route)
       .then(response => response.json())
       .then(json => this.setState({venue: json, dataSource: ds.cloneWithRows(json.comments)}))
@@ -249,7 +250,6 @@ var VenueTab = React.createClass({
           onSubmitEditing={this._onSearchTextSubmit}
           returnKeyType='search'
           placeholder='Search'
-          />
         />
         <Button style={styles.commentButton} onPress={this.submitComment}>
           Submit Comment
