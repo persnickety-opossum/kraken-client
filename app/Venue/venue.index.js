@@ -131,7 +131,7 @@ var VenueTab = React.createClass({
     if (this.state.text) {
       var content = this.state.text;
       //TODO: make creator the actual creator, not a hardcoded creator
-      var creator = '55e77657a7b095b7227c49ab'; //hardcoded for now
+      var creator = '55e77ddedb0324fabe89285b'; //hardcoded for now
       var venue = this.state.venue._id;
       var datetime = new Date().toISOString();
       var atVenue = true;
