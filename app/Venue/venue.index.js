@@ -282,12 +282,8 @@ var styles = StyleSheet.create({
     margin: 10,
     flex: 1,
     bottom: 0,
-<<<<<<< HEAD
     height: Display.height * 0.49,
     //bottom: Display.height - (Display.height - 50)
-=======
-    height: Display.height*.30
->>>>>>> (feat) Format time. Add input to venue page.
   }
 });
 
