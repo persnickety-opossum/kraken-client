@@ -89,6 +89,10 @@ var VenueTab = React.createClass({
     var context = this;
     fetch(config.serverURL + '/api/users/', {
       method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
       body: JSON.stringify({token: config.userToken})
     }) // no ;
     .then(response => response.json())
