@@ -69,6 +69,7 @@ var VenueTab = React.createClass({
   componentWillReceiveProps: function(nextProps) {
     var venue = nextProps.venue;
     var route = config.serverURL + '/api/venues/' + venue._id;
+    var route = 'http://10.8.1.113:8000/api/venues/' + venue._id;
     fetch(route)
       .then(response => response.json())
       .then(json => this.setState({venue: json, dataSource: ds.cloneWithRows(json.comments)}))
