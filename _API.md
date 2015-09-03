@@ -4,7 +4,10 @@ Sample Venue Object:
   _id: '2343289439843',
   title: 'Hack Reactor',
   attendees: 20,
-  ratings: [0.5, 0.1, 1, 0.3],
+  ratings: [
+    {rating: 10, user: 'thisIsAToken1234'},
+    {rating: 9, user: 'thisIsAToken4321'}
+  ],
   description: 'There is a programming class 6 days a week here.',
   address: '944 Market St., San Francisco, CA',
   coordinates: '37.783542,-122.408943',
