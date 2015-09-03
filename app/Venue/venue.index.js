@@ -148,6 +148,32 @@ var VenueTab = React.createClass({
         <SliderIOS
           style={styles.slider}
           onValueChange={(voteValue) => this.setState({voteValue: Math.round(voteValue*10)})}
+          onSlidingComplete={(voteValue) => {
+            fetch(config.serverURL + '/api/venues/' + venue.id)
+            .then(response => response.json())
+            .then(modVenue => {
+              for (var i = 0; i < modVenue.ratings.length; i++) {
+                if (modVenue.ratings[i].user === this.state.user) {
+                  modVenue.ratings[i].rating = Math.round(voteValue*10);
+                  break;
+                }
+              }
+              if (i === modVenue.ratings.length) {
+                modVenue.ratings.push({
+                  rating: Math.round(voteValue*10),
+                  user: this.state.user
+                });
+              }
+              fetch(config.serverURL + '/api/venues/', {
+                method: 'put',
+                headers: {
+                  'Accept': 'application/json',
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(modVenue)
+              });
+            });
+          }}
           maximumTrackTintColor='red'/>
         <TextInput
           style={{height: 40, borderColor: 'gray', borderWidth: 1}}
