@@ -5,6 +5,9 @@ var MapboxGLMap = require('react-native-mapbox-gl');
 var mapRef = 'mapRef';
 var EventEmitter = require('EventEmitter');
 var Subscribable = require('Subscribable');
+var moment = require('moment');
+moment().format();
+var Display = require('react-native-device-display');
 
 var config = require('../config');
 
@@ -56,6 +59,10 @@ var MapTab = React.createClass({
     var id = e.id;
     for (var i = 0; i < this.state.annotations.length; i++) {
       if (this.state.annotations[i].id === id) {
+        var venue = this.state.annotations[i];
+        //for (var i = 0; i < venue.comments.length; i++) {
+        //  venue.comments[i].datetime = moment(venue.comments[i].datetime).fromNow();
+        //}
         this.eventEmitter.emit('annotationTapped', { venue: this.state.annotations[i] });
         break;
       }
@@ -79,7 +86,7 @@ var MapTab = React.createClass({
   _handleResponse: function (venues, inDb) {
     var that = this;
     venues.forEach(function (venue) {
-    console.log(that.state);
+      console.log(that.state);
       var coords = venue.coordinates.split(',');
       var tempArray = [];
 
@@ -90,23 +97,28 @@ var MapTab = React.createClass({
           height: 25,
           width: 25
       };
-
       if(inDb) {
         venue.subtitle = venue.description;
         venue.id = venue._id;
         var ratingsSum = 0;
+
+      if (venue.ratings) {
         for (var i = 0; i < venue.ratings.length; i++) {
           ratingsSum += venue.ratings[i];
         }
         venue.overallRating = Math.round(ratingsSum / venue.ratings.length);
-        venue.annotationImage = {
-          url: 'image!pin',
-          height: 25,
-          width: 25
-        };
-        tempArray = that.state.venuePins.slice(0);
-        tempArray.push(venue);
-        that.setState({venuePins: tempArray});
+      } else {
+        venue.overallRating = 'Be the first to vote!'
+      }
+      venue.annotationImage = {
+        url: 'image!pin',
+        height: 25,
+        width: 25
+      };
+      venue.datetime = moment(venue.datetime).format("dddd, MMMM Do YYYY, h:mm:ss a");
+      tempArray = that.state.venuePins.slice(0);
+      tempArray.push(venue);
+      that.setState({venuePins: tempArray});
       } else {
         console.log(that.state);
         venue.annotationImage = {
@@ -119,7 +131,9 @@ var MapTab = React.createClass({
         that.setState({searchPins: tempArray});
       }
     });
+    //this.setState({annotations: venues});
     this._displayPins();
+
   },
 
   _displayPins: function () {
@@ -239,7 +253,7 @@ var styles = StyleSheet.create({
     position: 'absolute',
     top: 0,
     height: 36,
-    width: 320,
+    width: Display.width*.89,
     padding: 4,
     fontSize: 12,
     borderWidth: 0.5,
