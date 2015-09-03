@@ -35,7 +35,9 @@ var MapTab = React.createClass({
       zoom: 13,
       venuePins: [],
       searchPins: [],
-      annotations: []
+      annotations: [],
+      mapStyle: ['asset://styles/emerald-v7.json', 'asset://styles/dark-v7.json', 'asset://styles/light-v7.json', 'asset://styles/mapbox-streets-v7.json', 'asset://styles/satellite-v7.json'],
+      currentMap: 0
      };
   },
   onRegionChange(location) {
@@ -54,17 +56,35 @@ var MapTab = React.createClass({
   onOpenAnnotation(annotation) {
     console.log(annotation);
   },
-  onRightAnnotationTapped(e) {
-    //console.log(e);
-    var id = e.id;
-    for (var i = 0; i < this.state.annotations.length; i++) {
-      if (this.state.annotations[i].id === id) {
-        var venue = this.state.annotations[i];
-        //for (var i = 0; i < venue.comments.length; i++) {
-        //  venue.comments[i].datetime = moment(venue.comments[i].datetime).fromNow();
-        //}
-        this.eventEmitter.emit('annotationTapped', { venue: this.state.annotations[i] });
+  onRightAnnotationTapped(venue) {
+    var id = venue.id;
+    var that = this;
+    for (var i = 0; i < this.state.venuePins.length; i++) {
+      if (this.state.venuePins[i].id === id) {
+        this.eventEmitter.emit('annotationTapped', { venue: this.state.venuePins[i] });
         break;
+      }
+    }
+    for (var j = 0; j < this.state.searchPins.length; j++) {
+      if (this.state.searchPins[j].id === id) {
+        var newVenue = this.state.searchPins[j]
+        fetch('http://10.8.1.120:5000/api/venues/', {
+          method: 'POST',
+          body: JSON.stringify({
+            'title': newVenue.title,
+            'description': '',
+            'address': 'test address',
+            'coordinates': newVenue.coordinates,
+            'creator': 'TEST',
+            'datetime': new Date().toISOString() 
+          })
+        })
+          .then(function(){that.eventEmitter.emit('annotationTapped', { venue: newVenue });})
+          .catch(function(err) {
+            console.log('error');
+            console.log(newVenue);
+            console.log(err);
+          });
       }
     }
     //{ _id: 'hopefullythiswillbemongoID',
@@ -73,7 +93,6 @@ var MapTab = React.createClass({
     //  latitude: 40.72052634,
     //  subtitle: 'It has a rightCalloutAccessory too',
     //  longitude: -73.97686958312988 }
-
 
   },
   componentWillMount: function() {
@@ -173,6 +192,18 @@ var MapTab = React.createClass({
     });
   },
 
+  // method for changing style of map on button press - NOT in working state because new map style covers old pins
+  _onStylePressed: function () {
+    console.log(this.state);
+    if(this.state.currentMap === 4) {
+      this.setState({currentMap: 0});
+    } else {
+      this.setState({currentMap: this.state.currentMap+1});
+    }
+    this.render();
+    this._displayPins();
+  },
+
   render: function() {
     //StatusBarIOS.setHidden(true);
     return (
@@ -222,7 +253,7 @@ var MapTab = React.createClass({
           showsUserLocation={true}
           ref={mapRef}
           accessToken={'pk.eyJ1IjoibWFyeW1hc29uIiwiYSI6IjM1NGVhNWZmNzQ5Yjk5NTczMDFhMzc3Zjg2ZGEyYzI0In0.7IdD26iFQhD2b6LbTIw_Sw'}
-          styleURL={'asset://styles/emerald-v7.json'}
+          styleURL={this.state.mapStyle[this.state.currentMap]}
           centerCoordinate={this.state.center}
           userLocationVisible={true}
           zoomLevel={this.state.zoom}
@@ -240,6 +271,12 @@ var MapTab = React.createClass({
             returnKeyType='search'
             placeholder='Search'/>
         </View>    
+        {/*<TouchableHighlight 
+          style={styles.button}
+          underlayColor='#99d9f4'
+          onPress={this._onStylePressed} >
+          <Text style={styles.buttonText}>Style</Text>
+        </TouchableHighlight>*/}
       </View>
     );
   }
@@ -273,7 +310,19 @@ var styles = StyleSheet.create({
     borderWidth: 0.5,
     borderColor: '#23FCA6',
     color: '#8C8C8C'
-  }
+  },
+    button: {
+    height: 36,
+    flex: 1,
+    flexDirection: 'row',
+    backgroundColor: '#48BBEC',
+    borderColor: '#48BBEC',
+    borderWidth: 1,
+    borderRadius: 8,
+    marginBottom: 10,
+    alignSelf: 'stretch',
+    justifyContent: 'center'
+  },
 });
 
 module.exports = MapTab;
