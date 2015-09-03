@@ -84,6 +84,16 @@ var VenueTab = React.createClass({
     //});
   },
 
+  componentWillMount: function() {
+    // retrieve user id, may be replaced with device UUID in the future
+    fetch(config.serverURL + '/api/users/', {
+      method: 'POST',
+      body: {token: config.userToken}
+    }) // no ;
+    .then(response => response.json())
+    .then(json => this.setState({user: json[0]._id}));
+  },
+
   getOverallRating() {
     var ratings = this.state.venue.ratings;
     var sum = 0;
