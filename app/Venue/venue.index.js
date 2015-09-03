@@ -4,12 +4,17 @@ var React = require('react-native');
 //var venue = require('./venueMock');
 var moment = require('moment');
 moment().format();
+var Display = require('react-native-device-display');
+var KeyboardEvents = require('react-native-keyboardevents');
+var KeyboardEventEmitter = KeyboardEvents.Emitter;
+
 var {
   SliderIOS,
   Text,
   StyleSheet,
   View,
-  ListView
+  ListView,
+  TextInput
   } = React;
 
 var config = require('../config');
@@ -24,17 +29,31 @@ var VenueTab = React.createClass({
       venue: this.props.venue,
       overallRating: 0,
       dataSource: ds.cloneWithRows(this.props.venue.comments),
+
+      keyboardSpace: 0
     };
   },
 
-  //componentDidMount: function() {
-  //  this.setState({venue: this.props.venue});
-  //  this.setState({dataSource: ds.cloneWithRows(this.props.venue.comments)})
-  //},
+  updateKeyboardSpace(frames) {
+    this.setState({keyboardSpace: frames.end.height});
+  },
+
+  resetKeyboardSpace() {
+    this.setState({keyboardSpace: 0});
+  },
+
+  componentDidMount: function() {
+    //this.setState({venue: this.props.venue});
+    //this.setState({dataSource: ds.cloneWithRows(this.props.venue.comments)})
+    KeyboardEventEmitter.on(KeyboardEvents.KeyboardDidShowEvent, this.updateKeyboardSpace);
+    KeyboardEventEmitter.on(KeyboardEvents.KeyboardWillHideEvent, this.resetKeyboardSpace);
+
+  },
 
   reloadComments() {
   //  //return ArticleStore.reload() // returns a Promise of reload completion
     console.log(this.state.venue);
+    console.log('device height:     ', Display.height);
     var route = config.serverURL + '/api/venues/' + this.state.venue._id;
     fetch(route)
       .then(response => response.json())
@@ -49,7 +68,7 @@ var VenueTab = React.createClass({
 
   componentWillReceiveProps: function(nextProps) {
     var venue = nextProps.venue;
-    var route = 'http://10.8.1.113:8000/api/venues/' + venue._id;
+    var route = config.serverURL + '/api/venues/' + venue._id;
     fetch(route)
       .then(response => response.json())
       .then(json => this.setState({venue: json, dataSource: ds.cloneWithRows(json.comments)}))
@@ -73,6 +92,11 @@ var VenueTab = React.createClass({
     voteValue *= 10;
     voteValue = Math.round(voteValue);
     this.setState({voteValue: voteValue})
+  },
+
+  renderComments(comments) {
+    //return <Text>{comments.datetime}: {comments.content}</Text>
+    return <Text>{comments}</Text>
   },
 
   render() {
@@ -108,11 +132,19 @@ var VenueTab = React.createClass({
         <RefreshableListView
           style={styles.listView}
           dataSource={this.state.dataSource}
-          renderRow={(rowData) => <Text>{rowData}</Text>}
+          renderRow={this.renderComments}
           loadData={this.reloadComments}
           refreshDescription="Refreshing comments"
           />
+        <TextInput
+          style={{height: 40, borderColor: 'gray', borderWidth: 1}}
+          onChangeText={(text) => this.setState({text})}
+          value={this.state.text}
+          />
+
+        <View style={{height: this.state.keyboardSpace}}></View>
       </View>
+
     );
   }
 });
@@ -153,7 +185,7 @@ var styles = StyleSheet.create({
     margin: 10,
     flex: 1,
     bottom: 0,
-    height: 500
+    height: Display.height*.30
   }
 });
 
