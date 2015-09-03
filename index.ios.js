@@ -41,8 +41,8 @@ var persnickety = React.createClass({
     this.getOverallRating();
   },
 
-  selectVenue: function(venue) {
-    var venue = venue.venue;
+  selectVenue: function(eventObj) {
+    var venue = eventObj.venue;
     var newVenue = venue;
     //var currDateTime = venue.venue.datetime;
 
@@ -118,7 +118,7 @@ var styles = StyleSheet.create({
   },
   pageView: {
     flex: 1,
-  
+
   },
   instructions: {
     textAlign: 'center',

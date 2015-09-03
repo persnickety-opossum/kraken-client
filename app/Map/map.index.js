@@ -8,7 +8,6 @@ var Subscribable = require('Subscribable');
 var moment = require('moment');
 moment().format();
 var Display = require('react-native-device-display');
-
 var config = require('../config');
 
 var {
@@ -102,23 +101,23 @@ var MapTab = React.createClass({
         venue.id = venue._id;
         var ratingsSum = 0;
 
-      if (venue.ratings) {
-        for (var i = 0; i < venue.ratings.length; i++) {
-          ratingsSum += venue.ratings[i].rating;
+        if (venue.ratings) {
+          for (var i = 0; i < venue.ratings.length; i++) {
+            ratingsSum += venue.ratings[i].rating;
+          }
+          venue.overallRating = Math.round(ratingsSum / venue.ratings.length);
+        } else {
+          venue.overallRating = 'Be the first to vote!'
         }
-        venue.overallRating = Math.round(ratingsSum / venue.ratings.length);
-      } else {
-        venue.overallRating = 'Be the first to vote!'
-      }
-      venue.annotationImage = {
-        url: 'image!pin',
-        height: 25,
-        width: 25
-      };
-      venue.datetime = moment(venue.datetime).format("dddd, MMMM Do YYYY, h:mm:ss a");
-      tempArray = that.state.venuePins.slice(0);
-      tempArray.push(venue);
-      that.setState({venuePins: tempArray});
+        venue.annotationImage = {
+          url: 'image!pin',
+          height: 25,
+          width: 25
+        };
+        venue.datetime = moment(venue.datetime).format("dddd, MMMM Do YYYY, h:mm:ss a");
+        tempArray = that.state.venuePins.slice(0);
+        tempArray.push(venue);
+        that.setState({venuePins: tempArray});
       } else {
         console.log(that.state);
         venue.annotationImage = {
