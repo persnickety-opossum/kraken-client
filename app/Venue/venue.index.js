@@ -218,11 +218,7 @@ var VenueTab = React.createClass({
           loadData={this.reloadComments}
           refreshDescription="Refreshing comments"
           />
-        <TextInput
-          style={{height: 40, borderColor: 'gray', borderWidth: 1}}
-          onChangeText={(text) => this.setState({text})}
-          value={this.state.text}
-          />
+
 
         <View style={{height: this.state.keyboardSpace}}></View>
       </View>
