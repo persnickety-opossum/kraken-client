@@ -86,12 +86,13 @@ var VenueTab = React.createClass({
 
   componentWillMount: function() {
     // retrieve user id, may be replaced with device UUID in the future
+    var context = this;
     fetch(config.serverURL + '/api/users/', {
       method: 'POST',
-      body: {token: config.userToken}
+      body: JSON.stringify({token: config.userToken})
     }) // no ;
     .then(response => response.json())
-    .then(json => this.setState({user: json[0]._id}));
+    .then(json => context.setState({user: json._id}));
   },
 
   getOverallRating() {
