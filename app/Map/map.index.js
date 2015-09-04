@@ -29,8 +29,8 @@ var MapTab = React.createClass({
     return {
       searchString: '',
       center: {
-      latitude: 37.783585,
-      longitude: -122.408955
+        latitude: 37.783585,
+        longitude: -122.408955
       },
       zoom: 13,
       venuePins: [],
@@ -77,6 +77,20 @@ var MapTab = React.createClass({
 
   },
   componentWillMount: function() {
+    navigator.geolocation.getCurrentPosition(
+      (initialPosition) =>  this.setState({
+        geolocation: initialPosition
+      }),
+      (error) => alert(error.message),
+      {enableHighAccuracy: true, timeout: 20000, maximumAge: 1000}
+    );
+    this.watchID = navigator.geolocation.watchPosition((lastPosition) => {
+      this.setState({
+        geolocation: lastPosition,
+      });
+      this.eventEmitter.emit('positionUpdated', lastPosition);
+    });
+
     this.eventEmitter = this.props.eventEmitter;
     fetch(config.serverURL + '/api/venues')
       .then(response => response.json())
