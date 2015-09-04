@@ -108,7 +108,12 @@ var VenueTab = React.createClass({
 
     fetch(route)
       .then(response => response.json())
-      .then(json => this.setState({venue: json, dataSource: ds.cloneWithRows(json.comments)}))
+      .then(json => {
+        this.setState({venue: json, dataSource: ds.cloneWithRows(json.comments)},
+        function() {
+          this.getOverallRating();
+        })
+      })
     //this.setState({
     //  venue: venue,
     //  dataSource: ds.cloneWithRows(venue.comments)
@@ -128,6 +133,7 @@ var VenueTab = React.createClass({
     }) // no ;
     .then(response => response.json())
     .then(json => context.setState({user: json._id}));
+    this.getOverallRating();
   },
 
   getOverallRating() {
@@ -211,7 +217,7 @@ var VenueTab = React.createClass({
           Time: {venue.datetime}
         </Text>
         <Text style={[styles.text, styles.yourRating]} >
-          Overall rating: {venue.overallRating} | Your rating: {this.state.voteValue}
+          Overall rating: {this.state.overallRating} | Your rating: {this.state.voteValue}
         </Text>
         <SliderIOS
           style={styles.slider}
@@ -239,6 +245,13 @@ var VenueTab = React.createClass({
                   'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(modVenue)
+              })
+              .then(response => response.json())
+              .then(json => {
+                this.setState({venue: json, dataSource: ds.cloneWithRows(json.comments)},
+                function() {
+                  this.getOverallRating();
+                });
               });
             });
           }}
