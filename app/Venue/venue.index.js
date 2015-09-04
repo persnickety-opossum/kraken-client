@@ -143,14 +143,16 @@ var VenueTab = React.createClass({
   getOverallRating() {
     var ratings = this.state.venue.ratings;
     var sum = 0;
-    for (var i = 0; i < ratings.length; i++) {
-      sum += ratings[i].rating;
-    }
-    if (ratings.length >= 1) {
-      var average = Math.round(sum / ratings.length);
-      this.setState({overallRating: average});
-    } else {
-      this.setState({overallRating: 'No ratings yet!'});
+    if (ratings != undefined) {
+      for (var i = 0; i < ratings.length; i++) {
+        sum += ratings[i].rating;
+      }
+      if (ratings.length >= 1) {
+        var average = Math.round(sum / ratings.length);
+        this.setState({overallRating: average});
+      } else {
+        this.setState({overallRating: 'No ratings yet!'});
+      }
     }
   },
 
