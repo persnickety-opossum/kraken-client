@@ -49,6 +49,12 @@ var persnickety = React.createClass({
   selectVenue: function(eventObj) {
     var venue = eventObj.venue;
     var newVenue = venue;
+    var venueObject = {};
+    //for (var key in newVenue) {
+    //  venueObject[key] = newVenue[key];
+    //}
+    //venueObject.comments.reverse();
+
     //var currDateTime = venue.venue.datetime;
 
     //var currDateTime = new Date(venue.venue.datetime);

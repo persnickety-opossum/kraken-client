@@ -76,7 +76,7 @@ var MapTab = React.createClass({
              address: currVenue.address,
              coordinates: currVenue.coordinates,
              creator: '55e7301b6df4ceb7721b41cb',
-             datetime: new Date().toISOString(),
+             datetime: new Date().toISOString()
             })
           })
             .then(response => response.json())

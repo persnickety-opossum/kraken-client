@@ -116,7 +116,7 @@ var VenueTab = React.createClass({
         function() {
           this.getOverallRating();
         })
-      })
+      });
 
     //this.setState({
     //  venue: venue,
@@ -146,8 +146,12 @@ var VenueTab = React.createClass({
     for (var i = 0; i < ratings.length; i++) {
       sum += ratings[i].rating;
     }
-    var average = Math.round(sum / ratings.length);
-    this.setState({overallRating: average});
+    if (ratings.length >= 1) {
+      var average = Math.round(sum / ratings.length);
+      this.setState({overallRating: average});
+    } else {
+      this.setState({overallRating: 'No ratings yet!'});
+    }
   },
 
   setRoundVoteValue(voteValue) {
@@ -177,7 +181,7 @@ var VenueTab = React.createClass({
       var creator = this.state.user; //hardcoded for now
       var venue = this.state.venue._id;
       var datetime = new Date().toISOString();
-      var atVenue = true;
+      var atVenue = true; //hardcoded
       console.log('This is the post object: ', content, creator, venue, datetime, atVenue);
       fetch(config.serverURL + '/api/comments/', {
         method: 'post',
@@ -206,7 +210,7 @@ var VenueTab = React.createClass({
     return (
       <View>
         <Text style={styles.header}>
-          Waz Kraken
+          Kraken
         </Text>
         <Text style={styles.venueName}>
           {venue.title}
@@ -264,9 +268,9 @@ var VenueTab = React.createClass({
           style={styles.textInput}
           onChangeText={(text) => this.setState({text})}
           value={this.state.text}
-          onSubmitEditing={this._onSearchTextSubmit}
-          returnKeyType='search'
-          placeholder='Search'
+          onSubmitEditing={this.submitComment}
+          returnKeyType='send'
+          placeholder='Submit Comment'
         />
         <Button style={styles.commentButton} onPress={this.submitComment}>
           Submit Comment
@@ -298,7 +302,6 @@ var styles = StyleSheet.create({
   header: {
     fontSize: 22,
     textAlign: 'center',
-    marginTop: 20,
     backgroundColor: '#000000',
     color: '#ffffff'
   },
