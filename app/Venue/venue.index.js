@@ -56,7 +56,6 @@ var VenueTab = React.createClass({
   },
 
   reloadComments() {
-  //  //return ArticleStore.reload() // returns a Promise of reload completion
     console.log(this.state.venue);
 
     console.log('device height:     ', Display.height);
@@ -75,11 +74,12 @@ var VenueTab = React.createClass({
   calculateDistance: function(current, venue) {
     Number.prototype.toRadians = function () { return this * Math.PI / 180; };
     var coords = venue.coordinates.split(',');
-
     var lon1 = current.longitude;
+    //var lon2 = venue.longitude;
     var lon2 = +coords[1];
 
     var lat1 = current.latitude;
+    //var lat2 = venue.latitude;
     var lat2 = +coords[0];
 
     var R = 6371000; // metres
@@ -110,12 +110,14 @@ var VenueTab = React.createClass({
 
     fetch(route)
       .then(response => response.json())
+
       .then(json => {
-        this.setState({venue: json, dataSource: ds.cloneWithRows(json.comments)},
+        this.setState({venue: json, dataSource: ds.cloneWithRows(json.comments), atVenue: distance < 100},
         function() {
           this.getOverallRating();
         })
       })
+
     //this.setState({
     //  venue: venue,
     //  dataSource: ds.cloneWithRows(venue.comments)
