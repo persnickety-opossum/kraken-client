@@ -133,6 +133,7 @@ var VenueTab = React.createClass({
     }) // no ;
     .then(response => response.json())
     .then(json => context.setState({user: json._id}));
+    this.getOverallRating();
   },
 
   getOverallRating() {
