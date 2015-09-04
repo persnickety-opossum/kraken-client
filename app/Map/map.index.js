@@ -24,7 +24,7 @@ var {
 // create MapTab class
 var MapTab = React.createClass({
   mixins: [MapboxGLMap.Mixin],
-  //initialize class with base states
+  // initialize class with base states
   getInitialState() {
     return {
       searchString: '',
@@ -40,6 +40,8 @@ var MapTab = React.createClass({
       currentMap: 0
      };
   },
+
+  // update map on region change
   onRegionChange(location) {
     this.setState({
       currentZoom: location.zoom,
@@ -57,6 +59,7 @@ var MapTab = React.createClass({
     console.log(annotation);
   },
 
+  // Mapbox helper function for when right annotation press event is detected
   onRightAnnotationTapped(rightAnnot) {
     var that = this;
     for(var i = 0; i < this.state.annotations.length; i++) {
@@ -166,17 +169,14 @@ var MapTab = React.createClass({
 
   _displayPins: function () {
     var pins = this.state.venuePins.concat(this.state.searchPins);
-    console.log('Displaying Pins');
     this.setState({annotations: pins});
   },
 
   _onSearchTextChanged: function (event) {
-    console.log('onSearchTextChanged');
     this.setState({ searchString: event.nativeEvent.text });
   },
 
   _onSearchTextSubmit: function () {
-    console.log('onSearchTextChanged');
     this.setState({searchPins: []});
     fetch(config.serverURL + '/api/search/query/'+this.state.searchString+'/'+this.state.center.latitude+','+this.state.center.longitude)
     .then(response => response.json())
@@ -188,7 +188,6 @@ var MapTab = React.createClass({
 
   // method for changing style of map on button press - NOT in working state because new map style covers old pins
   _onStylePressed: function () {
-    console.log('onStylePressed');
     if(this.state.currentMap === 4) {
       this.setState({currentMap: 0});
     } else {
