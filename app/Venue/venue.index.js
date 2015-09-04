@@ -58,9 +58,6 @@ var VenueTab = React.createClass({
   },
 
   reloadComments() {
-  //  //return ArticleStore.reload() // returns a Promise of reload completion
-    console.log(this.state.venue);
-    console.log('device height:     ', Display.height);
     var route = config.serverURL + '/api/venues/' + this.state.venue._id;
     fetch(route)
       .then(response => response.json())
@@ -75,7 +72,7 @@ var VenueTab = React.createClass({
 
   componentWillReceiveProps: function(nextProps) {
     var venue = nextProps.venue;
-    var route = config.serverURL + '/api/venues/' + venue._id;
+    var route = config.serverURL + '/api/venues/' + venue.id;
     fetch(route)
       .then(response => response.json())
       .then(json => this.setState({venue: json, dataSource: ds.cloneWithRows(json.comments)}))
@@ -85,11 +82,26 @@ var VenueTab = React.createClass({
     //});
   },
 
+  componentWillMount: function() {
+    // retrieve user id, may be replaced with device UUID in the future
+    var context = this;
+    fetch(config.serverURL + '/api/users/', {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({token: config.userToken})
+    }) // no ;
+    .then(response => response.json())
+    .then(json => context.setState({user: json._id}));
+  },
+
   getOverallRating() {
     var ratings = this.state.venue.ratings;
     var sum = 0;
     for (var i = 0; i < ratings.length; i++) {
-      sum += ratings[i];
+      sum += ratings[i].rating;
     }
     var average = Math.round(sum / ratings.length);
     this.setState({overallRating: average});
@@ -115,33 +127,35 @@ var VenueTab = React.createClass({
 //   datetime: "2016-03-30T06:20:46.000Z",
 //   atVenue: true
 // }
-    var content = this.state.content;
-    var creator = 'fake token for now';
-    var venue = this.state.venue._id;
-    var datetime = new Date().toISOString();
-    var atVenue = true;
-    var postObj = {
-      method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        'Origin': ''
-      },
-      body: JSON.stringify({
-        'content': content,
-        'creator': creator,
-        'venue': venue,
-        'datetime': datetime,
-        'atVenue': atVenue
+    var that = this;
+    if (this.state.text) {
+      var content = this.state.text;
+      //TODO: make creator the actual creator, not a hardcoded creator
+      var creator = '55e77ddedb0324fabe89285b'; //hardcoded for now
+      var venue = this.state.venue._id;
+      var datetime = new Date().toISOString();
+      var atVenue = true;
+      console.log('This is the post object: ', content, creator, venue, datetime, atVenue);
+      fetch(config.serverURL + '/api/comments/', {
+        method: 'post',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          content: content,
+          creator: creator,
+          venue: venue,
+          datetime: datetime,
+          atVenue: atVenue
+        })
       })
-    };
-    fetch(config.serverURL + '/api/comments/', postObj)
-      .then(function(res) {
-        return res.json();
-      })
-      //.then(function(resJson) {
-      //  return resJson;
-      //})
+        .then(function(res) {
+          that.setState({text: ''});
+          that.reloadComments();
+          return res.json();
+        })
+    }
   },
 
   render() {
@@ -163,20 +177,46 @@ var VenueTab = React.createClass({
         <Text style={styles.text} >
           Time: {venue.datetime}
         </Text>
-        <Text style={styles.text} >
-          Overall rating: {venue.overallRating}
-        </Text>
         <Text style={[styles.text, styles.yourRating]} >
-          Your rating: {this.state.voteValue}
+          Overall rating: {venue.overallRating} | Your rating: {this.state.voteValue}
         </Text>
         <SliderIOS
           style={styles.slider}
           onValueChange={(voteValue) => this.setState({voteValue: Math.round(voteValue*10)})}
+          onSlidingComplete={(voteValue) => {
+            fetch(config.serverURL + '/api/venues/' + venue.id)
+            .then(response => response.json())
+            .then(modVenue => {
+              for (var i = 0; i < modVenue.ratings.length; i++) {
+                if (modVenue.ratings[i].user === this.state.user) {
+                  modVenue.ratings[i].rating = Math.round(voteValue*10);
+                  break;
+                }
+              }
+              if (i === modVenue.ratings.length) {
+                modVenue.ratings.push({
+                  rating: Math.round(voteValue*10),
+                  user: this.state.user
+                });
+              }
+              fetch(config.serverURL + '/api/venues/', {
+                method: 'put',
+                headers: {
+                  'Accept': 'application/json',
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(modVenue)
+              });
+            });
+          }}
           maximumTrackTintColor='red'/>
         <TextInput
           style={styles.textInput}
           onChangeText={(text) => this.setState({text})}
           value={this.state.text}
+          onSubmitEditing={this.submitComment}
+          returnKeyType='send'
+          placeholder='Add comment'
         />
         <Button style={styles.commentButton} onPress={this.submitComment}>
           Submit Comment
@@ -245,7 +285,8 @@ var styles = StyleSheet.create({
     margin: 10,
     flex: 1,
     bottom: 0,
-    height: Display.height*.30
+    height: Display.height * 0.49,
+    //bottom: Display.height - (Display.height - 50)
   }
 });
 
