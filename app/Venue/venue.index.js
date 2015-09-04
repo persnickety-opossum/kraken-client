@@ -53,7 +53,6 @@ var VenueTab = React.createClass({
     //this.setState({dataSource: ds.cloneWithRows(this.props.venue.comments)})
     KeyboardEventEmitter.on(KeyboardEvents.KeyboardDidShowEvent, this.updateKeyboardSpace);
     KeyboardEventEmitter.on(KeyboardEvents.KeyboardWillHideEvent, this.resetKeyboardSpace);
-
   },
 
   reloadComments() {
@@ -72,9 +71,39 @@ var VenueTab = React.createClass({
       .then(json => this.setState({venue: json, dataSource: ds.cloneWithRows(json.comments)}))
   },
 
+  calculateDistance: function(current, venue) {
+    Number.prototype.toRadians = function () { return this * Math.PI / 180; };
+    var lon1 = current.longitude;
+    var lon2 = venue.longitude;
+
+    var lat1 = current.latitude;
+    var lat2 = venue.latitude;
+
+    var R = 6371000; // metres
+    var φ1 = lat1.toRadians();
+    var φ2 = lat2.toRadians();
+    var Δφ = (lat2-lat1).toRadians();
+    var Δλ = (lon2-lon1).toRadians();
+
+    var a = Math.sin(Δφ/2) * Math.sin(Δφ/2) +
+            Math.cos(φ1) * Math.cos(φ2) *
+            Math.sin(Δλ/2) * Math.sin(Δλ/2);
+    var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+
+    return R * c;
+
+  },
+
   componentWillReceiveProps: function(nextProps) {
     var venue = nextProps.venue;
     var route = config.serverURL + '/api/venues/' + venue._id;
+
+    var coords = nextProps.geolocation.coords;
+
+    // Sets atVenue to true is user within 100 metres
+    var distance = this.calculateDistance(coords, venue);
+    this.setState({atVenue: distance < 100});
+
     fetch(route)
       .then(response => response.json())
       .then(json => this.setState({venue: json, dataSource: ds.cloneWithRows(json.comments)}))

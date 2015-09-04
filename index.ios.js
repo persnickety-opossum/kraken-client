@@ -34,6 +34,11 @@ var persnickety = React.createClass({
   },
   componentDidMount: function() {
     this.addListenerOn(this.eventEmitter, 'annotationTapped', this.selectVenue);
+    this.addListenerOn(this.eventEmitter, 'positionUpdated', this.updatePosition);
+  },
+
+  updatePosition(position) {
+    this.setState({geolocation: position});
   },
 
   _handleResponse(response) {
@@ -88,7 +93,7 @@ var persnickety = React.createClass({
           onPress={ () => this.changeTab('venue') }
           selected={ this.state.selectedTab === 'venue' }>
           <View style={ styles.pageView }>
-            <VenueTab venue={this.state.venue}/>
+            <VenueTab venue={this.state.venue} geolocation={this.state.geolocation} />
           </View>
         </TabBarIOS.Item>
 
