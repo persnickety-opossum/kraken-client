@@ -24,7 +24,7 @@ var {
 // create MapTab class
 var MapTab = React.createClass({
   mixins: [MapboxGLMap.Mixin],
-  //initialize class with base states
+  // initialize class with base states
   getInitialState() {
     return {
       searchString: '',
@@ -35,9 +35,13 @@ var MapTab = React.createClass({
       zoom: 13,
       venuePins: [],
       searchPins: [],
-      annotations: []
+      annotations: [],
+      mapStyle: ['asset://styles/emerald-v7.json', 'asset://styles/dark-v7.json', 'asset://styles/light-v7.json', 'asset://styles/mapbox-streets-v7.json', 'asset://styles/satellite-v7.json'],
+      currentMap: 0
      };
   },
+
+  // update map on region change
   onRegionChange(location) {
     this.setState({
       currentZoom: location.zoom,
@@ -54,28 +58,42 @@ var MapTab = React.createClass({
   onOpenAnnotation(annotation) {
     console.log(annotation);
   },
-  onRightAnnotationTapped(e) {
-    //console.log(e);
-    var id = e.id;
-    for (var i = 0; i < this.state.annotations.length; i++) {
-      if (this.state.annotations[i].id === id) {
-        var venue = this.state.annotations[i];
-        //for (var i = 0; i < venue.comments.length; i++) {
-        //  venue.comments[i].datetime = moment(venue.comments[i].datetime).fromNow();
-        //}
-        this.eventEmitter.emit('annotationTapped', { venue: this.state.annotations[i] });
-        break;
+
+  // Mapbox helper function for when right annotation press event is detected
+  onRightAnnotationTapped(rightAnnot) {
+    var that = this;
+    for(var i = 0; i < this.state.annotations.length; i++) {
+      if(this.state.annotations[i].id === rightAnnot.id) {
+        if(this.state.annotations[i].description) {
+          this.eventEmitter.emit('annotationTapped', { venue: this.state.annotations[i] });
+        } else {
+          fetch(config.serverURL+'/api/venues', {
+            method: 'POST',
+            headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+             title: this.state.annotations[i].title,
+             description: 'test',
+             address: 'test Address',
+             coordinates: this.state.annotations[i].coordinates,
+             creator: '55e7301b6df4ceb7721b41cb',
+             datetime: new Date().toISOString(),
+            })
+          })
+            .then(response => response.json())
+            .then(json => this.eventEmitter.emit('annotationTapped', { venue: json}))
+            .catch(function(err) {
+              console.log('error');
+              console.log(newVenue);
+              console.log(err);
+            });
+        } 
       }
     }
-    //{ _id: 'hopefullythiswillbemongoID',
-    // id: 'marker1',
-    //  title: 'This is marker 1',
-    //  latitude: 40.72052634,
-    //  subtitle: 'It has a rightCalloutAccessory too',
-    //  longitude: -73.97686958312988 }
-
-
   },
+
   componentWillMount: function() {
     navigator.geolocation.getCurrentPosition(
       (initialPosition) =>  this.setState({
@@ -100,7 +118,6 @@ var MapTab = React.createClass({
   _handleResponse: function (venues, inDb) {
     var that = this;
     venues.forEach(function (venue) {
-      console.log(that.state);
       var coords = venue.coordinates.split(',');
       var tempArray = [];
 
@@ -134,12 +151,12 @@ var MapTab = React.createClass({
       tempArray.push(venue);
       that.setState({venuePins: tempArray});
       } else {
-        console.log(that.state);
         venue.annotationImage = {
           url: 'image!searchPin',
           height: 25,
           width: 25
         };
+        venue.comments = [];
         tempArray = that.state.searchPins;
         tempArray.push(venue);
         that.setState({searchPins: tempArray});
@@ -152,18 +169,14 @@ var MapTab = React.createClass({
 
   _displayPins: function () {
     var pins = this.state.venuePins.concat(this.state.searchPins);
-    console.log(pins);
     this.setState({annotations: pins});
   },
 
   _onSearchTextChanged: function (event) {
-    console.log('onSearchTextChanged');
     this.setState({ searchString: event.nativeEvent.text });
   },
 
   _onSearchTextSubmit: function () {
-    console.log('submitted');
-    console.log(this.state.searchString);
     this.setState({searchPins: []});
     fetch(config.serverURL + '/api/search/query/'+this.state.searchString+'/'+this.state.center.latitude+','+this.state.center.longitude)
     .then(response => response.json())
@@ -171,6 +184,17 @@ var MapTab = React.createClass({
     .catch(function(err) {
       console.log(err);
     });
+  },
+
+  // method for changing style of map on button press - NOT in working state because new map style covers old pins
+  _onStylePressed: function () {
+    if(this.state.currentMap === 4) {
+      this.setState({currentMap: 0});
+    } else {
+      this.setState({currentMap: this.state.currentMap+1});
+    }
+    this.render();
+    this._displayPins();
   },
 
   render: function() {
@@ -222,7 +246,7 @@ var MapTab = React.createClass({
           showsUserLocation={true}
           ref={mapRef}
           accessToken={'pk.eyJ1IjoibWFyeW1hc29uIiwiYSI6IjM1NGVhNWZmNzQ5Yjk5NTczMDFhMzc3Zjg2ZGEyYzI0In0.7IdD26iFQhD2b6LbTIw_Sw'}
-          styleURL={'asset://styles/emerald-v7.json'}
+          styleURL={this.state.mapStyle[this.state.currentMap]}
           centerCoordinate={this.state.center}
           userLocationVisible={true}
           zoomLevel={this.state.zoom}
@@ -240,6 +264,12 @@ var MapTab = React.createClass({
             returnKeyType='search'
             placeholder='Search'/>
         </View>    
+        {/*<TouchableHighlight 
+          style={styles.button}
+          underlayColor='#99d9f4'
+          onPress={this._onStylePressed} >
+          <Text style={styles.buttonText}>Style</Text>
+        </TouchableHighlight>*/}
       </View>
     );
   }
@@ -273,7 +303,19 @@ var styles = StyleSheet.create({
     borderWidth: 0.5,
     borderColor: '#23FCA6',
     color: '#8C8C8C'
-  }
+  },
+    button: {
+    height: 36,
+    flex: 1,
+    flexDirection: 'row',
+    backgroundColor: '#48BBEC',
+    borderColor: '#48BBEC',
+    borderWidth: 1,
+    borderRadius: 8,
+    marginBottom: 10,
+    alignSelf: 'stretch',
+    justifyContent: 'center'
+  },
 });
 
 module.exports = MapTab;
