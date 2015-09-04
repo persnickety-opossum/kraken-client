@@ -27,6 +27,10 @@ var MapTab = React.createClass({
   getInitialState() {
     return {
       searchString: '',
+      center: {
+        latitude: 37.783585,
+        longitude: -122.408955
+      },
       zoom: 13,
       venuePins: [],
       searchPins: [],
@@ -58,9 +62,10 @@ var MapTab = React.createClass({
   onRightAnnotationTapped(rightAnnot) {
     var that = this;
     for(var i = 0; i < this.state.annotations.length; i++) {
-      if(this.state.annotations[i].id === rightAnnot.id) {
-        if(this.state.annotations[i].description) {
-          this.eventEmitter.emit('annotationTapped', { venue: this.state.annotations[i] });
+      var currVenue = this.state.annotations[i];
+      if(currVenue.id === rightAnnot.id) {
+        if(currVenue._id) {
+          this.eventEmitter.emit('annotationTapped', { venue: currVenue });
         } else {
           fetch(config.serverURL+'/api/venues', {
             method: 'POST',
@@ -69,10 +74,10 @@ var MapTab = React.createClass({
             'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-             title: this.state.annotations[i].title,
-             description: 'test',
-             address: 'test Address',
-             coordinates: this.state.annotations[i].coordinates,
+             title: currVenue.title,
+             description: currVenue.description,
+             address: currVenue.address,
+             coordinates: currVenue.coordinates,
              creator: '55e7301b6df4ceb7721b41cb',
              datetime: new Date().toISOString(),
             })
@@ -92,21 +97,9 @@ var MapTab = React.createClass({
   componentWillMount: function() {
     navigator.geolocation.getCurrentPosition(
       (initialPosition) =>  this.setState({
-        geolocation: initialPosition,
-        center: {
-          latitude: initialPosition.coords.latitude,
-          longitude: initialPosition.coords.longitude
-        }
+        geolocation: initialPosition
       }),
-      (error) => {
-        this.setState({
-          center: {
-            latitude: 37.783585,
-            longitude: -122.408955
-          }
-        });
-        alert(error.message);
-      },
+      (error) => alert(error.message),
       {enableHighAccuracy: true, timeout: 20000, maximumAge: 1000}
     );
     this.watchID = navigator.geolocation.watchPosition((lastPosition) => {
