@@ -27,7 +27,7 @@ var MapTab = React.createClass({
   getInitialState() {
     return {
       searchString: '',
-      zoom: 13,
+      zoom: 15,
       venuePins: [],
       searchPins: [],
       annotations: [],
@@ -149,9 +149,9 @@ var MapTab = React.createClass({
           venue.overallRating = 'Be the first to vote!'
         }
         venue.annotationImage = {
-          url: 'image!pin',
-          height: 25,
-          width: 25
+          url: 'image!marker-1',
+          height: 27,
+          width: 41
         };
         venue.datetime = moment(venue.datetime).format("dddd, MMMM Do YYYY, h:mm:ss a");
         tempArray = that.state.venuePins.slice(0);
@@ -159,9 +159,9 @@ var MapTab = React.createClass({
         that.setState({venuePins: tempArray});
       } else {
         venue.annotationImage = {
-          url: 'image!searchPin',
-          height: 25,
-          width: 25
+          url: 'image!marker-search',
+          height: 27,
+          width: 40
         };
         venue.comments = [];
         tempArray = that.state.searchPins;
@@ -253,7 +253,7 @@ var MapTab = React.createClass({
           showsUserLocation={true}
           ref={mapRef}
           accessToken={'pk.eyJ1IjoibWFyeW1hc29uIiwiYSI6IjM1NGVhNWZmNzQ5Yjk5NTczMDFhMzc3Zjg2ZGEyYzI0In0.7IdD26iFQhD2b6LbTIw_Sw'}
-          styleURL={this.state.mapStyle[this.state.currentMap]}
+          styleURL='asset://styles/light-v7.json'
           centerCoordinate={this.state.center}
           userLocationVisible={true}
           zoomLevel={this.state.zoom}
