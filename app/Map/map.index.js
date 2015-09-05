@@ -81,6 +81,7 @@ var MapTab = React.createClass({
           })
             .then(response => response.json())
             .then(json => this.eventEmitter.emit('annotationTapped', { venue: json}))
+            .then(() => this._venueQuery(config.serverURL + '/api/venues', true))
             .catch(function(err) {
               console.log('error');
               console.log(newVenue);
@@ -119,9 +120,17 @@ var MapTab = React.createClass({
     });
 
     this.eventEmitter = this.props.eventEmitter;
-    fetch(config.serverURL + '/api/venues')
+
+    this._venueQuery(config.serverURL + '/api/venues', true);
+  },
+
+  _venueQuery: function(url, inDB) {
+    fetch(url)
       .then(response => response.json())
-      .then(json => this._handleResponse(json, true));
+      .then(json => this._handleResponse(json, inDB))
+      .catch(function(err) {
+        console.log(err);
+      });  
   },
 
   _handleResponse: function (venues, inDb) {
@@ -182,12 +191,7 @@ var MapTab = React.createClass({
 
   _onSearchTextSubmit: function () {
     this.setState({searchPins: []});
-    fetch(config.serverURL + '/api/search/query/'+this.state.searchString+'/'+this.state.center.latitude+','+this.state.center.longitude)
-    .then(response => response.json())
-    .then(json => this._handleResponse(json, false))
-    .catch(function(err) {
-      console.log(err);
-    });
+    this._venueQuery(config.serverURL + '/api/search/query/'+this.state.searchString+'/'+this.state.center.latitude+','+this.state.center.longitude, false);
   },
 
   // method for changing style of map on button press - NOT in working state because new map style covers old pins
@@ -266,12 +270,12 @@ var MapTab = React.createClass({
             returnKeyType='search'
             placeholder='Search'/>
         </View>    
-        {<TouchableHighlight 
+        {/*<TouchableHighlight 
           style={styles.button}
           underlayColor='#99d9f4'
           onPress={this._onStylePressed} >
           <Text style={styles.buttonText}>Style</Text>
-        </TouchableHighlight>}
+        </TouchableHighlight>*/}
       </View>
     );
   }
