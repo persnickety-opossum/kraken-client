@@ -8,6 +8,7 @@ moment().format();
 var Display = require('react-native-device-display');
 var KeyboardEvents = require('react-native-keyboardevents');
 var KeyboardEventEmitter = KeyboardEvents.Emitter;
+var config = require('../config');
 
 var {
   SliderIOS,
@@ -17,8 +18,6 @@ var {
   ListView,
   TextInput
   } = React;
-
-var config = require('../config');
 
 var RefreshableListView = require('react-native-refreshable-listview');
 var ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
@@ -56,11 +55,10 @@ var VenueTab = React.createClass({
   },
 
   reloadComments() {
-    var context = this;
     console.log(this.state.venue);
 
     console.log('device height:     ', Display.height);
-    var route = config.serverURL + '/api/venues/' + this.state.venue.id;
+    var route = config.serverURL + '/api/venues/' + this.state.venue._id;
     fetch(route)
       .then(response => response.json())
       .then(function(res) {
@@ -69,18 +67,16 @@ var VenueTab = React.createClass({
         }
         return res;
       })
-      .then(json => context.setState({venue: json, dataSource: ds.cloneWithRows(json.comments)}))
+      .then(json => this.setState({venue: json, dataSource: ds.cloneWithRows(json.comments)}))
   },
 
   calculateDistance: function(current, venue) {
     Number.prototype.toRadians = function () { return this * Math.PI / 180; };
     var coords = venue.coordinates.split(',');
     var lon1 = current.longitude;
-    //var lon2 = venue.longitude;
     var lon2 = +coords[1];
 
     var lat1 = current.latitude;
-    //var lat2 = venue.latitude;
     var lat2 = +coords[0];
 
     var R = 6371000; // metres
@@ -90,8 +86,8 @@ var VenueTab = React.createClass({
     var Δλ = (lon2-lon1).toRadians();
 
     var a = Math.sin(Δφ/2) * Math.sin(Δφ/2) +
-            Math.cos(φ1) * Math.cos(φ2) *
-            Math.sin(Δλ/2) * Math.sin(Δλ/2);
+      Math.cos(φ1) * Math.cos(φ2) *
+      Math.sin(Δλ/2) * Math.sin(Δλ/2);
     var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
 
     return R * c;
@@ -108,18 +104,22 @@ var VenueTab = React.createClass({
       var distance = this.calculateDistance(coords, venue);
       //this.setState({atVenue: distance < 100});
     }
-    var context = this;
 
     fetch(route)
       .then(response => response.json())
-
       .then(json => {
-        this.setState({venue: json, dataSource: ds.cloneWithRows(json.comments), atVenue: distance < 100},
-        function() {
-          context.getOverallRating();
-        })
-      });
-
+        json.datetime = moment(json.datetime).format("dddd, MMMM Do YYYY, h:mm:ss a");
+        for (var i = 0; i < json.comments.length; i++) {
+          json.comments[i].datetime = moment(json.comments[i].datetime).fromNow();
+        }
+        this.setState({
+          venue: json,
+          dataSource: ds.cloneWithRows(json.comments),
+          atVenue: distance < 100},
+          function() {
+            this.getOverallRating();
+          })
+      })
     //this.setState({
     //  venue: venue,
     //  dataSource: ds.cloneWithRows(venue.comments)
@@ -137,27 +137,23 @@ var VenueTab = React.createClass({
       },
       body: JSON.stringify({token: config.userToken})
     }) // no ;
-    .then(response => response.json())
-    .then(json => context.setState({user: json._id},
-      function() {
-        context.getOverallRating();
-      }));
+      .then(response => response.json())
+      .then(json => context.setState({user: json._id}));
+    this.getOverallRating();
   },
 
   getOverallRating() {
     var ratings = this.state.venue.ratings;
     var sum = 0;
-    if (ratings != undefined) {
-      for (var i = 0; i < ratings.length; i++) {
-        sum += ratings[i].rating;
-      }
-      if (ratings.length >= 1) {
-        var average = Math.round(sum / ratings.length);
-        this.setState({overallRating: average});
-      } else {
-        this.setState({overallRating: 'No ratings yet!'});
-      }
+    for (var i = 0; i < ratings.length; i++) {
+      sum += ratings[i].rating;
     }
+    if (ratings.length > 0) {
+      var average = Math.round(sum / ratings.length);
+    } else {
+      var average = 'No ratings yet!';
+    }
+    this.setState({overallRating: average});
   },
 
   setRoundVoteValue(voteValue) {
@@ -187,7 +183,7 @@ var VenueTab = React.createClass({
       var creator = this.state.user; //hardcoded for now
       var venue = this.state.venue._id;
       var datetime = new Date().toISOString();
-      var atVenue = true; //hardcoded
+      var atVenue = true;
       console.log('This is the post object: ', content, creator, venue, datetime, atVenue);
       fetch(config.serverURL + '/api/comments/', {
         method: 'post',
@@ -204,21 +200,19 @@ var VenueTab = React.createClass({
         })
       })
         .then(function(res) {
-          context.setState({text: ''}, function() {
-            context.reloadComments();
-            return res.json();
-          });
+          context.setState({text: ''});
+          context.reloadComments();
+          return res.json();
         })
     }
   },
 
-  slideComplete(voteValue) {
-    var context = this;
-    fetch(config.serverURL + '/api/venues/' + this.props.venue.id)
+  slidingComplete(voteValue, venue) {
+    fetch(config.serverURL + '/api/venues/' + venue._id)
       .then(response => response.json())
       .then(modVenue => {
         for (var i = 0; i < modVenue.ratings.length; i++) {
-          if (modVenue.ratings[i].user === context.state.user) {
+          if (modVenue.ratings[i].user === this.state.user) {
             modVenue.ratings[i].rating = Math.round(voteValue*10);
             break;
           }
@@ -226,7 +220,7 @@ var VenueTab = React.createClass({
         if (i === modVenue.ratings.length) {
           modVenue.ratings.push({
             rating: Math.round(voteValue*10),
-            user: context.state.user
+            user: this.state.user
           });
         }
         fetch(config.serverURL + '/api/venues/', {
@@ -239,21 +233,20 @@ var VenueTab = React.createClass({
         })
           .then(response => response.json())
           .then(json => {
-            context.setState({venue: json, dataSource: ds.cloneWithRows(json.comments)},
+            this.setState({venue: json, dataSource: ds.cloneWithRows(json.comments)},
               function() {
-                context.getOverallRating();
+                this.getOverallRating();
               });
           });
       });
   },
-
 
   render() {
     var venue = this.props.venue;
     return (
       <View>
         <Text style={styles.header}>
-          Kraken
+          Waz Kraken
         </Text>
         <Text style={styles.venueName}>
           {venue.title}
@@ -273,7 +266,7 @@ var VenueTab = React.createClass({
         <SliderIOS
           style={styles.slider}
           onValueChange={(voteValue) => this.setState({voteValue: Math.round(voteValue*10)})}
-          onSlidingComplete={(voteValue) => this.slideComplete(voteValue)}
+          onSlidingComplete={(voteValue) => this.slidingComplete(voteValue, venue)}
           maximumTrackTintColor='red'/>
         <TextInput
           style={styles.textInput}
@@ -282,7 +275,7 @@ var VenueTab = React.createClass({
           onSubmitEditing={this.submitComment}
           returnKeyType='send'
           placeholder='Submit Comment'
-        />
+          />
         <Button style={styles.commentButton} onPress={this.submitComment}>
           Submit Comment
         </Button>
@@ -313,6 +306,7 @@ var styles = StyleSheet.create({
   header: {
     fontSize: 22,
     textAlign: 'center',
+    marginTop: 20,
     backgroundColor: '#000000',
     color: '#ffffff'
   },

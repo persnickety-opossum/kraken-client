@@ -20,7 +20,7 @@ var {
   TextInput,
   TouchableHighlight,
   View,
-} = React;
+  } = React;
 
 // create MapTab class
 var MapTab = React.createClass({
@@ -34,8 +34,9 @@ var MapTab = React.createClass({
       searchPins: [],
       annotations: [],
       mapStyle: ['asset://styles/emerald-v7.json', 'asset://styles/dark-v7.json', 'asset://styles/light-v7.json', 'asset://styles/mapbox-streets-v7.json', 'asset://styles/satellite-v7.json'],
-      currentMap: 0
-     };
+      currentMap: 0,
+      user: this.props.user
+    };
   },
 
   // update map on region change
@@ -58,44 +59,60 @@ var MapTab = React.createClass({
 
   // Mapbox helper function for when right annotation press event is detected
   onRightAnnotationTapped(rightAnnot) {
-    var context = this;
     for(var i = 0; i < this.state.annotations.length; i++) {
       var currVenue = this.state.annotations[i];
       if(currVenue.id === rightAnnot.id) {
         if(currVenue._id) {
           this.eventEmitter.emit('annotationTapped', { venue: currVenue });
+          break;
         } else {
           fetch(config.serverURL+'/api/venues', {
             method: 'POST',
             headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
+              'Accept': 'application/json',
+              'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-             title: currVenue.title,
-             description: currVenue.description,
-             address: currVenue.address,
-             coordinates: currVenue.coordinates,
-             creator: this.state.user,
-             datetime: new Date().toISOString()
+              title: currVenue.title,
+              description: currVenue.description,
+              address: currVenue.address,
+              coordinates: currVenue.coordinates,
+              creator: this.state.user,
+              datetime: new Date().toISOString(),
             })
           })
             .then(response => response.json())
-            .then(json => this.eventEmitter.emit('annotationTapped', { venue: json}))
-            .then(() => this.setState({searchPins: []}))
-            .then(() => this.setState({venuePins: []}))
-            .then(() => this._venueQuery(config.serverURL + '/api/venues', true))
+            .then(json => {
+              this.setState({searchPins: []})
+              this.setState({venuePins: []})
+              this._venueQuery(config.serverURL + '/api/venues', true)
+              this.eventEmitter.emit('annotationTapped', { venue: json})
+            })
             .catch(function(err) {
               console.log('error');
               console.log(newVenue);
               console.log(err);
             });
-        } 
+          break;
+        }
       }
     }
   },
 
   componentWillMount: function() {
+    // retrieve user id, may be replaced with device UUID in the future
+    var context = this;
+    fetch(config.serverURL + '/api/users/', {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({token: config.userToken})
+    }) // no ;
+      .then(response => response.json())
+      .then(json => context.setState({user: json._id}));
+
     navigator.geolocation.getCurrentPosition(
       (initialPosition) =>  this.setState({
         geolocation: initialPosition,
@@ -138,10 +155,6 @@ var MapTab = React.createClass({
       });
   },
 
-  componentDidMount: function() {
-    this.setState({user: this.props.user});
-  },
-
   _handleResponse: function (venues, inDb) {
     var context = this;
     venues.forEach(function (venue) {
@@ -151,15 +164,15 @@ var MapTab = React.createClass({
       venue.longitude = parseFloat(coords[1]);
       venue.rightCalloutAccessory = {
         url: 'image!arrow',
-          height: 25,
-          width: 25
+        height: 25,
+        width: 25
       };
       if(inDb) {
         venue.subtitle = venue.description;
         venue.id = venue._id;
         var ratingsSum = 0;
 
-        if (venue.ratings) {
+        if (venue.ratings.length > 0) {
           for (var i = 0; i < venue.ratings.length; i++) {
             ratingsSum += venue.ratings[i].rating;
           }
@@ -218,41 +231,41 @@ var MapTab = React.createClass({
     return (
       <View style={styles.container}>
         {/*<Text style={styles.text} onPress={() => this.setDirectionAnimated(mapRef, 0)}>
-          Set direction to 0
-        </Text>
-        <Text style={styles.text} onPress={() => this.setZoomLevelAnimated(mapRef, 6)}>
-          Zoom out to zoom level 6
-        </Text>
-        <Text style={styles.text} onPress={() => this.setCenterCoordinateAnimated(mapRef, 48.8589, 2.3447)}>
-          Go to Paris at current zoom level {parseInt(this.state.currentZoom)}
-        </Text>
-        <Text style={styles.text} onPress={() => this.setCenterCoordinateZoomLevelAnimated(mapRef, 35.68829, 139.77492, 14)}>
-          Go to Tokyo at fixed zoom level 14
-        </Text>
-        <Text style={styles.text} onPress={() => {
-          this.annotate({
-            latitude: this.state.latitude,
-            longitude:  this.state.longitude,
-            title: 'This is a new marker',
-            annotationImage: {
-              url: 'https://cldup.com/CnRLZem9k9.png',
-              height: 25,
-              width: 25
-            }
-          });
-        }}>
-          Add new marker
-        </Text>
-        <Text style={styles.text} onPress={() => this.selectAnnotationAnimated(mapRef, 0)}>
-          Open first popup
-        </Text>
-        <Text style={styles.text} onPress={() => {
-          this.setState({
-            annotations: this.state.annotations.slice(1, this.state.annotations.length)
-          });
-        }}>
-          Remove first annotation
-        </Text> */}
+         Set direction to 0
+         </Text>
+         <Text style={styles.text} onPress={() => this.setZoomLevelAnimated(mapRef, 6)}>
+         Zoom out to zoom level 6
+         </Text>
+         <Text style={styles.text} onPress={() => this.setCenterCoordinateAnimated(mapRef, 48.8589, 2.3447)}>
+         Go to Paris at current zoom level {parseInt(this.state.currentZoom)}
+         </Text>
+         <Text style={styles.text} onPress={() => this.setCenterCoordinateZoomLevelAnimated(mapRef, 35.68829, 139.77492, 14)}>
+         Go to Tokyo at fixed zoom level 14
+         </Text>
+         <Text style={styles.text} onPress={() => {
+         this.annotate({
+         latitude: this.state.latitude,
+         longitude:  this.state.longitude,
+         title: 'This is a new marker',
+         annotationImage: {
+         url: 'https://cldup.com/CnRLZem9k9.png',
+         height: 25,
+         width: 25
+         }
+         });
+         }}>
+         Add new marker
+         </Text>
+         <Text style={styles.text} onPress={() => this.selectAnnotationAnimated(mapRef, 0)}>
+         Open first popup
+         </Text>
+         <Text style={styles.text} onPress={() => {
+         this.setState({
+         annotations: this.state.annotations.slice(1, this.state.annotations.length)
+         });
+         }}>
+         Remove first annotation
+         </Text> */}
         <MapboxGLMap
           style={styles.map}
           direction={0}
@@ -280,13 +293,13 @@ var MapTab = React.createClass({
             onSubmitEditing={this._onSearchTextSubmit}
             returnKeyType='search'
             placeholder='Search'/>
-        </View>    
+        </View>
         {/*<TouchableHighlight 
-          style={styles.button}
-          underlayColor='#99d9f4'
-          onPress={this._onStylePressed} >
-          <Text style={styles.buttonText}>Style</Text>
-        </TouchableHighlight>*/}
+         style={styles.button}
+         underlayColor='#99d9f4'
+         onPress={this._onStylePressed} >
+         <Text style={styles.buttonText}>Style</Text>
+         </TouchableHighlight>*/}
       </View>
     );
   }
@@ -321,7 +334,7 @@ var styles = StyleSheet.create({
     borderColor: '#23FCA6',
     color: '#8C8C8C'
   },
-    button: {
+  button: {
     height: 36,
     flex: 1,
     flexDirection: 'row',
@@ -336,4 +349,3 @@ var styles = StyleSheet.create({
 });
 
 module.exports = MapTab;
-
