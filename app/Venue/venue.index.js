@@ -168,7 +168,7 @@ var VenueTab = React.createClass({
 //   datetime: "2016-03-30T06:20:46.000Z",
 //   atVenue: true
 // }
-    var that = this;
+    var context = this;
     if (this.state.text) {
       var content = this.state.text;
       //TODO: make creator the actual creator, not a hardcoded creator
@@ -192,8 +192,8 @@ var VenueTab = React.createClass({
         })
       })
         .then(function(res) {
-          that.setState({text: ''});
-          that.reloadComments();
+          context.setState({text: ''});
+          context.reloadComments();
           return res.json();
         })
     }

@@ -56,7 +56,6 @@ var MapTab = React.createClass({
 
   // Mapbox helper function for when right annotation press event is detected
   onRightAnnotationTapped(rightAnnot) {
-    var that = this;
     for(var i = 0; i < this.state.annotations.length; i++) {
       var currVenue = this.state.annotations[i];
       if(currVenue.id === rightAnnot.id) {
@@ -124,10 +123,9 @@ var MapTab = React.createClass({
   },
 
   _handleResponse: function (venues, inDb) {
-    var that = this;
+    var context = this;
     venues.forEach(function (venue) {
       var coords = venue.coordinates.split(',');
-      var tempArray = [];
 
       venue.latitude = parseFloat(coords[0]);
       venue.longitude = parseFloat(coords[1]);
@@ -155,9 +153,7 @@ var MapTab = React.createClass({
           width: 41
         };
         venue.datetime = moment(venue.datetime).format("dddd, MMMM Do YYYY, h:mm:ss a");
-        tempArray = that.state.venuePins.slice(0);
-        tempArray.push(venue);
-        that.setState({venuePins: tempArray});
+        context.setState({venuePins: context.state.venuePins.concat(venue)});
       } else {
         venue.annotationImage = {
           url: 'image!marker-search',
@@ -165,9 +161,7 @@ var MapTab = React.createClass({
           width: 40
         };
         venue.comments = [];
-        tempArray = that.state.searchPins;
-        tempArray.push(venue);
-        that.setState({searchPins: tempArray});
+        context.setState({searchPins: context.state.searchPins.concat(venue)});
       }
     });
     //this.setState({annotations: venues});
