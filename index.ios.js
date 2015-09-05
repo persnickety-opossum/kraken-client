@@ -10,6 +10,7 @@ var MapboxGLMap = require('react-native-mapbox-gl');
 var mapRef = 'mapRef';
 var moment = require('moment');
 moment().format();
+var config = require('./app/config.js');
 
 var {
   AppRegistry,
@@ -31,6 +32,22 @@ var persnickety = React.createClass({
   },
   componentWillMount: function() {
     this.eventEmitter = new EventEmitter();
+
+    // retrieve user id, may be replaced with device UUID in the future
+    var context = this;
+    fetch(config.serverURL + '/api/users/', {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({token: config.userToken})
+    }) // no ;
+      .then(response => response.json())
+      .then(json => context.setState({user: json._id},
+        function() {
+          //context.getOverallRating();
+        }));
   },
   componentDidMount: function() {
     this.addListenerOn(this.eventEmitter, 'annotationTapped', this.selectVenue);
@@ -49,7 +66,6 @@ var persnickety = React.createClass({
   selectVenue: function(eventObj) {
     var venue = eventObj.venue;
     var newVenue = venue;
-    var venueObject = {};
     //for (var key in newVenue) {
     //  venueObject[key] = newVenue[key];
     //}
@@ -90,7 +106,7 @@ var persnickety = React.createClass({
           icon={ require('image!map') }
           onPress={ () => this.changeTab('map') }
           selected={ this.state.selectedTab === 'map' }>
-          <MapTab eventEmitter={this.eventEmitter}/>
+          <MapTab user={this.state.user} eventEmitter={this.eventEmitter}/>
         </TabBarIOS.Item>
 
         <TabBarIOS.Item

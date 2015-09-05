@@ -58,6 +58,7 @@ var MapTab = React.createClass({
 
   // Mapbox helper function for when right annotation press event is detected
   onRightAnnotationTapped(rightAnnot) {
+    var context = this;
     for(var i = 0; i < this.state.annotations.length; i++) {
       var currVenue = this.state.annotations[i];
       if(currVenue.id === rightAnnot.id) {
@@ -75,7 +76,7 @@ var MapTab = React.createClass({
              description: currVenue.description,
              address: currVenue.address,
              coordinates: currVenue.coordinates,
-             creator: '55ea2b65116b680300836089',
+             creator: this.state.user,
              datetime: new Date().toISOString()
             })
           })
@@ -84,7 +85,6 @@ var MapTab = React.createClass({
             .then(() => this.setState({searchPins: []}))
             .then(() => this.setState({venuePins: []}))
             .then(() => this._venueQuery(config.serverURL + '/api/venues', true))
-
             .catch(function(err) {
               console.log('error');
               console.log(newVenue);
@@ -125,6 +125,8 @@ var MapTab = React.createClass({
     this.eventEmitter = this.props.eventEmitter;
 
     this._venueQuery(config.serverURL + '/api/venues', true);
+
+    this.setState({user: this.props.user});
   },
 
   _venueQuery: function(url, inDB) {
@@ -133,7 +135,11 @@ var MapTab = React.createClass({
       .then(json => this._handleResponse(json, inDB))
       .catch(function(err) {
         console.log(err);
-      });  
+      });
+  },
+
+  componentDidMount: function() {
+    this.setState({user: this.props.user});
   },
 
   _handleResponse: function (venues, inDb) {

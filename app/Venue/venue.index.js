@@ -106,7 +106,7 @@ var VenueTab = React.createClass({
       var coords = nextProps.geolocation.coords;
       // Sets atVenue to true is user within 100 metres
       var distance = this.calculateDistance(coords, venue);
-      this.setState({atVenue: distance < 100});
+      //this.setState({atVenue: distance < 100});
     }
     var context = this;
 
@@ -212,6 +212,42 @@ var VenueTab = React.createClass({
     }
   },
 
+  slideComplete(voteValue) {
+    var context = this;
+    fetch(config.serverURL + '/api/venues/' + this.props.venue.id)
+      .then(response => response.json())
+      .then(modVenue => {
+        for (var i = 0; i < modVenue.ratings.length; i++) {
+          if (modVenue.ratings[i].user === context.state.user) {
+            modVenue.ratings[i].rating = Math.round(voteValue*10);
+            break;
+          }
+        }
+        if (i === modVenue.ratings.length) {
+          modVenue.ratings.push({
+            rating: Math.round(voteValue*10),
+            user: context.state.user
+          });
+        }
+        fetch(config.serverURL + '/api/venues/', {
+          method: 'put',
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(modVenue)
+        })
+          .then(response => response.json())
+          .then(json => {
+            context.setState({venue: json, dataSource: ds.cloneWithRows(json.comments)},
+              function() {
+                context.getOverallRating();
+              });
+          });
+      });
+  },
+
+
   render() {
     var venue = this.props.venue;
     return (
@@ -237,39 +273,7 @@ var VenueTab = React.createClass({
         <SliderIOS
           style={styles.slider}
           onValueChange={(voteValue) => this.setState({voteValue: Math.round(voteValue*10)})}
-          onSlidingComplete={(voteValue) => {
-            fetch(config.serverURL + '/api/venues/' + venue.id)
-            .then(response => response.json())
-            .then(modVenue => {
-              for (var i = 0; i < modVenue.ratings.length; i++) {
-                if (modVenue.ratings[i].user === this.state.user) {
-                  modVenue.ratings[i].rating = Math.round(voteValue*10);
-                  break;
-                }
-              }
-              if (i === modVenue.ratings.length) {
-                modVenue.ratings.push({
-                  rating: Math.round(voteValue*10),
-                  user: this.state.user
-                });
-              }
-              fetch(config.serverURL + '/api/venues/', {
-                method: 'put',
-                headers: {
-                  'Accept': 'application/json',
-                  'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(modVenue)
-              })
-              .then(response => response.json())
-              .then(json => {
-                this.setState({venue: json, dataSource: ds.cloneWithRows(json.comments)},
-                function() {
-                  this.getOverallRating();
-                });
-              });
-            });
-          }}
+          onSlidingComplete={(voteValue) => this.slideComplete(voteValue)}
           maximumTrackTintColor='red'/>
         <TextInput
           style={styles.textInput}
