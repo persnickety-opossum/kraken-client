@@ -101,12 +101,12 @@ var VenueTab = React.createClass({
     var venue = nextProps.venue;
     var route = config.serverURL + '/api/venues/' + venue._id;
 
-    var coords = nextProps.geolocation.coords;
-
-    // Sets atVenue to true is user within 100 metres
-    var distance = this.calculateDistance(coords, venue);
-    this.setState({atVenue: distance < 100});
-
+    if (nextProps.geolocation) {
+      var coords = nextProps.geolocation.coords;
+      // Sets atVenue to true is user within 100 metres
+      var distance = this.calculateDistance(coords, venue);
+      this.setState({atVenue: distance < 100});
+    }
 
     fetch(route)
       .then(response => response.json())
