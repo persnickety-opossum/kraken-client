@@ -3,7 +3,7 @@
 // require modules
 var React = require('react-native');
 var MapboxGLMap = require('react-native-mapbox-gl');
-var mapRef = 'mapRef';
+
 var EventEmitter = require('EventEmitter');
 var Subscribable = require('Subscribable');
 var moment = require('moment');
@@ -20,6 +20,7 @@ var {
   TextInput,
   TouchableHighlight,
   View,
+  Image
   } = React;
 
 // create MapTab class
@@ -34,8 +35,9 @@ var MapTab = React.createClass({
       searchPins: [],
       annotations: [],
       mapStyle: ['asset://styles/emerald-v7.json', 'asset://styles/dark-v7.json', 'asset://styles/light-v7.json', 'asset://styles/mapbox-streets-v7.json', 'asset://styles/satellite-v7.json'],
-      currentMap: 0,
-      user: this.props.user
+      currentMap: 1,
+      user: this.props.user,
+      mapRef: 'mapRef'
     };
   },
 
@@ -209,15 +211,17 @@ var MapTab = React.createClass({
 
   // method for recentering and reset zoom level based on current location 
   _onCenterPressed: function () {
-    this._currentLocation();
+    this.setCenterCoordinateZoomLevelAnimated(this.state.mapRef, 37.783585, -122.408955, 14)
   },
 
   // method for changing style of map on button press - NOT in working state because new map style covers old pins
   _onStylePressed: function () {
     if(this.state.currentMap === 4) {
       this.setState({currentMap: 0});
+      this.setState({mapRef: 'mapRef'})
     } else {
       this.setState({currentMap: this.state.currentMap+1});
+      this.setState({mapRef: 'mapRef'})
     }
   },
 
@@ -268,9 +272,9 @@ var MapTab = React.createClass({
           scrollEnabled={true}
           zoomEnabled={true}
           showsUserLocation={true}
-          ref={mapRef}
+          ref={this.state.mapRef}
           accessToken={'pk.eyJ1IjoibWFyeW1hc29uIiwiYSI6IjM1NGVhNWZmNzQ5Yjk5NTczMDFhMzc3Zjg2ZGEyYzI0In0.7IdD26iFQhD2b6LbTIw_Sw'}
-          styleURL={this.state.mapStyle[0]}
+          styleURL={this.state.mapStyle[this.state.currentMap]}
           centerCoordinate={this.state.center}
           userLocationVisible={true}
           zoomLevel={this.state.zoom}
@@ -289,18 +293,18 @@ var MapTab = React.createClass({
             returnKeyType='search'
             placeholder='Search'/>
         </View>
-        <TouchableHighlight 
-          style={styles.button}
-          underlayColor='#99d9f4'
-          onPress={this._onCenterPressed} >
-          <Text style={styles.buttonText}>Center</Text>
+        <TouchableHighlight onPress={this._onCenterPressed}> 
+          <Image
+            style={styles.button}
+            source={require('image!target')}
+          />
         </TouchableHighlight>
-        <TouchableHighlight 
-          style={styles.button}
+        {/*<TouchableHighlight 
+          style={styles.stylebutton}
           underlayColor='#99d9f4'
-          onPress={this._onStylePressed} >
+          onPress={this._onStylePressed}>
           <Text style={styles.buttonText}>Style</Text>
-        </TouchableHighlight>
+        </TouchableHighlight>*/}
       </View>
     );
   }
@@ -335,17 +339,19 @@ var styles = StyleSheet.create({
     borderColor: '#23FCA6',
     color: '#8C8C8C'
   },
-    button: {
+  button: {
     height: 40,
     width: 40,
-    flexDirection: 'row',
-    backgroundColor: '#48BBEC',
-    borderColor: '#48BBEC',
-    borderWidth: 1,
-    borderRadius: 8,
-    marginBottom: 50,
-    alignSelf: 'stretch',
-    justifyContent: 'center'
+    position: 'absolute',
+    bottom: 50,
+    right: 30
+  },
+  stylebutton: {
+    height: 40,
+    width: 40,
+    position: 'absolute',
+    bottom: 50,
+    left: 30
   },
 });
 
