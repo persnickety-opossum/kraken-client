@@ -17,7 +17,8 @@ var {
   StyleSheet,
   View,
   ListView,
-  TextInput
+  TextInput,
+  Image
   } = React;
 
 var RefreshableListView = require('react-native-refreshable-listview');
