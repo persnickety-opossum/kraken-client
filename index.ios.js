@@ -113,7 +113,7 @@ var persnickety = React.createClass({
             onPress={ () => this.changeTab('images') }
             selected={ this.state.selectedTab === 'images' }>
             <View style={ styles.pageView }>
-              <ImageTab />
+              <ImagesTab />
             </View>
           </TabBarIOS.Item>
         </TabBarIOS>
