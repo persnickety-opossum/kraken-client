@@ -56,7 +56,6 @@ var MapTab = React.createClass({
 
   // Mapbox helper function for when right annotation press event is detected
   onRightAnnotationTapped(rightAnnot) {
-    var that = this;
     for(var i = 0; i < this.state.annotations.length; i++) {
       var currVenue = this.state.annotations[i];
       if(currVenue.id === rightAnnot.id) {
@@ -127,7 +126,6 @@ var MapTab = React.createClass({
     var context = this;
     venues.forEach(function (venue) {
       var coords = venue.coordinates.split(',');
-      var tempArray = [];
 
       venue.latitude = parseFloat(coords[0]);
       venue.longitude = parseFloat(coords[1]);
