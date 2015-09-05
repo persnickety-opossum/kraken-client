@@ -136,8 +136,10 @@ var VenueTab = React.createClass({
       body: JSON.stringify({token: config.userToken})
     }) // no ;
     .then(response => response.json())
-    .then(json => context.setState({user: json._id}));
-    this.getOverallRating();
+    .then(json => context.setState({user: json._id},
+      function() {
+        this.getOverallRating();
+      }));
   },
 
   getOverallRating() {
@@ -200,9 +202,10 @@ var VenueTab = React.createClass({
         })
       })
         .then(function(res) {
-          context.setState({text: ''});
-          context.reloadComments();
-          return res.json();
+          context.setState({text: ''}, function() {
+            context.reloadComments();
+            return res.json();
+          });
         })
     }
   },
