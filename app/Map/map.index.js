@@ -147,6 +147,7 @@ var MapTab = React.createClass({
       },
       {enableHighAccuracy: true, timeout: 20000, maximumAge: 1000}
     );
+    //this.setState({user: this.props.user});
   },
 
   _handleResponse: function (venues, inDb) {

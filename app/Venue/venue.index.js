@@ -18,7 +18,8 @@ var {
   View,
   ListView,
   TextInput,
-  Image
+  Image,
+  ScrollView
   } = React;
 
 var RefreshableListView = require('react-native-refreshable-listview');
@@ -50,10 +51,7 @@ var VenueTab = React.createClass({
   },
 
   componentDidMount: function() {
-    //this.setState({venue: this.props.venue});
-    //this.setState({dataSource: ds.cloneWithRows(this.props.venue.comments)})
-    //KeyboardEventEmitter.on(KeyboardEvents.KeyboardDidShowEvent, this.updateKeyboardSpace);
-    //KeyboardEventEmitter.on(KeyboardEvents.KeyboardWillHideEvent, this.resetKeyboardSpace);
+
   },
 
   reloadComments() {
@@ -96,6 +94,7 @@ var VenueTab = React.createClass({
   },
 
   componentWillReceiveProps: function(nextProps) {
+    console.log(nextProps);
     var venue = nextProps.venue;
     var route = config.serverURL + '/api/venues/' + venue._id;
 
@@ -253,6 +252,7 @@ var VenueTab = React.createClass({
 
   render() {
     var venue = this.props.venue;
+    var THUMB_URLS = ['http://www.fubiz.net/wp-content/uploads/2012/03/the-kraken-existence2.jpg', 'http://img2.wikia.nocookie.net/__cb20140311041907/villains/images/b/bb/The_Kraken.jpg', 'http://vignette2.wikia.nocookie.net/reddits-world/images/8/8e/Kraken_v2_by_elmisa-d70nmt4.jpg/revision/latest?cb=20140922042121', 'http://orig11.deviantart.net/ccd8/f/2011/355/0/c/kraken_by_elmisa-d4ju669.jpg', 'http://orig14.deviantart.net/40df/f/2014/018/d/4/the_kraken_by_alexstoneart-d72o83n.jpg', 'http://orig10.deviantart.net/bf30/f/2010/332/f/5/kraken_by_mabuart-d33tchk.jpg', 'http://static.comicvine.com/uploads/original/12/120846/2408132-kraken_by_neo_br.jpg', 'https://upload.wikimedia.org/wikipedia/commons/9/9d/Colossal_octopus_by_Pierre_Denys_de_Montfort.jpg', 'http://www.wallpaper4me.com/images/wallpapers/deathbykraken-39598.jpeg', 'http://img06.deviantart.net/3c5b/i/2012/193/d/9/kraken__work_in_progress_by_rkarl-d56zu66.jpg', 'http://i.gr-assets.com/images/S/photo.goodreads.com/hostedimages/1393990556r/8792967._SY540_.jpg', 'http://static.fjcdn.com/pictures/Kraken+found+on+tumblr_5b3d72_4520925.jpg'];
     return (
       <View>
         <Text style={styles.header}>
@@ -278,6 +278,14 @@ var VenueTab = React.createClass({
           onValueChange={(voteValue) => this.setState({voteValue: Math.round(voteValue*10)})}
           onSlidingComplete={(voteValue) => this.slidingComplete(voteValue, venue)}
           maximumTrackTintColor='red'/>
+        <ScrollView
+          horizontal={true}
+          style={styles.horizontalScrollView}
+          showsHorizontalScrollIndicator={false}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={styles.contentContainer}>
+          {THUMB_URLS.map(createThumbRow)}
+        </ScrollView>
         <TextInput
           style={styles.textInput}
           onChangeText={(text) => this.setState({text})}
@@ -289,10 +297,9 @@ var VenueTab = React.createClass({
         <Button style={styles.commentButton} onPress={this.submitComment}>
           Submit Comment
         </Button>
-        <Image source={{uri: 'https://facebook.github.io/react/img/logo_og.png'}}
-               style={{width: 40, height: 40}} />
+
         <RefreshableListView
-          style={styles.listView}
+          style={styles.refreshableListView}
           dataSource={this.state.dataSource}
           renderRow={this.renderComments}
           loadData={this.reloadComments}
@@ -300,11 +307,24 @@ var VenueTab = React.createClass({
           />
         <View style={{height: this.state.keyboardSpace}}></View>
       </View>
-
     );
-  },
-
+  }
 });
+
+var Thumb = React.createClass({
+  shouldComponentUpdate: function(nextProps, nextState) {
+    return false;
+  },
+  render: function() {
+    return (
+      <View style={styles.thumbView}>
+        <Image style={styles.img} source={{uri:this.props.uri}} />
+      </View>
+    );
+  }
+});
+
+var createThumbRow = (uri, i) => <Thumb key={i} uri={uri} />;
 
 var styles = StyleSheet.create({
   text: {
@@ -352,14 +372,36 @@ var styles = StyleSheet.create({
     right: 10,
     alignSelf: 'flex-end'
   },
-  listView: {
+  refreshableListView: {
     flex: 1,
     flexDirection: 'column',
     margin: 10,
     bottom: 0,
-    //height: Display.height * 0.49,
-    //bottom: Display.height - (Display.height - 50)
+    height: Display.height * 0.49
+  },
+
+  img: {
+    flex: 1,
+    width: 70,
+    height: 70,
+    margin: 0,
+    padding: 0
+  },
+  horizontalScrollView: {
+    height: 70,
+    width: Display.width,
+    marginTop: 10,
+    flex: 1,
+    flexDirection: 'row'
+  },
+  thumbView: {
+    flex: 1,
+    height: 70
   }
+  //contentContainer: {
+  //  //height: 0,
+  //  flex: 1
+  //}
 });
 
 module.exports = VenueTab;
