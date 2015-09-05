@@ -210,7 +210,7 @@ var MapTab = React.createClass({
   _onSearchTextSubmit: function () {
     this._textInput.setNativeProps({text: ''});
     this.setState({searchPins: []});
-    this._venueQuery(config.serverURL + '/api/search/query/'+this.state.searchString+'/'+this.state.center.latitude+','+this.state.center.longitude, false);
+    this._venueQuery(config.serverURL + '/api/search/query/'+this.state.searchString+'/'+this.state.latitude+','+this.state.longitude, false);
   },
 
   // method for changing style of map on button press - NOT in working state because new map style covers old pins
