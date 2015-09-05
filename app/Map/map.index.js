@@ -1,5 +1,6 @@
 'use strict';
 
+// require modules
 var React = require('react-native');
 var MapboxGLMap = require('react-native-mapbox-gl');
 var mapRef = 'mapRef';
@@ -10,6 +11,7 @@ moment().format();
 var Display = require('react-native-device-display');
 var config = require('../config');
 
+// require React Native modules
 var {
   AppRegistry,
   StyleSheet,
@@ -79,6 +81,10 @@ var MapTab = React.createClass({
           })
             .then(response => response.json())
             .then(json => this.eventEmitter.emit('annotationTapped', { venue: json}))
+            .then(() => this.setState({searchPins: []}))
+            .then(() => this.setState({venuePins: []}))
+            .then(() => this._venueQuery(config.serverURL + '/api/venues', true))
+
             .catch(function(err) {
               console.log('error');
               console.log(newVenue);
@@ -117,9 +123,17 @@ var MapTab = React.createClass({
     });
 
     this.eventEmitter = this.props.eventEmitter;
-    fetch(config.serverURL + '/api/venues')
+
+    this._venueQuery(config.serverURL + '/api/venues', true);
+  },
+
+  _venueQuery: function(url, inDB) {
+    fetch(url)
       .then(response => response.json())
-      .then(json => this._handleResponse(json, true));
+      .then(json => this._handleResponse(json, inDB))
+      .catch(function(err) {
+        console.log(err);
+      });  
   },
 
   _handleResponse: function (venues, inDb) {
@@ -179,24 +193,18 @@ var MapTab = React.createClass({
   },
 
   _onSearchTextSubmit: function () {
+    this._textInput.setNativeProps({text: ''});
     this.setState({searchPins: []});
-    fetch(config.serverURL + '/api/search/query/'+this.state.searchString+'/'+this.state.center.latitude+','+this.state.center.longitude)
-    .then(response => response.json())
-    .then(json => this._handleResponse(json, false))
-    .catch(function(err) {
-      console.log(err);
-    });
+    this._venueQuery(config.serverURL + '/api/search/query/'+this.state.searchString+'/'+this.state.center.latitude+','+this.state.center.longitude, false);
   },
 
   // method for changing style of map on button press - NOT in working state because new map style covers old pins
   _onStylePressed: function () {
     if(this.state.currentMap === 4) {
-      this.setState({currentMap: 0});
+      this.setState({currentMap: 0}, function(){this._displayPins()});
     } else {
-      this.setState({currentMap: this.state.currentMap+1});
+      this.setState({currentMap: this.state.currentMap+1}, function(){this._displayPins()});
     }
-    this.render();
-    this._displayPins();
   },
 
   render: function() {
@@ -260,6 +268,7 @@ var MapTab = React.createClass({
           onUpdateUserLocation={this.onUpdateUserLocation} />
         <View style={styles.flowRight}>
           <TextInput
+            ref={component => this._textInput = component}
             style={styles.searchInput}
             onChange={this._onSearchTextChanged}
             onSubmitEditing={this._onSearchTextSubmit}
@@ -322,34 +331,3 @@ var styles = StyleSheet.create({
 
 module.exports = MapTab;
 
-
-
-//annotations
-// {
-//   latitude: 40.72052634,
-//   longitude: -73.97686958312988,
-//   title: 'This is marker 1',
-//   subtitle: 'It has a rightCalloutAccessory too',
-//   rightCalloutAccessory: {
-//     url: 'https://cldup.com/9Lp0EaBw5s.png',
-//     height: 1000,
-//     width: 100
-//   },
-//   annotationImage: {
-//     url: 'https://cldup.com/CnRLZem9k9.png',
-//     height: 100,
-//     width: 100
-//   },
-//   id: 'marker1'
-// }, {
-//   latitude: 40.714541341726175,
-//   longitude: -74.00579452514648,
-//   title: 'Important!',
-//   subtitle: 'Neat, this is a custom annotation image',
-//   annotationImage: {
-//     url: 'https://cldup.com/7NLZklp8zS.png',
-//     height: 25,
-//     width: 25
-//   },
-//   id: 'marker2'
-// }
