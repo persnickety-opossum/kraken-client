@@ -19,7 +19,7 @@ var {
   View,
   MapView,
   TabBarIOS,
-} = React;
+  } = React;
 
 var persnickety = React.createClass({
   mixins: [MapboxGLMap.Mixin, Subscribable.Mixin],
@@ -48,7 +48,6 @@ var persnickety = React.createClass({
 
   selectVenue: function(eventObj) {
     var venue = eventObj.venue;
-    var newVenue = venue;
     //var currDateTime = venue.venue.datetime;
 
     //var currDateTime = new Date(venue.venue.datetime);
@@ -65,8 +64,9 @@ var persnickety = React.createClass({
     //for (var i = 0; i < newVenue.comments.length;i++) {
     //  newVenue.comments[i].datetime = moment(newVenue.comments[i].datetime).fromNow();
     //}
-    this.setState({venue: newVenue});
-    this.changeTab('venue');
+    this.setState({venue: venue}, function() {
+      this.changeTab('venue');
+    });
   },
 
   changeTab(tabName) {
@@ -79,35 +79,35 @@ var persnickety = React.createClass({
     return (
       <View style={styles.container}>
         <TabBarIOS>
-        <TabBarIOS.Item
-          title="Map"
-          icon={ require('image!map') }
-          onPress={ () => this.changeTab('map') }
-          selected={ this.state.selectedTab === 'map' }>
-          <MapTab eventEmitter={this.eventEmitter}/>
-        </TabBarIOS.Item>
+          <TabBarIOS.Item
+            title="Map"
+            icon={ require('image!map') }
+            onPress={ () => this.changeTab('map') }
+            selected={ this.state.selectedTab === 'map' }>
+            <MapTab eventEmitter={this.eventEmitter}/>
+          </TabBarIOS.Item>
 
-        <TabBarIOS.Item
-          title="Venue"
-          icon={ require('image!messages') }
-          onPress={ () => this.changeTab('venue') }
-          selected={ this.state.selectedTab === 'venue' }>
-          <View style={ styles.pageView }>
-            <VenueTab venue={this.state.venue} geolocation={this.state.geolocation} />
-          </View>
-        </TabBarIOS.Item>
+          <TabBarIOS.Item
+            title="Venue"
+            icon={ require('image!messages') }
+            onPress={ () => this.changeTab('venue') }
+            selected={ this.state.selectedTab === 'venue' }>
+            <View style={ styles.pageView }>
+              <VenueTab venue={this.state.venue} geolocation={this.state.geolocation} />
+            </View>
+          </TabBarIOS.Item>
 
-        <TabBarIOS.Item
-          title="G-Map"
-          icon={ require('image!settings') }
-          onPress={ () => this.changeTab('settings') }
-          selected={ this.state.selectedTab === 'settings' }>
-          <View style={ styles.pageView }>
-            <WebTab />
-          </View>
-        </TabBarIOS.Item>
-      </TabBarIOS>
-    </View>
+          <TabBarIOS.Item
+            title="G-Map"
+            icon={ require('image!settings') }
+            onPress={ () => this.changeTab('settings') }
+            selected={ this.state.selectedTab === 'settings' }>
+            <View style={ styles.pageView }>
+              <WebTab />
+            </View>
+          </TabBarIOS.Item>
+        </TabBarIOS>
+      </View>
     );
   }
 });
