@@ -1,6 +1,7 @@
 'use strict';
 
 var React = require('react-native');
+var DeviceUUID = require("react-native-device-uuid");
 //var venue = require('./venueMock');
 var Button = require('react-native-button');
 var moment = require('moment');
@@ -129,17 +130,27 @@ var VenueTab = React.createClass({
   componentWillMount: function() {
     // retrieve user id, may be replaced with device UUID in the future
     var context = this;
-    fetch(config.serverURL + '/api/users/', {
-      method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({token: config.userToken})
-    }) // no ;
+    // Get Device UUID
+    DeviceUUID.getUUID().then((uuid) => {
+      console.log('Device ID >>>>>>>>> ', uuid);
+      return uuid;
+    })
+    .then((uuid) => {
+      fetch(config.serverURL + '/api/users/', {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({token: uuid})
+      }) // no ;
       .then(response => response.json())
       .then(json => context.setState({user: json._id}));
-    this.getOverallRating();
+      this.getOverallRating();
+    })
+    .catch((err) => {
+      console.log(err);
+    });
   },
 
   getOverallRating() {
