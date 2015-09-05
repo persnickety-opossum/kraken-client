@@ -81,7 +81,10 @@ var MapTab = React.createClass({
           })
             .then(response => response.json())
             .then(json => this.eventEmitter.emit('annotationTapped', { venue: json}))
+            .then(() => this.setState({searchPins: []}))
+            .then(() => this.setState({venuePins: []}))
             .then(() => this._venueQuery(config.serverURL + '/api/venues', true))
+
             .catch(function(err) {
               console.log('error');
               console.log(newVenue);
@@ -189,7 +192,8 @@ var MapTab = React.createClass({
     this.setState({ searchString: event.nativeEvent.text });
   },
 
-  _onSearchTextSubmit: function () {
+  _onSearchTextSubmit: function (event) {
+    event.nativeEvent.text = '';
     this.setState({searchPins: []});
     this._venueQuery(config.serverURL + '/api/search/query/'+this.state.searchString+'/'+this.state.center.latitude+','+this.state.center.longitude, false);
   },
