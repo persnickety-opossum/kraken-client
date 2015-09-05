@@ -73,12 +73,11 @@ var VenueTab = React.createClass({
 
   calculateDistance: function(current, venue) {
     Number.prototype.toRadians = function () { return this * Math.PI / 180; };
-    var coords = venue.coordinates.split(',');
     var lon1 = current.longitude;
-    var lon2 = +coords[1];
+    var lon2 = venue.longitude;
 
     var lat1 = current.latitude;
-    var lat2 = +coords[0];
+    var lat2 = venue.latitude;
 
     var R = 6371000; // metres
     var φ1 = lat1.toRadians();
@@ -101,9 +100,7 @@ var VenueTab = React.createClass({
 
     if (nextProps.geolocation) {
       var coords = nextProps.geolocation.coords;
-      // Sets atVenue to true is user within 100 metres
       var distance = this.calculateDistance(coords, venue);
-      //this.setState({atVenue: distance < 100});
     }
 
     fetch(route)
@@ -116,6 +113,7 @@ var VenueTab = React.createClass({
         this.setState({
           venue: json,
           dataSource: ds.cloneWithRows(json.comments),
+          // Sets atVenue to true if user is within 100 metres
           atVenue: distance < 100},
           function() {
             this.getOverallRating();
