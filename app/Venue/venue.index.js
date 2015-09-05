@@ -246,7 +246,7 @@ var VenueTab = React.createClass({
     return (
       <View>
         <Text style={styles.header}>
-          Waz Kraken
+          Kraken
         </Text>
         <Text style={styles.venueName}>
           {venue.title}
@@ -261,7 +261,7 @@ var VenueTab = React.createClass({
           Time: {venue.datetime}
         </Text>
         <Text style={[styles.text, styles.yourRating]} >
-          Overall rating: {this.state.overallRating} | Your rating: {this.state.voteValue}
+          Overall rating: {this.state.overallRating} | Your last rating: {this.state.voteValue}
         </Text>
         <SliderIOS
           style={styles.slider}

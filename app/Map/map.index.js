@@ -102,6 +102,7 @@ var MapTab = React.createClass({
   componentWillMount: function() {
     // retrieve user id, may be replaced with device UUID in the future
     var context = this;
+    this.eventEmitter = this.props.eventEmitter;
     fetch(config.serverURL + '/api/users/', {
       method: 'POST',
       headers: {
@@ -138,8 +139,6 @@ var MapTab = React.createClass({
       });
       this.eventEmitter.emit('positionUpdated', lastPosition);
     });
-
-    this.eventEmitter = this.props.eventEmitter;
 
     this._venueQuery(config.serverURL + '/api/venues', true);
 
