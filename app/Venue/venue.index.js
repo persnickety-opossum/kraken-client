@@ -51,11 +51,12 @@ var VenueTab = React.createClass({
   componentDidMount: function() {
     //this.setState({venue: this.props.venue});
     //this.setState({dataSource: ds.cloneWithRows(this.props.venue.comments)})
-    KeyboardEventEmitter.on(KeyboardEvents.KeyboardDidShowEvent, this.updateKeyboardSpace);
-    KeyboardEventEmitter.on(KeyboardEvents.KeyboardWillHideEvent, this.resetKeyboardSpace);
+    //KeyboardEventEmitter.on(KeyboardEvents.KeyboardDidShowEvent, this.updateKeyboardSpace);
+    //KeyboardEventEmitter.on(KeyboardEvents.KeyboardWillHideEvent, this.resetKeyboardSpace);
   },
 
   reloadComments() {
+    var context = this;
     console.log(this.state.venue);
 
     console.log('device height:     ', Display.height);
@@ -68,7 +69,7 @@ var VenueTab = React.createClass({
         }
         return res;
       })
-      .then(json => this.setState({venue: json, dataSource: ds.cloneWithRows(json.comments)}))
+      .then(json => context.setState({venue: json, dataSource: ds.cloneWithRows(json.comments)}))
   },
 
   calculateDistance: function(current, venue) {
@@ -107,6 +108,7 @@ var VenueTab = React.createClass({
       var distance = this.calculateDistance(coords, venue);
       this.setState({atVenue: distance < 100});
     }
+    var context = this;
 
     fetch(route)
       .then(response => response.json())
@@ -114,7 +116,7 @@ var VenueTab = React.createClass({
       .then(json => {
         this.setState({venue: json, dataSource: ds.cloneWithRows(json.comments), atVenue: distance < 100},
         function() {
-          this.getOverallRating();
+          context.getOverallRating();
         })
       });
 
@@ -138,7 +140,7 @@ var VenueTab = React.createClass({
     .then(response => response.json())
     .then(json => context.setState({user: json._id},
       function() {
-        this.getOverallRating();
+        context.getOverallRating();
       }));
   },
 
