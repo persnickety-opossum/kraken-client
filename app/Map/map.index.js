@@ -237,7 +237,6 @@ var MapTab = React.createClass({
 
   // method for recentering and reset zoom level based on current location 
   _onCenterPressed: function () {
-    //this.setCenterCoordinateZoomLevelAnimated(mapRef, 37.783585, -122.408955, 15);
     this.setCenterCoordinateZoomLevelAnimated(mapRef, this.state.center.latitude, this.state.center.longitude, 15)
   },
 
