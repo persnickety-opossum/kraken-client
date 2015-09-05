@@ -192,8 +192,8 @@ var MapTab = React.createClass({
     this.setState({ searchString: event.nativeEvent.text });
   },
 
-  _onSearchTextSubmit: function (event) {
-    event.nativeEvent.text = '';
+  _onSearchTextSubmit: function () {
+    this._textInput.setNativeProps({text: ''});
     this.setState({searchPins: []});
     this._venueQuery(config.serverURL + '/api/search/query/'+this.state.searchString+'/'+this.state.center.latitude+','+this.state.center.longitude, false);
   },
@@ -268,6 +268,7 @@ var MapTab = React.createClass({
           onUpdateUserLocation={this.onUpdateUserLocation} />
         <View style={styles.flowRight}>
           <TextInput
+            ref={component => this._textInput = component}
             style={styles.searchInput}
             onChange={this._onSearchTextChanged}
             onSubmitEditing={this._onSearchTextSubmit}
