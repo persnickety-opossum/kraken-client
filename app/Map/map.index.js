@@ -211,7 +211,7 @@ var MapTab = React.createClass({
 
   // method for recentering and reset zoom level based on current location 
   _onCenterPressed: function () {
-    this.setCenterCoordinateZoomLevelAnimated(this.state.mapRef, 37.783585, -122.408955, 14)
+    this.setCenterCoordinateZoomLevelAnimated(this.state.mapRef, 37.783585, -122.408955, 15)
   },
 
   // method for changing style of map on button press - NOT in working state because new map style covers old pins
