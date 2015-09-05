@@ -1,5 +1,6 @@
 'use strict';
 
+// require modules
 var React = require('react-native');
 var MapboxGLMap = require('react-native-mapbox-gl');
 var mapRef = 'mapRef';
@@ -10,6 +11,7 @@ moment().format();
 var Display = require('react-native-device-display');
 var config = require('../config');
 
+// require React Native modules
 var {
   AppRegistry,
   StyleSheet,
@@ -191,12 +193,10 @@ var MapTab = React.createClass({
   // method for changing style of map on button press - NOT in working state because new map style covers old pins
   _onStylePressed: function () {
     if(this.state.currentMap === 4) {
-      this.setState({currentMap: 0});
+      this.setState({currentMap: 0}, function(){this._displayPins()});
     } else {
-      this.setState({currentMap: this.state.currentMap+1});
+      this.setState({currentMap: this.state.currentMap+1}, function(){this._displayPins()});
     }
-    this.render();
-    this._displayPins();
   },
 
   render: function() {
@@ -266,12 +266,12 @@ var MapTab = React.createClass({
             returnKeyType='search'
             placeholder='Search'/>
         </View>    
-        {/*<TouchableHighlight 
+        {<TouchableHighlight 
           style={styles.button}
           underlayColor='#99d9f4'
           onPress={this._onStylePressed} >
           <Text style={styles.buttonText}>Style</Text>
-        </TouchableHighlight>*/}
+        </TouchableHighlight>}
       </View>
     );
   }
@@ -322,34 +322,3 @@ var styles = StyleSheet.create({
 
 module.exports = MapTab;
 
-
-
-//annotations
-// {
-//   latitude: 40.72052634,
-//   longitude: -73.97686958312988,
-//   title: 'This is marker 1',
-//   subtitle: 'It has a rightCalloutAccessory too',
-//   rightCalloutAccessory: {
-//     url: 'https://cldup.com/9Lp0EaBw5s.png',
-//     height: 1000,
-//     width: 100
-//   },
-//   annotationImage: {
-//     url: 'https://cldup.com/CnRLZem9k9.png',
-//     height: 100,
-//     width: 100
-//   },
-//   id: 'marker1'
-// }, {
-//   latitude: 40.714541341726175,
-//   longitude: -74.00579452514648,
-//   title: 'Important!',
-//   subtitle: 'Neat, this is a custom annotation image',
-//   annotationImage: {
-//     url: 'https://cldup.com/7NLZklp8zS.png',
-//     height: 25,
-//     width: 25
-//   },
-//   id: 'marker2'
-// }
