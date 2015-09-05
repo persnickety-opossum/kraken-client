@@ -93,9 +93,21 @@ var MapTab = React.createClass({
   componentWillMount: function() {
     navigator.geolocation.getCurrentPosition(
       (initialPosition) =>  this.setState({
-        geolocation: initialPosition
+        geolocation: initialPosition,
+        center: {
+          latitude: initialPosition.coords.latitude,
+          longitude: initialPosition.coords.longitude
+        }
       }),
-      (error) => alert(error.message),
+      (error) => {
+        this.setState({
+          center: {
+            latitude: 37.783585,
+            longitude: -122.408955
+          }
+        });
+        alert(error.message);
+      },
       {enableHighAccuracy: true, timeout: 20000, maximumAge: 1000}
     );
     this.watchID = navigator.geolocation.watchPosition((lastPosition) => {
