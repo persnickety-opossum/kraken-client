@@ -289,6 +289,8 @@ var VenueTab = React.createClass({
         <Button style={styles.commentButton} onPress={this.submitComment}>
           Submit Comment
         </Button>
+        <Image source={{uri: 'https://facebook.github.io/react/img/logo_og.png'}}
+               style={{width: 40, height: 40}} />
         <RefreshableListView
           style={styles.listView}
           dataSource={this.state.dataSource}
@@ -300,7 +302,8 @@ var VenueTab = React.createClass({
       </View>
 
     );
-  }
+  },
+
 });
 
 var styles = StyleSheet.create({
@@ -350,10 +353,11 @@ var styles = StyleSheet.create({
     alignSelf: 'flex-end'
   },
   listView: {
-    margin: 10,
     flex: 1,
+    flexDirection: 'column',
+    margin: 10,
     bottom: 0,
-    height: Display.height * 0.49,
+    //height: Display.height * 0.49,
     //bottom: Display.height - (Display.height - 50)
   }
 });
