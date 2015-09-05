@@ -233,7 +233,7 @@ var VenueTab = React.createClass({
         })
           .then(response => response.json())
           .then(json => {
-            this.setState({venue: json, dataSource: ds.cloneWithRows(json.comments)},
+            this.setState({venue: json},
               function() {
                 this.getOverallRating();
               });
