@@ -76,7 +76,8 @@ var MapTab = React.createClass({
               title: currVenue.title,
               description: currVenue.description,
               address: currVenue.address,
-              coordinates: currVenue.coordinates,
+              latitude: currVenue.latitude,
+              longitude: currVenue.longitude,
               creator: this.state.user,
               datetime: new Date().toISOString(),
             })
@@ -157,10 +158,6 @@ var MapTab = React.createClass({
   _handleResponse: function (venues, inDb) {
     var context = this;
     venues.forEach(function (venue) {
-      var coords = venue.coordinates.split(',');
-
-      venue.latitude = parseFloat(coords[0]);
-      venue.longitude = parseFloat(coords[1]);
       venue.rightCalloutAccessory = {
         url: 'image!arrow',
         height: 25,
