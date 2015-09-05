@@ -101,20 +101,32 @@ var MapTab = React.createClass({
   },
 
   componentWillMount: function() {
-    // retrieve user id, may be replaced with device UUID in the future
-    var context = this;
-    this.eventEmitter = this.props.eventEmitter;
-    fetch(config.serverURL + '/api/users/', {
-      method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({token: config.userToken})
-    }) // no ;
-      .then(response => response.json())
-      .then(json => context.setState({user: json._id}));
+    this._currentLocation();
 
+    this.watchID = navigator.geolocation.watchPosition((lastPosition) => {
+      this.setState({
+        geolocation: lastPosition,
+      });
+      this.eventEmitter.emit('positionUpdated', lastPosition);
+    });
+
+    this.eventEmitter = this.props.eventEmitter;
+
+    this._venueQuery(config.serverURL + '/api/venues', true);
+  },
+
+  // helper function to fetch venue data from server
+  _venueQuery: function(url, inDB) {
+    fetch(url)
+      .then(response => response.json())
+      .then(json => this._handleResponse(json, inDB))
+      .catch(function(err) {
+        console.log(err);
+      });  
+  },
+
+  // helper function to update center of map
+  _currentLocation: function() {
     navigator.geolocation.getCurrentPosition(
       (initialPosition) =>  this.setState({
         geolocation: initialPosition,
@@ -134,25 +146,6 @@ var MapTab = React.createClass({
       },
       {enableHighAccuracy: true, timeout: 20000, maximumAge: 1000}
     );
-    this.watchID = navigator.geolocation.watchPosition((lastPosition) => {
-      this.setState({
-        geolocation: lastPosition,
-      });
-      this.eventEmitter.emit('positionUpdated', lastPosition);
-    });
-
-    this._venueQuery(config.serverURL + '/api/venues', true);
-
-    this.setState({user: this.props.user});
-  },
-
-  _venueQuery: function(url, inDB) {
-    fetch(url)
-      .then(response => response.json())
-      .then(json => this._handleResponse(json, inDB))
-      .catch(function(err) {
-        console.log(err);
-      });
   },
 
   _handleResponse: function (venues, inDb) {
@@ -213,12 +206,18 @@ var MapTab = React.createClass({
     this._venueQuery(config.serverURL + '/api/search/query/'+this.state.searchString+'/'+this.state.center.latitude+','+this.state.center.longitude, false);
   },
 
+
+  // method for recentering and reset zoom level based on current location 
+  _onCenterPressed: function () {
+    this._currentLocation();
+  },
+
   // method for changing style of map on button press - NOT in working state because new map style covers old pins
   _onStylePressed: function () {
     if(this.state.currentMap === 4) {
-      this.setState({currentMap: 0}, function(){this._displayPins()});
+      this.setState({currentMap: 0});
     } else {
-      this.setState({currentMap: this.state.currentMap+1}, function(){this._displayPins()});
+      this.setState({currentMap: this.state.currentMap+1});
     }
   },
 
@@ -271,7 +270,7 @@ var MapTab = React.createClass({
           showsUserLocation={true}
           ref={mapRef}
           accessToken={'pk.eyJ1IjoibWFyeW1hc29uIiwiYSI6IjM1NGVhNWZmNzQ5Yjk5NTczMDFhMzc3Zjg2ZGEyYzI0In0.7IdD26iFQhD2b6LbTIw_Sw'}
-          styleURL='asset://styles/light-v7.json'
+          styleURL={this.state.mapStyle[0]}
           centerCoordinate={this.state.center}
           userLocationVisible={true}
           zoomLevel={this.state.zoom}
@@ -290,12 +289,18 @@ var MapTab = React.createClass({
             returnKeyType='search'
             placeholder='Search'/>
         </View>
-        {/*<TouchableHighlight 
-         style={styles.button}
-         underlayColor='#99d9f4'
-         onPress={this._onStylePressed} >
-         <Text style={styles.buttonText}>Style</Text>
-         </TouchableHighlight>*/}
+        <TouchableHighlight 
+          style={styles.button}
+          underlayColor='#99d9f4'
+          onPress={this._onCenterPressed} >
+          <Text style={styles.buttonText}>Center</Text>
+        </TouchableHighlight>
+        <TouchableHighlight 
+          style={styles.button}
+          underlayColor='#99d9f4'
+          onPress={this._onStylePressed} >
+          <Text style={styles.buttonText}>Style</Text>
+        </TouchableHighlight>
       </View>
     );
   }
@@ -330,15 +335,15 @@ var styles = StyleSheet.create({
     borderColor: '#23FCA6',
     color: '#8C8C8C'
   },
-  button: {
-    height: 36,
-    flex: 1,
+    button: {
+    height: 40,
+    width: 40,
     flexDirection: 'row',
     backgroundColor: '#48BBEC',
     borderColor: '#48BBEC',
     borderWidth: 1,
     borderRadius: 8,
-    marginBottom: 10,
+    marginBottom: 50,
     alignSelf: 'stretch',
     justifyContent: 'center'
   },

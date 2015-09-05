@@ -5,7 +5,7 @@ var EventEmitter = require('EventEmitter');
 var Subscribable = require('Subscribable');
 var MapTab = require('./app/Map/map.index');
 var VenueTab = require('./app/Venue/venue.index');
-var WebTab = require('./app/GMap/gmap.index');
+var SettingsTab = require('./app/Settings/settings.index');
 var MapboxGLMap = require('react-native-mapbox-gl');
 var mapRef = 'mapRef';
 var moment = require('moment');
@@ -97,17 +97,17 @@ var persnickety = React.createClass({
             </View>
           </TabBarIOS.Item>
 
-          <TabBarIOS.Item
-            title="G-Map"
-            icon={ require('image!settings') }
-            onPress={ () => this.changeTab('settings') }
-            selected={ this.state.selectedTab === 'settings' }>
-            <View style={ styles.pageView }>
-              <WebTab />
-            </View>
-          </TabBarIOS.Item>
-        </TabBarIOS>
-      </View>
+        <TabBarIOS.Item
+          title="Settings"
+          icon={ require('image!settings') }
+          onPress={ () => this.changeTab('settings') }
+          selected={ this.state.selectedTab === 'settings' }>
+          <View style={ styles.pageView }>
+            <SettingsTab />
+          </View>
+        </TabBarIOS.Item>
+      </TabBarIOS>
+    </View>
     );
   }
 });
