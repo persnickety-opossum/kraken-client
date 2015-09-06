@@ -3,7 +3,7 @@
 // require modules
 var React = require('react-native');
 var MapboxGLMap = require('react-native-mapbox-gl');
-
+var mapRef = 'mapRef';
 var EventEmitter = require('EventEmitter');
 var Subscribable = require('Subscribable');
 var moment = require('moment');
@@ -37,7 +37,6 @@ var MapTab = React.createClass({
       mapStyle: ['asset://styles/emerald-v7.json', 'asset://styles/dark-v7.json', 'asset://styles/light-v7.json', 'asset://styles/mapbox-streets-v7.json', 'asset://styles/satellite-v7.json'],
       currentMap: 1,
       user: this.props.user,
-      mapRef: 'mapRef'
     };
   },
 
@@ -211,17 +210,15 @@ var MapTab = React.createClass({
 
   // method for recentering and reset zoom level based on current location 
   _onCenterPressed: function () {
-    this.setCenterCoordinateZoomLevelAnimated(this.state.mapRef, 37.783585, -122.408955, 15)
+    this.setCenterCoordinateZoomLevelAnimated(mapRef, 37.783585, -122.408955, 15)
   },
 
   // method for changing style of map on button press - NOT in working state because new map style covers old pins
   _onStylePressed: function () {
     if(this.state.currentMap === 4) {
       this.setState({currentMap: 0});
-      this.setState({mapRef: 'mapRef'})
     } else {
       this.setState({currentMap: this.state.currentMap+1});
-      this.setState({mapRef: 'mapRef'})
     }
   },
 
@@ -272,9 +269,9 @@ var MapTab = React.createClass({
           scrollEnabled={true}
           zoomEnabled={true}
           showsUserLocation={true}
-          ref={this.state.mapRef}
+          ref={mapRef}
           accessToken={'pk.eyJ1IjoibWFyeW1hc29uIiwiYSI6IjM1NGVhNWZmNzQ5Yjk5NTczMDFhMzc3Zjg2ZGEyYzI0In0.7IdD26iFQhD2b6LbTIw_Sw'}
-          styleURL={this.state.mapStyle[this.state.currentMap]}
+          styleURL={'asset://styles/light-v7.json'}
           centerCoordinate={this.state.center}
           userLocationVisible={true}
           zoomLevel={this.state.zoom}
