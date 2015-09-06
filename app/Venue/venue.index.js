@@ -283,7 +283,8 @@ var VenueTab = React.createClass({
           style={styles.horizontalScrollView}
           showsHorizontalScrollIndicator={false}
           showsVerticalScrollIndicator={false}
-          contentContainerStyle={styles.contentContainer}>
+          contentContainerStyle={styles.contentContainer}
+          iosdirectionalLockEnabled={true}>
           {THUMB_URLS.map(createThumbRow)}
         </ScrollView>
         <TextInput
@@ -394,9 +395,15 @@ var styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'row'
   },
+  //contentContainer: {
+  //  height: 70,
+  //  width: 70,
+  //  flex: 1
+  //},
   thumbView: {
     flex: 1,
-    height: 70
+    height: 70,
+    width: 70
   }
   //contentContainer: {
   //  //height: 0,
