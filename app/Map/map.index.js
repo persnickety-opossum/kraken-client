@@ -85,6 +85,7 @@ var MapTab = React.createClass({
           })
             .then(response => response.json())
             .then(json => {
+              json.datetime = moment(json.datetime).format("dddd, MMMM Do YYYY, h:mm:ss a");
               this.setState({searchPins: []})
               this.setState({venuePins: []})
               this._venueQuery(config.serverURL + '/api/venues', true)

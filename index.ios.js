@@ -94,7 +94,7 @@ var persnickety = React.createClass({
             onPress={ () => this.changeTab('venue') }
             selected={ this.state.selectedTab === 'venue' }>
             <View style={ styles.pageView }>
-              <VenueTab venue={this.state.venue} geolocation={this.state.geolocation} />
+              <VenueTab venue={this.state.venue} geolocation={this.state.geolocation} eventEmitter={this.eventEmitter} />
             </View>
           </TabBarIOS.Item>
 
