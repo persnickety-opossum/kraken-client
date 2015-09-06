@@ -20,6 +20,7 @@ var {
   TextInput,
   TouchableHighlight,
   View,
+  Image
   } = React;
 
 // create MapTab class
@@ -34,8 +35,8 @@ var MapTab = React.createClass({
       searchPins: [],
       annotations: [],
       mapStyle: ['asset://styles/emerald-v7.json', 'asset://styles/dark-v7.json', 'asset://styles/light-v7.json', 'asset://styles/mapbox-streets-v7.json', 'asset://styles/satellite-v7.json'],
-      currentMap: 0,
-      user: this.props.user
+      currentMap: 1,
+      user: this.props.user,
     };
   },
 
@@ -101,20 +102,32 @@ var MapTab = React.createClass({
   },
 
   componentWillMount: function() {
-    // retrieve user id, may be replaced with device UUID in the future
-    var context = this;
-    this.eventEmitter = this.props.eventEmitter;
-    fetch(config.serverURL + '/api/users/', {
-      method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({token: config.userToken})
-    }) // no ;
-      .then(response => response.json())
-      .then(json => context.setState({user: json._id}));
+    this._currentLocation();
 
+    this.watchID = navigator.geolocation.watchPosition((lastPosition) => {
+      this.setState({
+        geolocation: lastPosition,
+      });
+      this.eventEmitter.emit('positionUpdated', lastPosition);
+    });
+
+    this.eventEmitter = this.props.eventEmitter;
+
+    this._venueQuery(config.serverURL + '/api/venues', true);
+  },
+
+  // helper function to fetch venue data from server
+  _venueQuery: function(url, inDB) {
+    fetch(url)
+      .then(response => response.json())
+      .then(json => this._handleResponse(json, inDB))
+      .catch(function(err) {
+        console.log(err);
+      });  
+  },
+
+  // helper function to update center of map
+  _currentLocation: function() {
     navigator.geolocation.getCurrentPosition(
       (initialPosition) =>  this.setState({
         geolocation: initialPosition,
@@ -134,25 +147,6 @@ var MapTab = React.createClass({
       },
       {enableHighAccuracy: true, timeout: 20000, maximumAge: 1000}
     );
-    this.watchID = navigator.geolocation.watchPosition((lastPosition) => {
-      this.setState({
-        geolocation: lastPosition,
-      });
-      this.eventEmitter.emit('positionUpdated', lastPosition);
-    });
-
-    this._venueQuery(config.serverURL + '/api/venues', true);
-
-    this.setState({user: this.props.user});
-  },
-
-  _venueQuery: function(url, inDB) {
-    fetch(url)
-      .then(response => response.json())
-      .then(json => this._handleResponse(json, inDB))
-      .catch(function(err) {
-        console.log(err);
-      });
   },
 
   _handleResponse: function (venues, inDb) {
@@ -213,12 +207,18 @@ var MapTab = React.createClass({
     this._venueQuery(config.serverURL + '/api/search/query/'+this.state.searchString+'/'+this.state.latitude+','+this.state.longitude, false);
   },
 
+
+  // method for recentering and reset zoom level based on current location 
+  _onCenterPressed: function () {
+    this.setCenterCoordinateZoomLevelAnimated(mapRef, 37.783585, -122.408955, 15)
+  },
+
   // method for changing style of map on button press - NOT in working state because new map style covers old pins
   _onStylePressed: function () {
     if(this.state.currentMap === 4) {
-      this.setState({currentMap: 0}, function(){this._displayPins()});
+      this.setState({currentMap: 0});
     } else {
-      this.setState({currentMap: this.state.currentMap+1}, function(){this._displayPins()});
+      this.setState({currentMap: this.state.currentMap+1});
     }
   },
 
@@ -271,7 +271,7 @@ var MapTab = React.createClass({
           showsUserLocation={true}
           ref={mapRef}
           accessToken={'pk.eyJ1IjoibWFyeW1hc29uIiwiYSI6IjM1NGVhNWZmNzQ5Yjk5NTczMDFhMzc3Zjg2ZGEyYzI0In0.7IdD26iFQhD2b6LbTIw_Sw'}
-          styleURL='asset://styles/light-v7.json'
+          styleURL={'asset://styles/light-v7.json'}
           centerCoordinate={this.state.center}
           userLocationVisible={true}
           zoomLevel={this.state.zoom}
@@ -290,12 +290,18 @@ var MapTab = React.createClass({
             returnKeyType='search'
             placeholder='Search'/>
         </View>
+        <TouchableHighlight onPress={this._onCenterPressed}> 
+          <Image
+            style={styles.button}
+            source={require('image!target')}
+          />
+        </TouchableHighlight>
         {/*<TouchableHighlight 
-         style={styles.button}
-         underlayColor='#99d9f4'
-         onPress={this._onStylePressed} >
-         <Text style={styles.buttonText}>Style</Text>
-         </TouchableHighlight>*/}
+          style={styles.stylebutton}
+          underlayColor='#99d9f4'
+          onPress={this._onStylePressed}>
+          <Text style={styles.buttonText}>Style</Text>
+        </TouchableHighlight>*/}
       </View>
     );
   }
@@ -331,16 +337,18 @@ var styles = StyleSheet.create({
     color: '#8C8C8C'
   },
   button: {
-    height: 36,
-    flex: 1,
-    flexDirection: 'row',
-    backgroundColor: '#48BBEC',
-    borderColor: '#48BBEC',
-    borderWidth: 1,
-    borderRadius: 8,
-    marginBottom: 10,
-    alignSelf: 'stretch',
-    justifyContent: 'center'
+    height: 40,
+    width: 40,
+    position: 'absolute',
+    bottom: 50,
+    right: 30
+  },
+  stylebutton: {
+    height: 40,
+    width: 40,
+    position: 'absolute',
+    bottom: 50,
+    left: 30
   },
 });
 
