@@ -10,6 +10,7 @@ var moment = require('moment');
 moment().format();
 var Display = require('react-native-device-display');
 var config = require('../config');
+var DeviceUUID = require("react-native-device-uuid");
 
 // require React Native modules
 var {
@@ -35,8 +36,7 @@ var MapTab = React.createClass({
       searchPins: [],
       annotations: [],
       mapStyle: ['asset://styles/emerald-v7.json', 'asset://styles/dark-v7.json', 'asset://styles/light-v7.json', 'asset://styles/mapbox-streets-v7.json', 'asset://styles/satellite-v7.json'],
-      currentMap: 1,
-      user: this.props.user,
+      currentMap: 1
     };
   },
 
@@ -102,6 +102,30 @@ var MapTab = React.createClass({
   },
 
   componentWillMount: function() {
+    // retrieve user id, may be replaced with device UUID in the future
+    var context = this;
+    // Get Device UUID
+    DeviceUUID.getUUID().then((uuid) => {
+      console.log('Device ID >>>>>>>>> ', uuid);
+      return uuid;
+    })
+      .then((uuid) => {
+        fetch(config.serverURL + '/api/users/', {
+          method: 'POST',
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({token: uuid})
+        }) // no ;
+          .then(response => response.json())
+          .then(json => context.setState({user: json._id}));
+        this.getOverallRating();
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+
     this._currentLocation();
 
     this.watchID = navigator.geolocation.watchPosition((lastPosition) => {
@@ -211,7 +235,8 @@ var MapTab = React.createClass({
 
   // method for recentering and reset zoom level based on current location 
   _onCenterPressed: function () {
-    this.setCenterCoordinateZoomLevelAnimated(mapRef, 37.783585, -122.408955, 15)
+    //this.setCenterCoordinateZoomLevelAnimated(mapRef, 37.783585, -122.408955, 15);
+    this.setCenterCoordinateZoomLevelAnimated(mapRef, this.state.center.latitude, this.state.center.longitude, 15)
   },
 
   // method for changing style of map on button press - NOT in working state because new map style covers old pins

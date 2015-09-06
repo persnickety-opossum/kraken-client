@@ -284,7 +284,8 @@ var VenueTab = React.createClass({
           showsHorizontalScrollIndicator={false}
           showsVerticalScrollIndicator={false}
           contentContainerStyle={styles.contentContainer}
-          iosdirectionalLockEnabled={true}>
+          directionalLockEnabled={true}
+          automaticallyAdjustContentInsets={false}>
           {THUMB_URLS.map(createThumbRow)}
         </ScrollView>
         <TextInput
@@ -298,7 +299,6 @@ var VenueTab = React.createClass({
         <Button style={styles.commentButton} onPress={this.submitComment}>
           Submit Comment
         </Button>
-
         <RefreshableListView
           style={styles.refreshableListView}
           dataSource={this.state.dataSource}
@@ -392,23 +392,22 @@ var styles = StyleSheet.create({
     height: 70,
     width: Display.width,
     marginTop: 10,
-    flex: 1,
-    flexDirection: 'row'
+    flex: 1
   },
-  //contentContainer: {
-  //  height: 70,
-  //  width: 70,
-  //  flex: 1
-  //},
+  contentContainer: {
+    height: 70,
+    //width: 70,
+    flex: 1,
+    margin: 0,
+    padding: 0
+  },
   thumbView: {
     flex: 1,
     height: 70,
-    width: 70
+    width: 70,
+    margin: 0,
+    padding: 0
   }
-  //contentContainer: {
-  //  //height: 0,
-  //  flex: 1
-  //}
 });
 
 module.exports = VenueTab;
