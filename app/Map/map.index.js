@@ -121,7 +121,6 @@ var MapTab = React.createClass({
         }) // no ;
           .then(response => response.json())
           .then(json => context.setState({user: json._id}));
-        this.getOverallRating();
       })
       .catch((err) => {
         console.log(err);
