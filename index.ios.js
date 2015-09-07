@@ -10,6 +10,7 @@ var MapboxGLMap = require('react-native-mapbox-gl');
 var mapRef = 'mapRef';
 var moment = require('moment');
 moment().format();
+var ImagesTab = require('./app/Images/images.index');
 
 var {
   AppRegistry,
@@ -93,21 +94,30 @@ var persnickety = React.createClass({
             onPress={ () => this.changeTab('venue') }
             selected={ this.state.selectedTab === 'venue' }>
             <View style={ styles.pageView }>
-              <VenueTab venue={this.state.venue} geolocation={this.state.geolocation} />
+              <VenueTab venue={this.state.venue} geolocation={this.state.geolocation} eventEmitter={this.eventEmitter} />
             </View>
           </TabBarIOS.Item>
 
-        <TabBarIOS.Item
-          title="Settings"
-          icon={ require('image!settings') }
-          onPress={ () => this.changeTab('settings') }
-          selected={ this.state.selectedTab === 'settings' }>
-          <View style={ styles.pageView }>
-            <SettingsTab />
-          </View>
-        </TabBarIOS.Item>
-      </TabBarIOS>
-    </View>
+          <TabBarIOS.Item
+            title="Settings"
+            icon={ require('image!settings') }
+            onPress={ () => this.changeTab('settings') }
+            selected={ this.state.selectedTab === 'settings' }>
+            <View style={ styles.pageView }>
+              <SettingsTab />
+            </View>
+          </TabBarIOS.Item>
+          <TabBarIOS.Item
+            title="Images"
+            icon={ require('image!messages') }
+            onPress={ () => this.changeTab('images') }
+            selected={ this.state.selectedTab === 'images' }>
+            <View style={ styles.pageView }>
+              <ImagesTab />
+            </View>
+          </TabBarIOS.Item>
+        </TabBarIOS>
+      </View>
     );
   }
 });
