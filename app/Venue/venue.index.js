@@ -11,6 +11,7 @@ var KeyboardEvents = require('react-native-keyboardevents');
 var KeyboardEventEmitter = KeyboardEvents.Emitter;
 var EventEmitter = require('EventEmitter');
 var Subscribable = require('Subscribable');
+var Video = require('react-native-video');
 
 var config = require('../config');
 
@@ -265,9 +266,30 @@ var VenueTab = React.createClass({
     this.setState({modalVisible: visible, uri: uri});
   },
 
+  showImageOrVideo() {
+    if (this.state.uri) {
+      if (this.state.uri.indexOf('.') === -1) { //(if video) this will have to be changed later.
+        return (
+          <Video source={{uri: this.state.uri}}
+                 rate={1.0}
+                 volume={1.0}
+                 muted={false}
+                 paused={false}
+                 resizeMode="cover"
+                 repeat={true}
+                 style={styles.video} />
+        )
+      } else { //if image
+        return (
+          <Image style={styles.image} source={{uri:this.state.uri}} />
+        )
+      }
+    }
+  },
+
   render() {
     var venue = this.props.venue;
-    var THUMB_URLS = ['http://www.fubiz.net/wp-content/uploads/2012/03/the-kraken-existence2.jpg', 'http://img2.wikia.nocookie.net/__cb20140311041907/villains/images/b/bb/The_Kraken.jpg', 'http://vignette2.wikia.nocookie.net/reddits-world/images/8/8e/Kraken_v2_by_elmisa-d70nmt4.jpg/revision/latest?cb=20140922042121', 'http://orig11.deviantart.net/ccd8/f/2011/355/0/c/kraken_by_elmisa-d4ju669.jpg', 'http://orig14.deviantart.net/40df/f/2014/018/d/4/the_kraken_by_alexstoneart-d72o83n.jpg', 'http://orig10.deviantart.net/bf30/f/2010/332/f/5/kraken_by_mabuart-d33tchk.jpg', 'http://static.comicvine.com/uploads/original/12/120846/2408132-kraken_by_neo_br.jpg', 'https://upload.wikimedia.org/wikipedia/commons/9/9d/Colossal_octopus_by_Pierre_Denys_de_Montfort.jpg', 'http://www.wallpaper4me.com/images/wallpapers/deathbykraken-39598.jpeg', 'http://img06.deviantart.net/3c5b/i/2012/193/d/9/kraken__work_in_progress_by_rkarl-d56zu66.jpg', 'http://i.gr-assets.com/images/S/photo.goodreads.com/hostedimages/1393990556r/8792967._SY540_.jpg', 'http://static.fjcdn.com/pictures/Kraken+found+on+tumblr_5b3d72_4520925.jpg'];
+    var THUMB_URLS = ['sneakers', 'http://www.fubiz.net/wp-content/uploads/2012/03/the-kraken-existence2.jpg', 'http://img2.wikia.nocookie.net/__cb20140311041907/villains/images/b/bb/The_Kraken.jpg', 'http://vignette2.wikia.nocookie.net/reddits-world/images/8/8e/Kraken_v2_by_elmisa-d70nmt4.jpg/revision/latest?cb=20140922042121', 'http://orig11.deviantart.net/ccd8/f/2011/355/0/c/kraken_by_elmisa-d4ju669.jpg', 'http://orig14.deviantart.net/40df/f/2014/018/d/4/the_kraken_by_alexstoneart-d72o83n.jpg', 'http://orig10.deviantart.net/bf30/f/2010/332/f/5/kraken_by_mabuart-d33tchk.jpg', 'http://static.comicvine.com/uploads/original/12/120846/2408132-kraken_by_neo_br.jpg', 'https://upload.wikimedia.org/wikipedia/commons/9/9d/Colossal_octopus_by_Pierre_Denys_de_Montfort.jpg', 'http://www.wallpaper4me.com/images/wallpapers/deathbykraken-39598.jpeg', 'http://img06.deviantart.net/3c5b/i/2012/193/d/9/kraken__work_in_progress_by_rkarl-d56zu66.jpg', 'http://i.gr-assets.com/images/S/photo.goodreads.com/hostedimages/1393990556r/8792967._SY540_.jpg', 'http://static.fjcdn.com/pictures/Kraken+found+on+tumblr_5b3d72_4520925.jpg'];
     return (
       <View>
         <Text style={styles.header}>
@@ -325,7 +347,7 @@ var VenueTab = React.createClass({
         <Modal visible={this.state.modalVisible === true}>
           <View style={styles.modalContainer}>
             <View style={styles.innerContainer}>
-              <Image style={styles.image} source={{uri: this.state.uri}} />
+              {this.showImageOrVideo()}
               <Button
                 onPress={this.setModalVisible.bind(this, false)}
                 style={styles.modalButton}>
@@ -340,6 +362,7 @@ var VenueTab = React.createClass({
   }
 });
 
+
 var Thumb = React.createClass({
   shouldComponentUpdate: function(nextProps, nextState) {
     return false;
@@ -353,10 +376,29 @@ var Thumb = React.createClass({
     this.eventEmitter.emit('imagePressed', this.props.uri);
   },
 
+  imageOrVideo() {
+    if (this.props.uri.indexOf('.') === -1) { // (if video) this will have to be changed. Vid names right now don't have dots.
+      return (
+        <Video source={{uri: this.props.uri}}
+               rate={1.0}
+               volume={1.0}
+               muted={true}
+               paused={true}
+               resizeMode="cover"
+               repeat={true}
+               style={styles.thumbVideo} />
+      )
+    } else { //if image
+      return (
+        <Image style={styles.thumbImage} source={{uri:this.props.uri}} />
+      )
+    }
+  },
+
   render: function() {
     return (
       <TouchableHighlight onPress={this.onPressImage}>
-        <Image style={styles.img} source={{uri:this.props.uri}} />
+        {this.imageOrVideo()}
       </TouchableHighlight>
     );
   }
@@ -419,7 +461,7 @@ var styles = StyleSheet.create({
     height: Display.height * 0.49
   },
 
-  img: {
+  thumbImage: {
     flex: 1,
     width: 70,
     height: 70,
@@ -471,6 +513,23 @@ var styles = StyleSheet.create({
     right: 0,
     fontSize: 20
   },
+
+  video: {
+    //position: 'absolute',
+    height: Display.width*1.33333,
+    width: Display.width,
+    flex: 1,
+    margin: 0,
+    padding: 0
+  },
+
+  thumbVideo: {
+    flex: 1,
+    width: 70,
+    height: 70,
+    margin: 0,
+    padding: 0
+  }
 });
 
 module.exports = VenueTab;
