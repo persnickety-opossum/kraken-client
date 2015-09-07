@@ -5,7 +5,12 @@ var EventEmitter = require('EventEmitter');
 var Subscribable = require('Subscribable');
 var MapTab = require('./app/Map/map.index');
 var VenueTab = require('./app/Venue/venue.index');
+<<<<<<< HEAD
 var SettingsTab = require('./app/Settings/settings.index');
+=======
+var WebTab = require('./app/GMap/gmap.index');
+var CameraTab = require('./app/Camera/camera.index');
+>>>>>>> Camera working. Installed react-native-camera and react-native-file-transfer, which is still working without the exit code -1 error.
 var MapboxGLMap = require('react-native-mapbox-gl');
 var mapRef = 'mapRef';
 var moment = require('moment');
@@ -115,6 +120,13 @@ var persnickety = React.createClass({
             <View style={ styles.pageView }>
               <ImagesTab />
             </View>
+          </TabBarIOS.Item>
+          <TabBarIOS.Item
+            title="Camera"
+            icon={ require('image!settings') }
+            onPress={ () => this.changeTab('camera') }
+            selected={ this.state.selectedTab === 'camera' }>
+            <CameraTab />
           </TabBarIOS.Item>
         </TabBarIOS>
       </View>

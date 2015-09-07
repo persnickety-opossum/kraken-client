@@ -39,6 +39,7 @@
 		5876B0641B94D3950015FD2C /* libc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 5876B0631B94D3950015FD2C /* libc++.tbd */; };
 		5876B0661B94D39F0015FD2C /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 5876B0651B94D39F0015FD2C /* libsqlite3.tbd */; };
 		5876B0681B94D3AE0015FD2C /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 5876B0671B94D3AE0015FD2C /* libz.tbd */; };
+		58D0261B1B9E09B4007C2C7E /* libRCTCamera.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 58D0261A1B9E0989007C2C7E /* libRCTCamera.a */; };
 		58DA62B11B9B6E6E0061748A /* .npmignore in Resources */ = {isa = PBXBuildFile; fileRef = 58DA62A71B9B6E6E0061748A /* .npmignore */; settings = {ASSET_TAGS = (); }; };
 		58DA62B21B9B6E6E0061748A /* DeviceUUID.ios.js in Resources */ = {isa = PBXBuildFile; fileRef = 58DA62A81B9B6E6E0061748A /* DeviceUUID.ios.js */; settings = {ASSET_TAGS = (); }; };
 		58DA62B31B9B6E6E0061748A /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = 58DA62A91B9B6E6E0061748A /* LICENSE */; settings = {ASSET_TAGS = (); }; };
@@ -140,6 +141,13 @@
 			remoteGlobalIDString = C5DBB34B1AF2EF2B00E611A9;
 			remoteInfo = RCTMapboxGLTests;
 		};
+		58D026191B9E0989007C2C7E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 58D026151B9E0989007C2C7E /* RCTCamera.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 4107012F1ACB723B00C6AA39;
+			remoteInfo = RCTCamera;
+		};
 		58DA62B91B9B6E6E0061748A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 58DA62AD1B9B6E6E0061748A /* RCTDeviceUUID.xcodeproj */;
@@ -200,6 +208,7 @@
 		5876B0631B94D3950015FD2C /* libc++.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libc++.tbd"; path = "usr/lib/libc++.tbd"; sourceTree = SDKROOT; };
 		5876B0651B94D39F0015FD2C /* libsqlite3.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.tbd; path = usr/lib/libsqlite3.tbd; sourceTree = SDKROOT; };
 		5876B0671B94D3AE0015FD2C /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
+		58D026151B9E0989007C2C7E /* RCTCamera.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTCamera.xcodeproj; path = "../node_modules/react-native-camera/RCTCamera.xcodeproj"; sourceTree = "<group>"; };
 		58DA62A71B9B6E6E0061748A /* .npmignore */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = .npmignore; sourceTree = "<group>"; };
 		58DA62A81B9B6E6E0061748A /* DeviceUUID.ios.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = DeviceUUID.ios.js; sourceTree = "<group>"; };
 		58DA62A91B9B6E6E0061748A /* LICENSE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
@@ -224,6 +233,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				58D0261B1B9E09B4007C2C7E /* libRCTCamera.a in Frameworks */,
 				041ABA6B1B97BC9200EA1CA0 /* libRNKeyboardEvents.a in Frameworks */,
 				5876B0681B94D3AE0015FD2C /* libz.tbd in Frameworks */,
 				5876B0661B94D39F0015FD2C /* libsqlite3.tbd in Frameworks */,
@@ -374,6 +384,14 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		58D026161B9E0989007C2C7E /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				58D0261A1B9E0989007C2C7E /* libRCTCamera.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		58DA62A61B9B6E6E0061748A /* react-native-device-uuid */ = {
 			isa = PBXGroup;
 			children = (
@@ -409,7 +427,7 @@
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
-				045FF7511B9D42C7004E4E11 /* RCTVideo.xcodeproj */,
+				58D026151B9E0989007C2C7E /* RCTCamera.xcodeproj */,
 				58DA62A61B9B6E6E0061748A /* react-native-device-uuid */,
 				041ABA591B97BB6A00EA1CA0 /* RNKeyboardEvents.xcodeproj */,
 				146833FF1AC3E56700842450 /* React.xcodeproj */,
@@ -520,7 +538,7 @@
 						TestTargetID = 13B07F861A680F5B00A75B9A;
 					};
 					13B07F861A680F5B00A75B9A = {
-						DevelopmentTeam = ZH9MLA6FW4;
+						DevelopmentTeam = G94YC2Z5HH;
 					};
 				};
 			};
@@ -539,6 +557,10 @@
 				{
 					ProductGroup = 00C302A81ABCB8CE00DB3ED1 /* Products */;
 					ProjectRef = 00C302A71ABCB8CE00DB3ED1 /* RCTActionSheet.xcodeproj */;
+				},
+				{
+					ProductGroup = 58D026161B9E0989007C2C7E /* Products */;
+					ProjectRef = 58D026151B9E0989007C2C7E /* RCTCamera.xcodeproj */;
 				},
 				{
 					ProductGroup = 58DA62AE1B9B6E6E0061748A /* Products */;
@@ -686,6 +708,13 @@
 			remoteRef = 5876B0491B94D1FE0015FD2C /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
+		58D0261A1B9E0989007C2C7E /* libRCTCamera.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libRCTCamera.a;
+			remoteRef = 58D026191B9E0989007C2C7E /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		58DA62BA1B9B6E6E0061748A /* libRCTDeviceUUID.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
@@ -825,7 +854,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 8.4;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.persnickety-corey-12";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.persnickety-corey-12123";
 				PRODUCT_NAME = Kraken;
 				PROVISIONING_PROFILE = "";
 			};
@@ -848,7 +877,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 8.4;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.persnickety-corey-12";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.persnickety-corey-12123";
 				PRODUCT_NAME = Kraken;
 				PROVISIONING_PROFILE = "";
 			};
