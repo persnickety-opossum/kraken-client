@@ -59,12 +59,15 @@ var KrakenCam = React.createClass({
     this.refs.cam.capture(function(err, path) {
       var obj = {
           uri: path,
-          uploadUrl: 'http://10.8.1.143:5000/api/media/venue/',
-          mimeType: 'image/jpeg',
+          uploadUrl: 'http://10.8.1.143:5000/media/',
+          // mimeType: 'image/jpeg', this seems optional?
           headers: {
             'Accept': 'application/json',
             'Content-Type': 'application/json',
           },
+          data: {
+            venue: 'hard-coded-in-camera.index.js'
+          }
       };
       NativeModules.FileTransfer.upload(obj, (err, res) => {
           console.log(err);
