@@ -46,8 +46,7 @@ var VenueTab = React.createClass({
       venue: this.props.venue,
       overallRating: 0,
       dataSource: ds.cloneWithRows(this.props.venue.comments),
-      keyboardSpace: 0,
-      userAlreadyPosted: false
+      keyboardSpace: 0
     };
   },
 
@@ -166,7 +165,7 @@ var VenueTab = React.createClass({
     if (ratings.length > 0) {
       var average = Math.round(sum / ratings.length);
     } else {
-      var average = 'No ratings yet!';
+      var average = 'No ratings!';
     }
     this.setState({overallRating: average});
   },
@@ -224,7 +223,6 @@ var VenueTab = React.createClass({
             userAlreadyPosted = true;
             icon = res.comments[i].icon;
             color = res.comments[i].color;
-            userAlreadyPosted = true;
             break;
           }
         }
@@ -311,13 +309,13 @@ var VenueTab = React.createClass({
       if (this.state.uri.indexOf('.') === -1) { //(if video) this will have to be changed later.
         return (
           <Video source={{uri: this.state.uri}}
-                 rate={1.0}
-                 volume={1.0}
-                 muted={false}
-                 paused={false}
-                 resizeMode="cover"
-                 repeat={true}
-                 style={styles.video} />
+            rate={1.0}
+            volume={1.0}
+            muted={false}
+            paused={false}
+            resizeMode="cover"
+            repeat={true}
+            style={styles.video} />
         )
       } else { //if image
         return (
@@ -343,9 +341,6 @@ var VenueTab = React.createClass({
         </Text>
         <Text style={[styles.text, styles.alignLeft]} >
           Address: {venue.address}
-        </Text>
-        <Text style={styles.text} >
-          Time: {venue.datetime}
         </Text>
         <Text style={[styles.text, styles.yourRating]} >
           Overall rating: {this.state.overallRating} | Your last rating: {this.state.voteValue}
@@ -420,13 +415,13 @@ var Thumb = React.createClass({
     if (this.props.uri.indexOf('.') === -1) { // (if video) this will have to be changed. Vid names right now don't have dots.
       return (
         <Video source={{uri: this.props.uri}}
-               rate={1.0}
-               volume={1.0}
-               muted={true}
-               paused={true}
-               resizeMode="cover"
-               repeat={true}
-               style={styles.thumbVideo} />
+          rate={1.0}
+          volume={1.0}
+          muted={true}
+          paused={true}
+          resizeMode="cover"
+          repeat={true}
+          style={styles.thumbVideo} />
       )
     } else { //if image
       return (
