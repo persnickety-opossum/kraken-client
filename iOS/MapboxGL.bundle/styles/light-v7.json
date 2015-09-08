@@ -35,7 +35,7 @@
       "stops": [[14, 4], [20, 8]]
     },
     "@building-outline": "#c0c0c0",
-    "@park": "#A6E22E",
+    "@park": "#BBF0A8",
     "@rail-width": {
       "base": 1.5,
       "stops": [[14, 0.5], [20, 1]]
@@ -64,7 +64,7 @@
     "@label": "#666",
     "@label-halo": "#fff",
     "@grass": "#e5e5e5",
-    "@water": "#66D9EF",
+    "@water": "#BAE8F7",
     "@state-label": {
       "base": 1,
       "stops": [[0, "#929292"], [20, "#929292"]]

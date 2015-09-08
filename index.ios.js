@@ -3,14 +3,17 @@
 var React = require('react-native');
 var EventEmitter = require('EventEmitter');
 var Subscribable = require('Subscribable');
+
+// require tab views
 var MapTab = require('./app/Map/map.index');
 var VenueTab = require('./app/Venue/venue.index');
 var SettingsTab = require('./app/Settings/settings.index');
+var VideoTab = require('./app/SCRecorder/screcorder.index');
+
 var MapboxGLMap = require('react-native-mapbox-gl');
 var mapRef = 'mapRef';
 var moment = require('moment');
 moment().format();
-var ImagesTab = require('./app/Images/images.index');
 
 var {
   AppRegistry,
@@ -108,12 +111,12 @@ var persnickety = React.createClass({
             </View>
           </TabBarIOS.Item>
           <TabBarIOS.Item
-            title="Images"
-            icon={ require('image!messages') }
-            onPress={ () => this.changeTab('images') }
-            selected={ this.state.selectedTab === 'images' }>
+            title="Video"
+            icon={ require('image!video') }
+            onPress={ () => this.changeTab('video') }
+            selected={ this.state.selectedTab === 'video' }>
             <View style={ styles.pageView }>
-              <ImagesTab />
+              <VideoTab />
             </View>
           </TabBarIOS.Item>
         </TabBarIOS>
