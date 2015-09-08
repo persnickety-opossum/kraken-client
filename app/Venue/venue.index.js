@@ -180,6 +180,12 @@ var VenueTab = React.createClass({
     if (comments) {
       var icon = 'fontawesome|' + comments.icon;
       var color = comments.color;
+      var atVenue = comments.atVenue;
+      if (atVenue) {
+        var commentTextColor = '#000000';
+      } else {
+        var commentTextColor = '#898888';
+      }
       return (
         <View style={styles.commentContainer} flexWrap="wrap">
           <Icon
@@ -188,7 +194,7 @@ var VenueTab = React.createClass({
             color={color}
             style={styles.icon}
             />
-          <Text flexWrap="wrap" numberOfLines={3} style={styles.commentText}>{comments.datetime}: {comments.content}</Text>
+          <Text flexWrap="wrap" numberOfLines={3} style={{flex: 1, color: commentTextColor}}>{comments.datetime}: {comments.content}</Text>
         </View>
       )
     }
@@ -215,6 +221,11 @@ var VenueTab = React.createClass({
     var userAlreadyPosted = false;
     var icon;
     var color;
+    if (this.state.atVenue === false) {
+      this.setState({commentColor: '#898888'});
+    } else {
+      this.setState({commentColor: '#000000'});
+    }
     fetch(route)
       .then(response => response.json())
       .then(res => {
@@ -235,7 +246,7 @@ var VenueTab = React.createClass({
           var creator = this.state.user;
           var venue = this.state.venue._id;
           var datetime = new Date().toISOString();
-          var atVenue = true;
+          var atVenue = this.state.atVenue;
           fetch(config.serverURL + '/api/comments/', {
             method: 'post',
             headers: {
