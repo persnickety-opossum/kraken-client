@@ -12,6 +12,7 @@ var KeyboardEventEmitter = KeyboardEvents.Emitter;
 var EventEmitter = require('EventEmitter');
 var Subscribable = require('Subscribable');
 var Video = require('react-native-video');
+var { Icon, } = require('react-native-icons');
 
 var config = require('../config');
 
@@ -62,9 +63,6 @@ var VenueTab = React.createClass({
   },
 
   reloadComments() {
-    console.log(this.state.venue);
-
-    console.log('device height:     ', Display.height);
     var route = config.serverURL + '/api/venues/' + this.state.venue._id;
     fetch(route)
       .then(response => response.json())
@@ -167,7 +165,7 @@ var VenueTab = React.createClass({
     if (ratings.length > 0) {
       var average = Math.round(sum / ratings.length);
     } else {
-      var average = 'No ratings yet!';
+      var average = 'No ratings!';
     }
     this.setState({overallRating: average});
   },
@@ -179,48 +177,99 @@ var VenueTab = React.createClass({
   },
 
   renderComments(comments) {
-    return <Text>{comments.datetime}: {comments.content}</Text>
-    //return <Text>{comments}</Text>
+    if (comments) {
+      var icon = 'fontawesome|' + comments.icon;
+      var color = comments.color;
+      var atVenue = comments.atVenue;
+      if (atVenue) {
+        var commentTextColor = '#000000';
+      } else {
+        var commentTextColor = '#898888';
+      }
+      return (
+        <View style={styles.commentContainer} flexWrap="wrap">
+          <Icon
+            name={icon}
+            size={19}
+            color={color}
+            style={styles.icon}
+            />
+          <Text flexWrap="wrap" numberOfLines={3} style={{flex: 1, color: commentTextColor}}>{comments.datetime}: {comments.content}</Text>
+        </View>
+      )
+    }
+  },
+
+  getRandomColor() {
+    var letters = '0123456789ABCDEF'.split('');
+    var color = '#';
+    for (var i = 0; i < 6; i++ ) {
+      color += letters[Math.floor(Math.random() * 16)];
+    }
+    console.log(color);
+    return color;
+  },
+
+  getRandomIcon() {
+    var icons = ['hourglass', 'automobile', 'binoculars', 'birthday-cake', 'bullhorn', 'paw', 'plane', 'ship', 'truck', 'rocket', 'motorcycle', 'balance-scale', 'bank', 'beer', 'bell-o', 'book', 'coffee', 'flag-checkered', 'money', 'lightbulb-o', 'paint-brush', 'suitcase', 'shopping-cart', 'bolt', 'camera', 'headphones'];
+    return icons[Math.floor(Math.random()*icons.length)];
   },
 
   submitComment() {
-    //this gets called when "submit comment" gets pushed.
-    // {
-//   content: "Comment text",
-//   creator: "55e39290c2b4e82b4839046a", // ID of the user posting the comment
-//   venue: "55e394d6c2b4e82b48390473", // ID of the event that the comment is associated with
-//   datetime: "2016-03-30T06:20:46.000Z",
-//   atVenue: true
-// }
     var context = this;
-    if (this.state.text) {
-      var content = this.state.text;
-      //TODO: make creator the actual creator, not a hardcoded creator
-      var creator = this.state.user; //hardcoded for now
-      var venue = this.state.venue._id;
-      var datetime = new Date().toISOString();
-      var atVenue = true;
-      console.log('This is the post object: ', content, creator, venue, datetime, atVenue);
-      fetch(config.serverURL + '/api/comments/', {
-        method: 'post',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          content: content,
-          creator: creator,
-          venue: venue,
-          datetime: datetime,
-          atVenue: atVenue
-        })
-      })
-        .then(function(res) {
-          context.setState({text: ''});
-          context.reloadComments();
-          return res.json();
-        })
+    var route = config.serverURL + '/api/venues/' + this.state.venue._id;
+    var userAlreadyPosted = false;
+    var icon;
+    var color;
+    if (this.state.atVenue === false) {
+      this.setState({commentColor: '#898888'});
+    } else {
+      this.setState({commentColor: '#000000'});
     }
+    fetch(route)
+      .then(response => response.json())
+      .then(res => {
+        for (var i = 0; i < res.comments.length; i++) {
+          if (res.comments[i].creator === context.state.user) {
+            userAlreadyPosted = true;
+            icon = res.comments[i].icon;
+            color = res.comments[i].color;
+            break;
+          }
+        }
+        if (userAlreadyPosted === false) {
+          icon = context.getRandomIcon();
+          color = context.getRandomColor();
+        }
+        if (this.state.text) {
+          var content = this.state.text;
+          var creator = this.state.user;
+          var venue = this.state.venue._id;
+          var datetime = new Date().toISOString();
+          var atVenue = this.state.atVenue;
+          fetch(config.serverURL + '/api/comments/', {
+            method: 'post',
+            headers: {
+              'Accept': 'application/json',
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              content: content,
+              creator: creator,
+              venue: venue,
+              datetime: datetime,
+              atVenue: atVenue,
+              icon: icon,
+              color: color
+            })
+          })
+            .then(function(res) {
+              context.setState({text: ''});
+              context.reloadComments();
+              return res.json();
+            })
+        }
+      })
   },
 
   slidingComplete(voteValue, venue) {
@@ -271,13 +320,13 @@ var VenueTab = React.createClass({
       if (this.state.uri.indexOf('.') === -1) { //(if video) this will have to be changed later.
         return (
           <Video source={{uri: this.state.uri}}
-                 rate={1.0}
-                 volume={1.0}
-                 muted={false}
-                 paused={false}
-                 resizeMode="cover"
-                 repeat={true}
-                 style={styles.video} />
+            rate={1.0}
+            volume={1.0}
+            muted={false}
+            paused={false}
+            resizeMode="cover"
+            repeat={true}
+            style={styles.video} />
         )
       } else { //if image
         return (
@@ -289,7 +338,7 @@ var VenueTab = React.createClass({
 
   render() {
     var venue = this.props.venue;
-    var THUMB_URLS = ['sneakers', 'http://www.fubiz.net/wp-content/uploads/2012/03/the-kraken-existence2.jpg', 'http://img2.wikia.nocookie.net/__cb20140311041907/villains/images/b/bb/The_Kraken.jpg', 'http://vignette2.wikia.nocookie.net/reddits-world/images/8/8e/Kraken_v2_by_elmisa-d70nmt4.jpg/revision/latest?cb=20140922042121', 'http://orig11.deviantart.net/ccd8/f/2011/355/0/c/kraken_by_elmisa-d4ju669.jpg', 'http://orig14.deviantart.net/40df/f/2014/018/d/4/the_kraken_by_alexstoneart-d72o83n.jpg', 'http://orig10.deviantart.net/bf30/f/2010/332/f/5/kraken_by_mabuart-d33tchk.jpg', 'http://static.comicvine.com/uploads/original/12/120846/2408132-kraken_by_neo_br.jpg', 'https://upload.wikimedia.org/wikipedia/commons/9/9d/Colossal_octopus_by_Pierre_Denys_de_Montfort.jpg', 'http://www.wallpaper4me.com/images/wallpapers/deathbykraken-39598.jpeg', 'http://img06.deviantart.net/3c5b/i/2012/193/d/9/kraken__work_in_progress_by_rkarl-d56zu66.jpg', 'http://i.gr-assets.com/images/S/photo.goodreads.com/hostedimages/1393990556r/8792967._SY540_.jpg', 'http://static.fjcdn.com/pictures/Kraken+found+on+tumblr_5b3d72_4520925.jpg'];
+    var THUMB_URLS = ['sneakers', 'pool_party', 'http://www.fubiz.net/wp-content/uploads/2012/03/the-kraken-existence2.jpg', 'http://img2.wikia.nocookie.net/__cb20140311041907/villains/images/b/bb/The_Kraken.jpg', 'http://vignette2.wikia.nocookie.net/reddits-world/images/8/8e/Kraken_v2_by_elmisa-d70nmt4.jpg/revision/latest?cb=20140922042121', 'http://orig11.deviantart.net/ccd8/f/2011/355/0/c/kraken_by_elmisa-d4ju669.jpg', 'http://orig14.deviantart.net/40df/f/2014/018/d/4/the_kraken_by_alexstoneart-d72o83n.jpg', 'http://orig10.deviantart.net/bf30/f/2010/332/f/5/kraken_by_mabuart-d33tchk.jpg', 'http://static.comicvine.com/uploads/original/12/120846/2408132-kraken_by_neo_br.jpg', 'https://upload.wikimedia.org/wikipedia/commons/9/9d/Colossal_octopus_by_Pierre_Denys_de_Montfort.jpg', 'http://www.wallpaper4me.com/images/wallpapers/deathbykraken-39598.jpeg', 'http://img06.deviantart.net/3c5b/i/2012/193/d/9/kraken__work_in_progress_by_rkarl-d56zu66.jpg', 'http://i.gr-assets.com/images/S/photo.goodreads.com/hostedimages/1393990556r/8792967._SY540_.jpg', 'http://static.fjcdn.com/pictures/Kraken+found+on+tumblr_5b3d72_4520925.jpg'];
     return (
       <View>
         <Text style={styles.header}>
@@ -303,9 +352,6 @@ var VenueTab = React.createClass({
         </Text>
         <Text style={[styles.text, styles.alignLeft]} >
           Address: {venue.address}
-        </Text>
-        <Text style={styles.text} >
-          Time: {venue.datetime}
         </Text>
         <Text style={[styles.text, styles.yourRating]} >
           Overall rating: {this.state.overallRating} | Your last rating: {this.state.voteValue}
@@ -380,13 +426,13 @@ var Thumb = React.createClass({
     if (this.props.uri.indexOf('.') === -1) { // (if video) this will have to be changed. Vid names right now don't have dots.
       return (
         <Video source={{uri: this.props.uri}}
-               rate={1.0}
-               volume={1.0}
-               muted={true}
-               paused={true}
-               resizeMode="cover"
-               repeat={true}
-               style={styles.thumbVideo} />
+          rate={1.0}
+          volume={1.0}
+          muted={true}
+          paused={true}
+          resizeMode="cover"
+          repeat={true}
+          style={styles.thumbVideo} />
       )
     } else { //if image
       return (
@@ -443,8 +489,12 @@ var styles = StyleSheet.create({
     height: 30,
     borderColor: 'gray',
     margin: 5,
+    marginLeft: 1,
+    marginRight: 1,
     marginBottom: 15,
-    borderWidth: 1
+
+    borderWidth: 1,
+    borderRadius: 5
   },
   commentButton: {
     fontSize: 20,
@@ -457,6 +507,9 @@ var styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'column',
     margin: 10,
+    marginLeft: 5,
+    marginRight: 5,
+    padding: 0,
     bottom: 0,
     height: Display.height * 0.49
   },
@@ -529,6 +582,20 @@ var styles = StyleSheet.create({
     height: 70,
     margin: 0,
     padding: 0
+  },
+  icon: {
+    height: 20,
+    width: 20,
+    marginRight: 5,
+    marginLeft: 0,
+    padding: 0
+  },
+  commentContainer: {
+    flex: 1,
+    flexDirection: 'row'
+  },
+  commentText: {
+    flex: 1
   }
 });
 

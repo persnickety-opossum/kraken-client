@@ -182,8 +182,8 @@ var MapTab = React.createClass({
         height: 25,
         width: 25
       };
+      venue.subtitle = venue.description;
       if(inDb) {
-        venue.subtitle = venue.description;
         venue.id = venue._id;
         var ratingsSum = 0;
 
