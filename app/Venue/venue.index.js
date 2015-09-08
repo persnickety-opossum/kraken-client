@@ -188,7 +188,7 @@ var VenueTab = React.createClass({
             color={color}
             style={styles.icon}
             />
-          <Text flexWrap="wrap" numberOfLines={2} style={styles.commentText}>{comments.datetime}: {comments.content}</Text>
+          <Text flexWrap="wrap" numberOfLines={3} style={styles.commentText}>{comments.datetime}: {comments.content}</Text>
         </View>
       )
     }
@@ -582,6 +582,9 @@ var styles = StyleSheet.create({
   commentContainer: {
     flex: 1,
     flexDirection: 'row'
+  },
+  commentText: {
+    flex: 1
   }
 });
 
