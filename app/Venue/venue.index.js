@@ -12,6 +12,7 @@ var KeyboardEventEmitter = KeyboardEvents.Emitter;
 var EventEmitter = require('EventEmitter');
 var Subscribable = require('Subscribable');
 var Video = require('react-native-video');
+var { Icon, } = require('react-native-icons');
 
 var config = require('../config');
 
@@ -45,7 +46,8 @@ var VenueTab = React.createClass({
       venue: this.props.venue,
       overallRating: 0,
       dataSource: ds.cloneWithRows(this.props.venue.comments),
-      keyboardSpace: 0
+      keyboardSpace: 0,
+      userAlreadyPosted: false
     };
   },
 
@@ -62,9 +64,6 @@ var VenueTab = React.createClass({
   },
 
   reloadComments() {
-    console.log(this.state.venue);
-
-    console.log('device height:     ', Display.height);
     var route = config.serverURL + '/api/venues/' + this.state.venue._id;
     fetch(route)
       .then(response => response.json())
@@ -179,48 +178,89 @@ var VenueTab = React.createClass({
   },
 
   renderComments(comments) {
-    return <Text>{comments.datetime}: {comments.content}</Text>
-    //return <Text>{comments}</Text>
+    if (comments) {
+      var icon = 'fontawesome|' + comments.icon;
+      var color = comments.color;
+      return (
+        <View style={styles.commentContainer} flexWrap="wrap">
+          <Icon
+            name={icon}
+            size={19}
+            color={color}
+            style={styles.icon}
+            />
+          <Text flexWrap="wrap" numberOfLines={2} style={styles.commentText}>{comments.datetime}: {comments.content}</Text>
+        </View>
+      )
+    }
+  },
+
+  getRandomColor() {
+    var letters = '0123456789ABCDEF'.split('');
+    var color = '#';
+    for (var i = 0; i < 6; i++ ) {
+      color += letters[Math.floor(Math.random() * 16)];
+    }
+    console.log(color);
+    return color;
+  },
+
+  getRandomIcon() {
+    var icons = ['hourglass', 'automobile', 'binoculars', 'birthday-cake', 'bullhorn', 'paw', 'plane', 'ship', 'truck', 'rocket', 'motorcycle', 'balance-scale', 'bank', 'beer', 'bell-o', 'book', 'coffee', 'flag-checkered', 'money', 'lightbulb-o', 'paint-brush', 'suitcase', 'shopping-cart', 'bolt', 'camera', 'headphones'];
+    return icons[Math.floor(Math.random()*icons.length)];
   },
 
   submitComment() {
-    //this gets called when "submit comment" gets pushed.
-    // {
-//   content: "Comment text",
-//   creator: "55e39290c2b4e82b4839046a", // ID of the user posting the comment
-//   venue: "55e394d6c2b4e82b48390473", // ID of the event that the comment is associated with
-//   datetime: "2016-03-30T06:20:46.000Z",
-//   atVenue: true
-// }
     var context = this;
-    if (this.state.text) {
-      var content = this.state.text;
-      //TODO: make creator the actual creator, not a hardcoded creator
-      var creator = this.state.user; //hardcoded for now
-      var venue = this.state.venue._id;
-      var datetime = new Date().toISOString();
-      var atVenue = true;
-      console.log('This is the post object: ', content, creator, venue, datetime, atVenue);
-      fetch(config.serverURL + '/api/comments/', {
-        method: 'post',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          content: content,
-          creator: creator,
-          venue: venue,
-          datetime: datetime,
-          atVenue: atVenue
-        })
+    var route = config.serverURL + '/api/venues/' + this.state.venue._id;
+    var userAlreadyPosted = false;
+    var icon;
+    var color;
+    fetch(route)
+      .then(response => response.json())
+      .then(res => {
+        for (var i = 0; i < res.comments.length; i++) {
+          if (res.comments[i].creator === context.state.user) {
+            userAlreadyPosted = true;
+            icon = res.comments[i].icon;
+            color = res.comments[i].color;
+            userAlreadyPosted = true;
+            break;
+          }
+        }
+        if (userAlreadyPosted === false) {
+          icon = context.getRandomIcon();
+          color = context.getRandomColor();
+        }
+        if (this.state.text) {
+          var content = this.state.text;
+          var creator = this.state.user;
+          var venue = this.state.venue._id;
+          var datetime = new Date().toISOString();
+          var atVenue = true;
+          fetch(config.serverURL + '/api/comments/', {
+            method: 'post',
+            headers: {
+              'Accept': 'application/json',
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              content: content,
+              creator: creator,
+              venue: venue,
+              datetime: datetime,
+              atVenue: atVenue,
+              icon: icon,
+              color: color
+            })
+          })
+            .then(function(res) {
+              context.setState({text: ''});
+              context.reloadComments();
+              return res.json();
+            })
+        }
       })
-        .then(function(res) {
-          context.setState({text: ''});
-          context.reloadComments();
-          return res.json();
-        })
-    }
   },
 
   slidingComplete(voteValue, venue) {
@@ -443,8 +483,12 @@ var styles = StyleSheet.create({
     height: 30,
     borderColor: 'gray',
     margin: 5,
+    marginLeft: 1,
+    marginRight: 1,
     marginBottom: 15,
-    borderWidth: 1
+
+    borderWidth: 1,
+    borderRadius: 5
   },
   commentButton: {
     fontSize: 20,
@@ -457,6 +501,9 @@ var styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'column',
     margin: 10,
+    marginLeft: 5,
+    marginRight: 5,
+    padding: 0,
     bottom: 0,
     height: Display.height * 0.49
   },
@@ -529,6 +576,17 @@ var styles = StyleSheet.create({
     height: 70,
     margin: 0,
     padding: 0
+  },
+  icon: {
+    height: 20,
+    width: 20,
+    marginRight: 5,
+    marginLeft: 0,
+    padding: 0
+  },
+  commentContainer: {
+    flex: 1,
+    flexDirection: 'row'
   }
 });
 
