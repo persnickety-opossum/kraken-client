@@ -158,12 +158,13 @@ var VenueTab = React.createClass({
 
   getOverallRating() {
     var ratings = this.state.venue.ratings;
+    var numRatings = Object.keys(ratings).length;
     var sum = 0;
-    for (var i = 0; i < ratings.length; i++) {
-      sum += ratings[i].rating;
+    for (var userID in ratings) {
+      sum += ratings[userID];
     }
-    if (ratings.length > 0) {
-      var average = Math.round(sum / ratings.length);
+    if (numRatings > 0) {
+      var average = Math.round(sum / numRatings);
     } else {
       var average = 'No ratings!';
     }
@@ -273,37 +274,24 @@ var VenueTab = React.createClass({
   },
 
   slidingComplete(voteValue, venue) {
-    fetch(config.serverURL + '/api/venues/' + venue._id)
-      .then(response => response.json())
-      .then(modVenue => {
-        for (var i = 0; i < modVenue.ratings.length; i++) {
-          if (modVenue.ratings[i].user === this.state.user) {
-            modVenue.ratings[i].rating = Math.round(voteValue*10);
-            break;
-          }
-        }
-        if (i === modVenue.ratings.length) {
-          modVenue.ratings.push({
-            rating: Math.round(voteValue*10),
-            user: this.state.user
-          });
-        }
-        fetch(config.serverURL + '/api/venues/', {
-          method: 'put',
-          headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(modVenue)
-        })
-          .then(response => response.json())
-          .then(json => {
-            this.setState({venue: json},
-              function() {
-                this.getOverallRating();
-              });
-          });
-      });
+    fetch(config.serverURL + '/api/venues/rate/' + venue._id, {
+      method: 'post',
+      headers:  {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        user: this.state.user,
+        rating: Math.round(voteValue * 10)
+      })
+    })
+    .then(response => response.json())
+    .then(json => {
+      this.setState({venue: json},
+        function() {
+          this.getOverallRating();
+        });
+    });
   },
 
   imagePressed(uri) {
@@ -334,6 +322,57 @@ var VenueTab = React.createClass({
         )
       }
     }
+  },
+
+  toggleCheckedIn: function (value) {
+    if (value) {
+      if (this.state.checkedIn && this.state.currentlyAt !== this.props.venue.id) {
+        fetch(config.serverURL + '/api/venues/' + this.state.currentlyAt)
+        .then(response => response.json())
+        .then(json => {
+          json.attendees--;
+          fetch(config.serverURL + '/api/venues', {
+            method: 'put',
+            headers: {
+              'Accept': 'application/json',
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(json)
+          })
+        })
+      }
+      fetch(config.serverURL + '/api/venues/' + this.props.venue.id)
+      .then(response => response.json())
+      .then(json => {
+        json.attendees++;
+        fetch(config.serverURL + '/api/venues', {
+          method: 'put',
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(json)
+        })
+      })
+    } else {
+      fetch(config.serverURL + '/api/venues/' + this.state.currentlyAt)
+      .then(response => response.json())
+      .then(json => {
+        json.attendees--;
+        fetch(config.serverURL + '/api/venues', {
+          method: 'put',
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(json)
+        })
+      })
+    }
+    this.setState({
+      checkedIn: value,
+      currentlyAt: value ? this.props.venue.id : null
+    });
   },
 
   render() {
