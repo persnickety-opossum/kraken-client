@@ -54,7 +54,6 @@ var VideoTab = React.createClass({
         console.log(err);
       } else {
         console.log(url);
-        CameraRoll.saveImageWithTag(url);
       }
     });
   },
@@ -82,23 +81,23 @@ var VideoTab = React.createClass({
     });
   },
 
-  setModalVisible(visible, uri) {
+  setModalVisible: function(visible, uri) {
     console.log('modal set to visible');
     this.setState({modalVisible: visible, uri: uri});
   },
 
-  showImageOrVideo() {
+  showImageOrVideo: function() {
     if (this.state.uri) {
       console.log('video time!' + this.state.uri);
       return (
         <Video source={{uri: this.state.uri}}
-               rate={1.0}
-               volume={1.0}
-               muted={false}
-               paused={false}
-               resizeMode="cover"
-               repeat={true}
-               style={styles.video} />
+          rate={1.0}
+          volume={1.0}
+          muted={false}
+          paused={false}
+          resizeMode="cover"
+          repeat={true}
+          style={styles.video} />
       )
     }
   },
