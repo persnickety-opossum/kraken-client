@@ -6,7 +6,6 @@ var Subscribable = require('Subscribable');
 var MapTab = require('./app/Map/map.index');
 var VenueTab = require('./app/Venue/venue.index');
 var SettingsTab = require('./app/Settings/settings.index');
-var CameraTab = require('./app/Camera/camera.index');
 var MapboxGLMap = require('react-native-mapbox-gl');
 var mapRef = 'mapRef';
 var moment = require('moment');
