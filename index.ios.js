@@ -117,13 +117,6 @@ var persnickety = React.createClass({
               <ImagesTab />
             </View>
           </TabBarIOS.Item>
-          <TabBarIOS.Item
-            title="Camera"
-            icon={ require('image!settings') }
-            onPress={ () => this.changeTab('camera') }
-            selected={ this.state.selectedTab === 'camera' }>
-            <CameraTab />
-          </TabBarIOS.Item>
         </TabBarIOS>
       </View>
     );
