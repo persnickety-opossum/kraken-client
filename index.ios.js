@@ -13,6 +13,8 @@ var VideoTab = require('./app/SCRecorder/screcorder.index');
 var MapboxGLMap = require('react-native-mapbox-gl');
 var mapRef = 'mapRef';
 var moment = require('moment');
+var venImg = require('image!novenue');
+
 moment().format();
 
 var {
@@ -30,7 +32,9 @@ var persnickety = React.createClass({
   getInitialState() {
     return {
       selectedTab: 'map',
-      venue: 'default venue'
+      venue: 'default venue',
+      venueImg: 'image!venue',
+      venueClicked: 'map',
     }
   },
   componentWillMount: function() {
@@ -69,6 +73,8 @@ var persnickety = React.createClass({
     //  newVenue.comments[i].datetime = moment(newVenue.comments[i].datetime).fromNow();
     //}
     this.setState({venue: venue}, function() {
+      venImg = require('image!venue');
+      this.setState({venueClicked: 'venue'});
       this.changeTab('venue');
     });
   },
@@ -80,9 +86,12 @@ var persnickety = React.createClass({
   },
   render: function() {
     //StatusBarIOS.setHidden(true);
+
     return (
       <View style={styles.container}>
-        <TabBarIOS>
+        <TabBarIOS 
+          tintColor="white"
+          barTintColor="darkslateblue">
           <TabBarIOS.Item
             title="Map"
             icon={ require('image!map') }
@@ -93,8 +102,8 @@ var persnickety = React.createClass({
 
           <TabBarIOS.Item
             title="Venue"
-            icon={ require('image!messages') }
-            onPress={ () => this.changeTab('venue') }
+            icon={ venImg }
+            onPress={ () => this.changeTab(this.state.venueClicked) }
             selected={ this.state.selectedTab === 'venue' }>
             <View style={ styles.pageView }>
               <VenueTab venue={this.state.venue} geolocation={this.state.geolocation} eventEmitter={this.eventEmitter} />
