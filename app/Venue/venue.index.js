@@ -14,6 +14,8 @@ var Subscribable = require('Subscribable');
 var Video = require('react-native-video');
 var { Icon, } = require('react-native-icons');
 
+var KrakenCamera = require('../Camera/camera.index');
+
 var config = require('../config');
 
 var {
@@ -46,7 +48,8 @@ var VenueTab = React.createClass({
       venue: this.props.venue,
       overallRating: 0,
       dataSource: ds.cloneWithRows(this.props.venue.comments),
-      keyboardSpace: 0
+      keyboardSpace: 0,
+      modalCameraVisible: false
     };
   },
 
@@ -306,6 +309,10 @@ var VenueTab = React.createClass({
     this.setState({modalVisible: visible, uri: uri});
   },
 
+  toggleCamera(visible) {
+    this.setState({modalCameraVisible: !this.state.modalCameraVisible});
+  },
+
   showImageOrVideo() {
     if (this.state.uri) {
       if (this.state.uri.indexOf('.') === -1) { //(if video) this will have to be changed later.
@@ -371,18 +378,21 @@ var VenueTab = React.createClass({
           value={this.state.text}
           onSubmitEditing={this.submitComment}
           returnKeyType='send'
-          placeholder='Submit Comment'
-          />
+          placeholder='Submit Comment' />
         <Button style={styles.commentButton} onPress={this.submitComment}>
           Submit Comment
         </Button>
+
+        <Button style={styles.commentButton} onPress={this.toggleCamera}>
+          Take a pitcha!
+        </Button>
+
         <RefreshableListView
           style={styles.refreshableListView}
           dataSource={this.state.dataSource}
           renderRow={this.renderComments}
           loadData={this.reloadComments}
-          refreshDescription="Refreshing comments"
-          />
+          refreshDescription="Refreshing comments" />
 
         <Modal visible={this.state.modalVisible === true}>
           <View style={styles.modalContainer}>
@@ -390,6 +400,19 @@ var VenueTab = React.createClass({
               {this.showImageOrVideo()}
               <Button
                 onPress={this.setModalVisible.bind(this, false)}
+                style={styles.modalButton}>
+                Close
+              </Button>
+            </View>
+          </View>
+        </Modal>
+
+        <Modal visible={this.state.modalCameraVisible === true}>
+          <View style={styles.modalCameraContainer}>
+            <View style={styles.innerContainer}>
+              <KrakenCamera venue={this.state.venue} user={this.state.user} />
+              <Button 
+                onPress={this.toggleCamera}
                 style={styles.modalButton}>
                 Close
               </Button>
@@ -535,8 +558,14 @@ var styles = StyleSheet.create({
     margin: 0,
     padding: 0
   },
+  modalCameraContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    //padding: 20,
+    alignItems: 'center',
+    backgroundColor: '#f5fcff'
 
-
+  },
   modalContainer: {
     flex: 1,
     justifyContent: 'center',
