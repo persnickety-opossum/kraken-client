@@ -198,7 +198,13 @@ var MapTab = React.createClass({
           venue.overallRating = 'Be the first to vote!'
         }
         var attendees = Object.keys(venue.attendees).length
-        if (attendees) {
+        if (attendees > 3) {
+          venue.annotationImage = {
+            url: 'image!marker-kraken',
+            height: 47,
+            width: 44
+          };
+        } else if (attendees > 1) {
           venue.annotationImage = {
             url: 'image!marker-2',
             height: 27,
