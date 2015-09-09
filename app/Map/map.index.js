@@ -87,11 +87,11 @@ var MapTab = React.createClass({
             .then(response => response.json())
             .then(json => {
               json.datetime = moment(json.datetime).format("dddd, MMMM Do YYYY, h:mm:ss a");
-              this.setState({searchPins: []})
-              this.setState({venuePins: []})
-              this._venueQuery(config.serverURL + '/api/venues', true)
-              this.eventEmitter.emit('annotationTapped', { venue: json})
+              this.eventEmitter.emit('annotationTapped', { venue: json});
             })
+            .then(() => this.setState({searchPins: []}))
+            .then(() => this.setState({venuePins: []}))
+            .then(() => this._venueQuery(config.serverURL + '/api/venues', true))
             .catch(function(err) {
               console.log('error');
               console.log(newVenue);
@@ -237,7 +237,6 @@ var MapTab = React.createClass({
 
   // method for recentering and reset zoom level based on current location 
   _onCenterPressed: function () {
-    //this.setCenterCoordinateZoomLevelAnimated(mapRef, 37.783585, -122.408955, 15);
     this.setCenterCoordinateZoomLevelAnimated(mapRef, this.state.center.latitude, this.state.center.longitude, 15)
   },
 
@@ -357,11 +356,11 @@ var styles = StyleSheet.create({
     position: 'absolute',
     top: 0,
     height: 36,
-    width: Display.width*.89,
+    width: Display.width*.80,
     padding: 4,
     fontSize: 12,
     borderWidth: 0.5,
-    borderColor: '#23FCA6',
+    borderColor: '#66d9ef',
     color: '#8C8C8C'
   },
   button: {
