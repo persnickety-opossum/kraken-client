@@ -356,11 +356,11 @@ var styles = StyleSheet.create({
     position: 'absolute',
     top: 0,
     height: 36,
-    width: Display.width*.89,
+    width: Display.width*.80,
     padding: 4,
     fontSize: 12,
     borderWidth: 0.5,
-    borderColor: '#23FCA6',
+    borderColor: '#66d9ef',
     color: '#8C8C8C'
   },
   button: {
