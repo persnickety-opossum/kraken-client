@@ -321,12 +321,16 @@ var VenueTab = React.createClass({
   },
 
   setModalVisible(visible, uri) {
-    console.log('modal set to visible');
     this.setState({modalVisible: visible, uri: uri});
   },
 
+<<<<<<< HEAD
   toggleCamera(visible) {
     this.setState({modalCameraVisible: !this.state.modalCameraVisible});
+=======
+  setPopupVisible(visible) {
+    this.setState({popupVisible: visible});
+>>>>>>> (feat) Venue view UX in progress
   },
 
   showImageOrVideo() {
@@ -354,19 +358,38 @@ var VenueTab = React.createClass({
     var venue = this.props.venue;
     var THUMB_URLS = ['sneakers', 'pool_party', 'http://www.fubiz.net/wp-content/uploads/2012/03/the-kraken-existence2.jpg', 'http://img2.wikia.nocookie.net/__cb20140311041907/villains/images/b/bb/The_Kraken.jpg', 'http://vignette2.wikia.nocookie.net/reddits-world/images/8/8e/Kraken_v2_by_elmisa-d70nmt4.jpg/revision/latest?cb=20140922042121', 'http://orig11.deviantart.net/ccd8/f/2011/355/0/c/kraken_by_elmisa-d4ju669.jpg', 'http://orig14.deviantart.net/40df/f/2014/018/d/4/the_kraken_by_alexstoneart-d72o83n.jpg', 'http://orig10.deviantart.net/bf30/f/2010/332/f/5/kraken_by_mabuart-d33tchk.jpg', 'http://static.comicvine.com/uploads/original/12/120846/2408132-kraken_by_neo_br.jpg', 'https://upload.wikimedia.org/wikipedia/commons/9/9d/Colossal_octopus_by_Pierre_Denys_de_Montfort.jpg', 'http://www.wallpaper4me.com/images/wallpapers/deathbykraken-39598.jpeg', 'http://img06.deviantart.net/3c5b/i/2012/193/d/9/kraken__work_in_progress_by_rkarl-d56zu66.jpg', 'http://i.gr-assets.com/images/S/photo.goodreads.com/hostedimages/1393990556r/8792967._SY540_.jpg', 'http://static.fjcdn.com/pictures/Kraken+found+on+tumblr_5b3d72_4520925.jpg'];
     return (
-      <View>
-        <Text style={styles.header}>
-          Kraken
-        </Text>
+      <View style={styles.main}>
+        <Modal 
+          visible={this.state.popupVisible === true}
+          animated={true}
+          transparent={true}
+        >
+          <View style={styles.popupContainer}>
+            <View style={styles.innerContainer}>
+              <Text style={[styles.text, styles.alignLeft]} >
+                Venue description: {venue.description}
+              </Text>
+              <Text style={[styles.text, styles.alignLeft]} >
+                Address: {venue.address}
+              </Text>
+              <Button
+                onPress={this.setPopupVisible.bind(this, false)}
+                style={styles.modalButton}>
+                Close
+              </Button>
+            </View>
+          </View>
+        </Modal>
         <Text style={styles.venueName}>
           {venue.title}
         </Text>
-        <Text style={[styles.text, styles.alignLeft]} >
-          Venue description: {venue.description}
-        </Text>
-        <Text style={[styles.text, styles.alignLeft]} >
-          Address: {venue.address}
-        </Text>
+
+        <Button
+          onPress={this.setPopupVisible.bind(this, true)}
+          style={styles.modalButton}>
+          Details
+        </Button>
+
         <Text style={[styles.text, styles.yourRating]} >
           Overall rating: {this.state.overallRating} | Your last rating: {this.state.voteValue}
         </Text>
@@ -488,6 +511,13 @@ var createThumbRow = (eventEmitter, uri, i) => <Thumb eventEmitter={eventEmitter
 
 
 var styles = StyleSheet.create({
+  main: {
+    fontSize: 14,
+    textAlign: 'center',
+    fontWeight: '500',
+    margin: 3,
+  },
+
   text: {
     fontSize: 14,
     textAlign: 'center',
@@ -496,12 +526,6 @@ var styles = StyleSheet.create({
   },
   alignLeft: {
     //textAlign: 'left'
-  },
-  header: {
-    fontSize: 22,
-    textAlign: 'center',
-    backgroundColor: '#000000',
-    color: '#ffffff'
   },
   venueName: {
     fontSize: 20,
@@ -546,7 +570,6 @@ var styles = StyleSheet.create({
     bottom: 0,
     height: Display.height * 0.49
   },
-
   thumbImage: {
     flex: 1,
     width: 70,
@@ -580,7 +603,14 @@ var styles = StyleSheet.create({
     //padding: 20,
     alignItems: 'center',
     backgroundColor: '#f5fcff'
-
+  },
+  popupContainer: {
+    flex: 0,
+    justifyContent: 'center',
+    height: 200,
+    width: 150,
+    alignItems: 'center',
+    backgroundColor: '#f5fcff'
   },
   modalContainer: {
     flex: 1,
@@ -614,7 +644,6 @@ var styles = StyleSheet.create({
     margin: 0,
     padding: 0
   },
-
   thumbVideo: {
     flex: 1,
     width: 70,

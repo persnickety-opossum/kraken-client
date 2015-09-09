@@ -182,11 +182,6 @@ var styles = StyleSheet.create({
     top: 100,
     height: 36,
     width: 100,
-    padding: 4,
-    fontSize: 12,
-    borderWidth: 0.5,
-    borderColor: '#23FCA6',
-    color: '#8C8C8C'
   },
 
   controls: {
@@ -195,11 +190,6 @@ var styles = StyleSheet.create({
     top: 0,
     height: 150,
     width: 100,
-    padding: 4,
-    fontSize: 12,
-    borderWidth: 0.5,
-    borderColor: '#23FCA6',
-    color: '#8C8C8C'
   },
 
    modalContainer: {

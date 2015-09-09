@@ -354,9 +354,6 @@ var styles = StyleSheet.create({
     flexDirection: 'column',
     flex: 1,
   },
-  beer:{
-
-  },
   map: {
     flex: 5
   },
@@ -383,7 +380,7 @@ var styles = StyleSheet.create({
     width: 40,
     position: 'absolute',
     bottom: 50,
-    right: 30
+    right: 40
   },
   stylebutton: {
     height: 40,
