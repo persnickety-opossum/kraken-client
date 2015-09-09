@@ -38,7 +38,6 @@ var persnickety = React.createClass({
   },
   componentWillMount: function() {
     this.eventEmitter = new EventEmitter();
-    this.setState({venueImg: require('image!novenue')});
   },
   componentDidMount: function() {
     this.addListenerOn(this.eventEmitter, 'annotationTapped', this.selectVenue);
