@@ -118,10 +118,12 @@ var VenueTab = React.createClass({
           venue: json,
           dataSource: ds.cloneWithRows(json.comments),
           // Sets atVenue to true if user is within 100 metres
-          atVenue: distance < 100},
-          function() {
-            this.getOverallRating();
-          })
+          atVenue: distance < 100,
+          attendeeCount: Object.keys(json.attendees).length
+        },
+        function() {
+          this.getOverallRating();
+        })
       })
     //this.setState({
     //  venue: venue,
@@ -287,6 +289,7 @@ var VenueTab = React.createClass({
     })
     .then(response => response.json())
     .then(json => {
+      console.log(json.ratings);
       this.setState({venue: json},
         function() {
           this.getOverallRating();
@@ -394,6 +397,9 @@ var VenueTab = React.createClass({
         </Text>
         <Text style={[styles.text, styles.yourRating]} >
           Overall rating: {this.state.overallRating} | Your last rating: {this.state.voteValue}
+        </Text>
+        <Text style={styles.text}>
+          Current attendees: {this.state.attendeeCount}
         </Text>
         <SliderIOS
           style={styles.slider}
