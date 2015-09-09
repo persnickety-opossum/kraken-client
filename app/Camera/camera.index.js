@@ -1,6 +1,8 @@
 var React = require('react-native');
 var Camera = require('react-native-camera');
 var Display = require('react-native-device-display');
+var config = require('../config');
+
 var mime = require('mime');
 var {
   CameraRoll,
@@ -11,7 +13,6 @@ var {
   TouchableHighlight,
   NativeModules
 } = React;
-
 
 var KrakenCam = React.createClass({
   getInitialState() {
@@ -57,15 +58,12 @@ var KrakenCam = React.createClass({
   },
 
   _takePicture() {
-    // var venue = this.props.venue._id;
-    var venue = '55ee099fb34df23830581f29';
-    // var user = this.props.user
-    var user = '55ee099fb34df23830581f27';
-
+    var venue = this.props.venue._id;
+    var user = this.props.user
     this.refs.cam.capture(function(err, path) {
       var obj = {
           uri: path,
-          uploadUrl: 'http://10.8.1.143:5000/api/media/',
+          uploadUrl: config.serverURL + '/api/media/',
           headers: {
             'Accept': 'application/json',
             'Content-Type': 'application/json',
@@ -77,8 +75,8 @@ var KrakenCam = React.createClass({
           mimeType: mime.lookup(path)
       };
       NativeModules.FileTransfer.upload(obj, (err, res) => {
-        if (err) console.log('ERROR!>>>>>>>>>>>>>>>>>>>>>>>>', err);
-        if (res) console.log('RESONSE!>>>>>>>>>>>>>>>>>>>>>>', res);
+        if (err) console.log('Error:', err);
+        if (res) console.log('Response:', res);
       });
     });
   }

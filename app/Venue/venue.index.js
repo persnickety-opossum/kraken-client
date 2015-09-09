@@ -384,7 +384,7 @@ var VenueTab = React.createClass({
         </Button>
 
         <Button style={styles.commentButton} onPress={this.toggleCamera}>
-          Take a pitcha!
+          Take a photo!
         </Button>
 
         <RefreshableListView
