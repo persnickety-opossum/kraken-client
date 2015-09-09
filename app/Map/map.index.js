@@ -80,7 +80,8 @@ var MapTab = React.createClass({
               latitude: currVenue.latitude,
               longitude: currVenue.longitude,
               creator: this.state.user,
-              datetime: new Date().toISOString(),
+              ratings: {},
+              datetime: new Date().toISOString()
             })
           })
             .then(response => response.json())
@@ -185,13 +186,14 @@ var MapTab = React.createClass({
       venue.subtitle = venue.description;
       if(inDb) {
         venue.id = venue._id;
+        var numRatings = Object.keys(venue.ratings).length
         var ratingsSum = 0;
 
-        if (venue.ratings.length > 0) {
-          for (var i = 0; i < venue.ratings.length; i++) {
-            ratingsSum += venue.ratings[i].rating;
+        if (numRatings > 0) {
+          for (var userID in venue.ratings) {
+            ratingsSum += venue.ratings[userID];
           }
-          venue.overallRating = Math.round(ratingsSum / venue.ratings.length);
+          venue.overallRating = Math.round(ratingsSum / numRatings);
         } else {
           venue.overallRating = 'Be the first to vote!'
         }
