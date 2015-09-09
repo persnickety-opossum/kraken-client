@@ -105,29 +105,37 @@ var VenueTab = React.createClass({
     var venue = nextProps.venue;
     var route = config.serverURL + '/api/venues/' + venue._id;
 
+    var venueChanged = this.props.venue.id !== venue.id;
+
     if (nextProps.geolocation) {
       var coords = nextProps.geolocation.coords;
       var distance = this.calculateDistance(coords, venue);
     }
 
-    fetch(route)
-      .then(response => response.json())
-      .then(json => {
-        json.datetime = moment(json.datetime).format("dddd, MMMM Do YYYY, h:mm:ss a");
-        for (var i = 0; i < json.comments.length; i++) {
-          json.comments[i].datetime = moment(json.comments[i].datetime).fromNow();
-        }
-        this.setState({
-          venue: json,
-          dataSource: ds.cloneWithRows(json.comments),
-          // Sets atVenue to true if user is within 100 metres
-          atVenue: distance < 100,
-          attendeeCount: Object.keys(json.attendees).length
-        },
-        function() {
-          this.getOverallRating();
+    if (venueChanged) {
+      fetch(route)
+        .then(response => response.json())
+        .then(json => {
+          json.datetime = moment(json.datetime).format("dddd, MMMM Do YYYY, h:mm:ss a");
+          for (var i = 0; i < json.comments.length; i++) {
+            json.comments[i].datetime = moment(json.comments[i].datetime).fromNow();
+          }
+          this.setState({
+            venue: json,
+            dataSource: ds.cloneWithRows(json.comments),
+            // Sets atVenue to true if user is within 100 metres
+            atVenue: distance < 100,
+            attendeeCount: Object.keys(json.attendees).length
+          },
+          function() {
+            this.getOverallRating();
+          })
         })
+    } else {
+      this.setState({
+        atVenue: distance < 100
       })
+    }
     //this.setState({
     //  venue: venue,
     //  dataSource: ds.cloneWithRows(venue.comments)
