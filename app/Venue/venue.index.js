@@ -47,6 +47,7 @@ var VenueTab = React.createClass({
       voteValue: 0,
       venue: this.props.venue,
       overallRating: 0,
+      attendeeCount: Object.keys(this.props.venue.attendees).length,
       dataSource: ds.cloneWithRows(this.props.venue.comments),
       keyboardSpace: 0,
       modalCameraVisible: false
@@ -75,7 +76,11 @@ var VenueTab = React.createClass({
         }
         return res;
       })
-      .then(json => this.setState({venue: json, dataSource: ds.cloneWithRows(json.comments)}))
+      .then(json => this.setState({
+        venue: json,
+        dataSource: ds.cloneWithRows(json.comments),
+        attendeeCount: Object.keys(json.attendees).length
+      }))
   },
 
   calculateDistance: function(current, venue) {
@@ -105,29 +110,37 @@ var VenueTab = React.createClass({
     var venue = nextProps.venue;
     var route = config.serverURL + '/api/venues/' + venue._id;
 
+    var venueChanged = this.props.venue.id !== venue.id;
+
     if (nextProps.geolocation) {
       var coords = nextProps.geolocation.coords;
       var distance = this.calculateDistance(coords, venue);
     }
 
-    fetch(route)
-      .then(response => response.json())
-      .then(json => {
-        json.datetime = moment(json.datetime).format("dddd, MMMM Do YYYY, h:mm:ss a");
-        for (var i = 0; i < json.comments.length; i++) {
-          json.comments[i].datetime = moment(json.comments[i].datetime).fromNow();
-        }
-        this.setState({
-          venue: json,
-          dataSource: ds.cloneWithRows(json.comments),
-          // Sets atVenue to true if user is within 100 metres
-          atVenue: distance < 100,
-          attendeeCount: Object.keys(json.attendees).length
-        },
-        function() {
-          this.getOverallRating();
+    if (venueChanged) {
+      fetch(route)
+        .then(response => response.json())
+        .then(json => {
+          json.datetime = moment(json.datetime).format("dddd, MMMM Do YYYY, h:mm:ss a");
+          for (var i = 0; i < json.comments.length; i++) {
+            json.comments[i].datetime = moment(json.comments[i].datetime).fromNow();
+          }
+          this.setState({
+            venue: json,
+            dataSource: ds.cloneWithRows(json.comments),
+            // Sets atVenue to true if user is within 100 metres
+            atVenue: distance < 100,
+            attendeeCount: Object.keys(json.attendees).length
+          },
+          function() {
+            this.getOverallRating();
+          })
         })
+    } else {
+      this.setState({
+        atVenue: distance < 100
       })
+    }
     //this.setState({
     //  venue: venue,
     //  dataSource: ds.cloneWithRows(venue.comments)
@@ -293,7 +306,10 @@ var VenueTab = React.createClass({
     .then(response => response.json())
     .then(json => {
       console.log(json.ratings);
-      this.setState({venue: json},
+      this.setState({
+        venue: json,
+        attendeeCount: Object.keys(json.attendees).length
+      },
         function() {
           this.getOverallRating();
         });
