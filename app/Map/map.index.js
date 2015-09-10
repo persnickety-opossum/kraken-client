@@ -197,11 +197,26 @@ var MapTab = React.createClass({
         } else {
           venue.overallRating = 'Be the first to vote!'
         }
-        venue.annotationImage = {
-          url: 'image!marker-1',
-          height: 27,
-          width: 41
-        };
+        var attendees = Object.keys(venue.attendees).length
+        if (attendees > 3) {
+          venue.annotationImage = {
+            url: 'image!marker-kraken',
+            height: 47,
+            width: 44
+          };
+        } else if (attendees > 1) {
+          venue.annotationImage = {
+            url: 'image!marker-2',
+            height: 27,
+            width: 41
+          };
+        } else {
+          venue.annotationImage = {
+            url: 'image!marker-1',
+            height: 27,
+            width: 41
+          };
+        }
         venue.datetime = moment(venue.datetime).format("dddd, MMMM Do YYYY, h:mm:ss a");
         context.setState({venuePins: context.state.venuePins.concat(venue)});
       } else {
