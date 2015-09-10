@@ -93,8 +93,8 @@ var persnickety = React.createClass({
     return (
       <View style={styles.container}>
         <TabBarIOS 
-          tintColor="#f92672"
-          barTintColor="#66d9ef">
+          tintColor="white"
+          barTintColor="#47b3c8">
           <TabBarIOS.Item
             title="Map"
             icon={ require('image!map') }
@@ -127,9 +127,7 @@ var persnickety = React.createClass({
             icon={ require('image!video') }
             onPress={ () => this.changeTab('video') }
             selected={ this.state.selectedTab === 'video' }>
-            <View style={ styles.pageView }>
-              <VideoTab />
-            </View>
+            <VideoTab />
           </TabBarIOS.Item>
         </TabBarIOS>
       </View>

@@ -7,12 +7,7 @@ var Display = require('react-native-device-display');
 var {
   View,
   Image,
-  StyleSheet,
-  Text,
-  TouchableHighlight,
-  TouchableWithoutFeedback ,
-  CameraRoll,
-  Modal
+  StyleSheet
 } = React;
 
 var VideoTab = React.createClass({
@@ -28,17 +23,12 @@ var VideoTab = React.createClass({
   record: function() {
     this.refs.recorder.record();
     this.setState({recording: true});
+    console.log('recording');
   },
 
   capture: function() {
     this.refs.recorder.capture((err, url) => {
       // Playing with the picture
-      if(err) {
-        console.log(err);
-      } else {
-        console.log(url);
-        CameraRoll.saveImageWithTag(url);
-      }
     });
   },
 
@@ -50,56 +40,7 @@ var VideoTab = React.createClass({
   save: function() {
     this.refs.recorder.save((err, url) => {
       // Playing with the generated video
-      if(err) {
-        console.log(err);
-      } else {
-        console.log(url);
-      }
     });
-  },
-
-  saveToCameraRoll: function() {
-    this.refs.recorder.saveToCameraRoll((err, url) => {
-      // Playing with the generated video
-      if(err) {
-        console.log(err);
-      } else {
-        console.log('Saved to CameraROLL!: ' + url);
-      }
-    });
-  },
-
-  view: function() {
-    this.refs.recorder.save((err, url) => {
-      // Playing with the generated video
-      if(err) {
-        console.log(err);
-      } else {
-        console.log(url);
-        this.setModalVisible(true, url);
-      }
-    });
-  },
-
-  setModalVisible: function(visible, uri) {
-    console.log('modal set to visible');
-    this.setState({modalVisible: visible, uri: uri});
-  },
-
-  showImageOrVideo: function() {
-    if (this.state.uri) {
-      console.log('video time!' + this.state.uri);
-      return (
-        <Video source={{uri: this.state.uri}}
-          rate={1.0}
-          volume={1.0}
-          muted={false}
-          paused={false}
-          resizeMode="cover"
-          repeat={true}
-          style={styles.video} />
-      )
-    }
   },
 
   setDevice: function() {
@@ -111,77 +52,40 @@ var VideoTab = React.createClass({
     this.setState({segment: segment});
   },
 
-  removeAllSegments: function() {
-    this.refs.recorder.removeAllSegments();
-    this.setState({segment: null});
-  },
-
   render: function() {
     return (
-      <View style={styles.wrapper}>
+      <View style={styles.container}>
         <Recorder
           ref="recorder"
           config={this.state.config}
           device={this.state.device}
           onNewSegment={this.onNewSegment}
-          style={styles.recorder}>
+          style={styles.wrapper}>
         </Recorder>
         <View style={styles.controls}>
-          <TouchableHighlight onPress={this.setDevice} style={styles.recorder.device}>
-            <Text>Flip</Text>
-          </TouchableHighlight>
-          <TouchableHighlight onPressIn={this.record} onPressOut={this.pause}>
-            <Text>Record</Text>
-          </TouchableHighlight>
-          <TouchableHighlight onPress={this.view}>
-            <Text>View Video</Text>
-          </TouchableHighlight>
-          <TouchableHighlight onPress={this.saveToCameraRoll}>
-            <Text>Save Video</Text>
-          </TouchableHighlight>
-          <TouchableHighlight onPress={this.removeAllSegments}>
-            <Text>Reset Video</Text>
-          </TouchableHighlight>
-          <TouchableHighlight onPress={this.capture}>
-            <Text>Take Photo</Text>
-          </TouchableHighlight>
+          <Button onPressOut={this.setDevice} style={styles.device}>flip </Button>
+          <Button style={styles.device} onPressIn={this.record} onPressOut={this.pause}>record</Button>
+          <Button style={styles.device} onPressOut={this.save} icon="heart">save</Button>
         </View>
-        <Modal visible={this.state.modalVisible === true}>
-          <View style={styles.modalContainer}>
-            <View style={styles.innerContainer}>
-              {this.showImageOrVideo()}
-              <Button
-                onPress={this.setModalVisible.bind(this, false)}
-                style={styles.modalButton}>
-                Close
-              </Button>
-            </View>
-          </View>
-        </Modal>
       </View>
 
     );
   }
+
 });
 
 var styles = StyleSheet.create({
-
+  container: {
+    flex: 1,
+  },
   wrapper: {
     flex: 1,
   },
-  recorder: {
-    flex: 5,
-    flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'center',
-    bottom: 50
-  },
-
   device: {
-    position: 'absolute',
-    top: 100,
+    flex: 1,
     height: 36,
     width: 100,
+    color: 'blue'
   },
 
   controls: {
@@ -191,6 +95,7 @@ var styles = StyleSheet.create({
     height: 150,
     width: 100,
   },
+
 
    modalContainer: {
     flex: 1,

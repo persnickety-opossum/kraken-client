@@ -19,16 +19,17 @@ var KrakenCamera = require('../Camera/camera.index');
 var config = require('../config');
 
 var {
-  SliderIOS,
-  Text,
-  StyleSheet,
-  View,
-  ListView,
-  TextInput,
   Image,
+  LayoutAnimation,
+  ListView,
+  Modal,
+  SliderIOS,
+  StyleSheet,
   ScrollView,
+  Text,
+  TextInput,
   TouchableHighlight,
-  Modal
+  View,
   } = React;
 
 var RefreshableListView = require('react-native-refreshable-listview');
@@ -37,12 +38,6 @@ var ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
 var VenueTab = React.createClass({
   mixins: [Subscribable.Mixin],
   getInitialState() {
-    KeyboardEventEmitter.on(KeyboardEvents.KeyboardDidShowEvent, (frames) => {
-      this.setState({keyboardSpace: frames.end.height});
-    });
-    KeyboardEventEmitter.on(KeyboardEvents.KeyboardWillHideEvent, (frames) => {
-      this.setState({keyboardSpace: 0});
-    });
     return {
       voteValue: 0,
       venue: this.props.venue,
@@ -50,19 +45,28 @@ var VenueTab = React.createClass({
       attendeeCount: Object.keys(this.props.venue.attendees).length,
       dataSource: ds.cloneWithRows(this.props.venue.comments),
       keyboardSpace: 0,
+      bottom: 49,
       modalCameraVisible: false
     };
   },
 
+  // helper function to update view height when keyboard appears
   updateKeyboardSpace(frames) {
+    LayoutAnimation.configureNext(animations.layout.spring);
     this.setState({keyboardSpace: frames.end.height});
+    this.setState({bottom: 0});
   },
 
+  // helper function to update view height when keyboard is off screen
   resetKeyboardSpace() {
+    LayoutAnimation.configureNext(animations.layout.easeInEaseOut);
     this.setState({keyboardSpace: 0});
+    this.setState({bottom: 49});
   },
 
   componentDidMount: function() {
+    KeyboardEventEmitter.on(KeyboardEvents.KeyboardWillShowEvent, this.updateKeyboardSpace);
+    KeyboardEventEmitter.on(KeyboardEvents.KeyboardWillHideEvent, this.resetKeyboardSpace);
     this.addListenerOn(this.eventEmitter, 'imagePressed', this.imagePressed);
   },
 
@@ -324,13 +328,12 @@ var VenueTab = React.createClass({
     this.setState({modalVisible: visible, uri: uri});
   },
 
-<<<<<<< HEAD
   toggleCamera(visible) {
     this.setState({modalCameraVisible: !this.state.modalCameraVisible});
-=======
+  },
+
   setPopupVisible(visible) {
     this.setState({popupVisible: visible});
->>>>>>> (feat) Venue view UX in progress
   },
 
   showImageOrVideo() {
@@ -362,15 +365,20 @@ var VenueTab = React.createClass({
         <Modal 
           visible={this.state.popupVisible === true}
           animated={true}
-          transparent={true}
-        >
+          transparent={true}>
           <View style={styles.popupContainer}>
             <View style={styles.innerContainer}>
-              <Text style={[styles.text, styles.alignLeft]} >
+              <Text style={styles.venueName}>
+                {venue.title}
+              </Text>
+              <Text style={styles.text} >
                 Venue description: {venue.description}
               </Text>
-              <Text style={[styles.text, styles.alignLeft]} >
-                Address: {venue.address}
+              <Text style={styles.text} >
+                {venue.address}
+              </Text>
+              <Text style={styles.text}>
+                Current attendees: {this.state.attendeeCount}
               </Text>
               <Button
                 onPress={this.setPopupVisible.bind(this, false)}
@@ -380,51 +388,47 @@ var VenueTab = React.createClass({
             </View>
           </View>
         </Modal>
-        <Text style={styles.venueName}>
-          {venue.title}
-        </Text>
 
-        <Button
-          onPress={this.setPopupVisible.bind(this, true)}
-          style={styles.modalButton}>
-          Details
-        </Button>
+        <View style={styles.headerContainer}>
+          <Button
+            onPress={this.setPopupVisible.bind(this, true)}
+            style={styles.infoButton}>
+            <Icon
+              name='fontawesome|info-circle'
+              size={19}
+              color='gray'
+              style={styles.icon}/>
+          </Button>
+
+          <Text 
+            style={styles.venueName}
+            numberOfLines={1}>
+            {venue.title}
+          </Text>
+        </View>
+
+        <View style={styles.mediaContainer}>
+          <ScrollView
+            horizontal={true}
+            style={styles.horizontalScrollView}
+            showsHorizontalScrollIndicator={false}
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={styles.contentContainer}
+            directionalLockEnabled={true}
+            automaticallyAdjustContentInsets={false}>
+            {THUMB_URLS.map(createThumbRow.bind(this, this.eventEmitter))}
+          </ScrollView>
+        </View>
 
         <Text style={[styles.text, styles.yourRating]} >
           Overall rating: {this.state.overallRating} | Your last rating: {this.state.voteValue}
-        </Text>
-        <Text style={styles.text}>
-          Current attendees: {this.state.attendeeCount}
         </Text>
         <SliderIOS
           style={styles.slider}
           onValueChange={(voteValue) => this.setState({voteValue: Math.round(voteValue*10)})}
           onSlidingComplete={(voteValue) => this.slidingComplete(voteValue, venue)}
-          maximumTrackTintColor='red'/>
-        <ScrollView
-          horizontal={true}
-          style={styles.horizontalScrollView}
-          showsHorizontalScrollIndicator={false}
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={styles.contentContainer}
-          directionalLockEnabled={true}
-          automaticallyAdjustContentInsets={false}>
-          {THUMB_URLS.map(createThumbRow.bind(this, this.eventEmitter))}
-        </ScrollView>
-        <TextInput
-          style={styles.textInput}
-          onChangeText={(text) => this.setState({text})}
-          value={this.state.text}
-          onSubmitEditing={this.submitComment}
-          returnKeyType='send'
-          placeholder='Submit Comment' />
-        <Button style={styles.commentButton} onPress={this.submitComment}>
-          Submit Comment
-        </Button>
-
-        <Button style={styles.commentButton} onPress={this.toggleCamera}>
-          Take a photo!
-        </Button>
+          maximumTrackTintColor='#f92672'
+          minimumTrackTintColor='#66d9ef'/>
 
         <RefreshableListView
           style={styles.refreshableListView}
@@ -433,7 +437,27 @@ var VenueTab = React.createClass({
           loadData={this.reloadComments}
           refreshDescription="Refreshing comments" />
 
-        <Modal visible={this.state.modalVisible === true}>
+        <View style={[styles.inputContainer, {marginBottom: this.state.bottom}]}>  
+          <Button style={styles.cameraButton} onPress={this.toggleCamera}>
+            <Icon
+              name='fontawesome|camera-retro'
+              size={30}
+              color='gray'
+              style={styles.icon}/>
+          </Button>
+          <TextInput
+            style={styles.textInput}
+            onChangeText={(text) => this.setState({text})}
+            value={this.state.text}
+            onSubmitEditing={this.submitComment}
+            returnKeyType='send'
+            placeholder=' Unleash your inner Kraken' />
+        </View>
+
+        <Modal 
+          visible={this.state.modalVisible === true}
+          animated={true}
+          transparent={true}>
           <View style={styles.modalContainer}>
             <View style={styles.innerContainer}>
               {this.showImageOrVideo()}
@@ -458,7 +482,7 @@ var VenueTab = React.createClass({
             </View>
           </View>
         </Modal>
-
+        <View style={{height: this.state.keyboardSpace}}></View>
       </View>
     );
   }
@@ -508,85 +532,51 @@ var Thumb = React.createClass({
 
 var createThumbRow = (eventEmitter, uri, i) => <Thumb eventEmitter={eventEmitter} key={i} uri={uri} />;
 
-
-
 var styles = StyleSheet.create({
+  // venue view container
   main: {
+    flex: 1,
+  },
+
+  // general text style
+  text: {
+    fontFamily: 'Avenir',
     fontSize: 14,
     textAlign: 'center',
     fontWeight: '500',
     margin: 3,
   },
 
-  text: {
-    fontSize: 14,
-    textAlign: 'center',
-    fontWeight: '500',
-    margin: 3,
-  },
-  alignLeft: {
-    //textAlign: 'left'
+  // header container and children
+  headerContainer: {
+    marginTop: 5,
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   venueName: {
+    flex: 1,
+    fontFamily: 'Avenir',
     fontSize: 20,
-    textAlign: 'center'
+    textAlign: 'center',
   },
+  infoButton: {
+    flex: 0,
+    padding: 3
+  },
+
+  alignLeft: {
+    textAlign: 'left'
+  },
+
   yourRating: {
     marginBottom: 5
   },
-  slider: {
-    marginTop: 8,
-    height: 20,
-    marginLeft: 40,
-    marginRight: 40,
-    marginBottom: 10,
-    flex: 0.5
-  },
-  textInput: {
-    height: 30,
-    borderColor: 'gray',
-    margin: 5,
-    marginLeft: 1,
-    marginRight: 1,
-    marginBottom: 15,
 
-    borderWidth: 1,
-    borderRadius: 5
-  },
-  commentButton: {
-    fontSize: 20,
-    flex: 1,
-    textAlign: 'right',
-    right: 10,
-    alignSelf: 'flex-end'
-  },
-  refreshableListView: {
-    flex: 1,
-    flexDirection: 'column',
-    margin: 10,
-    marginLeft: 5,
-    marginRight: 5,
-    padding: 0,
-    bottom: 0,
-    height: Display.height * 0.49
-  },
+  // thumbnail for media
   thumbImage: {
     flex: 1,
     width: 70,
     height: 70,
-    margin: 0,
-    padding: 0
-  },
-  horizontalScrollView: {
-    height: 70,
-    width: Display.width,
-    marginTop: 10,
-    flex: 1
-  },
-  contentContainer: {
-    height: 70,
-    //width: 70,
-    flex: 1,
     margin: 0,
     padding: 0
   },
@@ -597,6 +587,76 @@ var styles = StyleSheet.create({
     margin: 0,
     padding: 0
   },
+
+  // scroll view for media
+  mediaContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  horizontalScrollView: {
+    height: 70,
+    width: Display.width,
+    marginTop: 10,
+  },
+
+  // slider
+  slider: {
+    marginTop: 5,
+    height: 15,
+    marginLeft: 40,
+    marginRight: 40,
+    marginBottom: 5,
+  },
+
+
+  // comments refreshable view
+  refreshableListView: {
+    flex: 1,
+    flexDirection: 'column',
+    padding: 5,
+    marginTop: 10,
+    // height: Display.height * 0.49
+  },
+
+  // comment input
+  inputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 5
+  },
+  textInput: {
+    flex: 1,
+    height: 30,
+    borderWidth: 1,
+    borderColor: '#66d9ef',
+    color: '#8C8C8C'
+  },
+  // camera button
+  cameraButton: {
+    flex: 0,
+    padding: 3,
+    height: 30,
+    width:30,
+  },
+
+
+  contentContainer: {
+    height: 70,
+    //width: 70,
+    flex: 1,
+    margin: 0,
+    padding: 0
+  },
+
+  // info modal
+  popupContainer: {
+    justifyContent: 'center',
+    height: 300,
+    alignItems: 'center',
+    backgroundColor: '#f5fcff'
+  },
+
+  // camera modal
   modalCameraContainer: {
     flex: 1,
     justifyContent: 'center',
@@ -604,14 +664,9 @@ var styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#f5fcff'
   },
-  popupContainer: {
-    flex: 0,
-    justifyContent: 'center',
-    height: 200,
-    width: 150,
-    alignItems: 'center',
-    backgroundColor: '#f5fcff'
-  },
+
+
+  // media modal
   modalContainer: {
     flex: 1,
     justifyContent: 'center',
@@ -666,5 +721,32 @@ var styles = StyleSheet.create({
     flex: 1
   }
 });
+
+var animations = {
+  layout: {
+    spring: {
+      duration: 200,
+      create: {
+        duration: 200,
+        type: LayoutAnimation.Types.easeInEaseOut,
+        property: LayoutAnimation.Properties.opacity,
+      },
+      update: {
+        type: LayoutAnimation.Types.spring,
+        springDamping: 400,
+      },
+    },
+    easeInEaseOut: {
+      duration: 200,
+      create: {
+        type: LayoutAnimation.Types.easeInEaseOut,
+        property: LayoutAnimation.Properties.scaleXY,
+      },
+      update: {
+        type: LayoutAnimation.Types.easeInEaseOut,
+      },
+    },
+  },
+};
 
 module.exports = VenueTab;
