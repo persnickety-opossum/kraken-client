@@ -69,23 +69,7 @@ var VenueTab = React.createClass({
     KeyboardEventEmitter.on(KeyboardEvents.KeyboardWillShowEvent, this.updateKeyboardSpace);
     KeyboardEventEmitter.on(KeyboardEvents.KeyboardWillHideEvent, this.resetKeyboardSpace);
     this.addListenerOn(this.eventEmitter, 'imagePressed', this.imagePressed);
-  },
-
-  reloadComments() {
-    var route = config.serverURL + '/api/venues/' + this.state.venue._id;
-    fetch(route)
-      .then(response => response.json())
-      .then(function(res) {
-        for (var i = 0; i < res.comments.length; i++) {
-          res.comments[i].datetime = moment(res.comments[i].datetime).fromNow();
-        }
-        return res;
-      })
-      .then(json => this.setState({
-        venue: json,
-        dataSource: ds.cloneWithRows(json.comments),
-        attendeeCount: Object.keys(json.attendees).length
-      }))
+    this.fetchVenue();
   },
 
   calculateDistance: function(current, venue) {
@@ -114,6 +98,7 @@ var VenueTab = React.createClass({
   componentWillReceiveProps: function(nextProps) {
     var venue = nextProps.venue;
     var route = config.serverURL + '/api/venues/' + venue._id;
+    var context = this;
 
     var venueChanged = this.props.venue.id !== venue.id;
 
@@ -135,19 +120,40 @@ var VenueTab = React.createClass({
             // Sets atVenue to true if user is within 100 metres
             atVenue: distance < 100,
             attendeeCount: Object.keys(json.attendees).length
-          },
-          function() {
-            this.getOverallRating();
-          })
+          }, function() {
+            context.this.getOverallRating();
+          });
         })
     } else {
       this.setState({
         atVenue: distance < 100
+      }, function() {
+        context.getOverallRating();
       })
     }
   },
 
+  fetchVenue: function() {
+    var context = this;
+    var venue = this.state.venue;
+    var route = config.serverURL + '/api/venues/' + venue._id;
+    fetch(route)
+      .then(response => response.json())
+      .then(json => {
+        for (var i = 0; i < json.comments.length; i++) {
+          json.comments[i].datetime = moment(json.comments[i].datetime).fromNow();
+        }
+        context.setState({
+          venue: json,
+          dataSource: ds.cloneWithRows(json.comments),
+          // Sets atVenue to true if user is within 100 metres
+          attendeeCount: Object.keys(json.attendees).length
+        });
+      })
+  },
+
   componentWillMount: function() {
+    var context = this;
     // retrieve user id, may be replaced with device UUID in the future
     this.eventEmitter = this.props.eventEmitter;
     var context = this;
@@ -166,8 +172,11 @@ var VenueTab = React.createClass({
         body: JSON.stringify({token: uuid})
       }) // no ;
       .then(response => response.json())
-      .then(json => context.setState({user: json._id}));
-      this.getOverallRating();
+      .then(json => context.setState({user: json._id}))
+      .then(function() {
+        context.fetchVenue();
+        context.getOverallRating();
+        })
     })
     .catch((err) => {
       console.log(err);
@@ -225,7 +234,7 @@ var VenueTab = React.createClass({
           </Text>
           <TouchableHighlight
             underlayColor='white'
-            activeOpacity='0.4'
+            activeOpacity={0.4}
             onPress={this.flag.bind(this, commentID)}>
             <Icon
               name="fontawesome|flag-o"
@@ -277,7 +286,7 @@ var VenueTab = React.createClass({
             })
           })
           .then(function() {
-            context.reloadComments();
+            context.fetchVenue();
           });
         }
       })
@@ -350,7 +359,7 @@ var VenueTab = React.createClass({
           })
             .then(function(res) {
               context.setState({text: ''});
-              context.reloadComments();
+              context.fetchVenue();
               return res.json();
             })
         }
@@ -521,7 +530,7 @@ var VenueTab = React.createClass({
           style={styles.refreshableListView}
           dataSource={this.state.dataSource}
           renderRow={this.renderComments}
-          loadData={this.reloadComments}
+          loadData={this.fetchVenue}
           refreshDescription="Refreshing comments" />
 
         <View style={[styles.inputContainer, {marginBottom: this.state.bottom}]}>  
