@@ -46,7 +46,8 @@ var VenueTab = React.createClass({
       dataSource: ds.cloneWithRows(this.props.venue.comments),
       keyboardSpace: 0,
       bottom: 49,
-      modalCameraVisible: false
+      modalCameraVisible: false,
+      userLastRating: 0
     };
   },
 
@@ -68,23 +69,7 @@ var VenueTab = React.createClass({
     KeyboardEventEmitter.on(KeyboardEvents.KeyboardWillShowEvent, this.updateKeyboardSpace);
     KeyboardEventEmitter.on(KeyboardEvents.KeyboardWillHideEvent, this.resetKeyboardSpace);
     this.addListenerOn(this.eventEmitter, 'imagePressed', this.imagePressed);
-  },
-
-  reloadComments() {
-    var route = config.serverURL + '/api/venues/' + this.state.venue._id;
-    fetch(route)
-      .then(response => response.json())
-      .then(function(res) {
-        for (var i = 0; i < res.comments.length; i++) {
-          res.comments[i].datetime = moment(res.comments[i].datetime).fromNow();
-        }
-        return res;
-      })
-      .then(json => this.setState({
-        venue: json,
-        dataSource: ds.cloneWithRows(json.comments),
-        attendeeCount: Object.keys(json.attendees).length
-      }))
+    this.fetchVenue();
   },
 
   calculateDistance: function(current, venue) {
@@ -113,6 +98,7 @@ var VenueTab = React.createClass({
   componentWillReceiveProps: function(nextProps) {
     var venue = nextProps.venue;
     var route = config.serverURL + '/api/venues/' + venue._id;
+    var context = this;
 
     var venueChanged = this.props.venue.id !== venue.id;
 
@@ -120,7 +106,6 @@ var VenueTab = React.createClass({
       var coords = nextProps.geolocation.coords;
       var distance = this.calculateDistance(coords, venue);
     }
-
     if (venueChanged) {
       fetch(route)
         .then(response => response.json())
@@ -135,23 +120,40 @@ var VenueTab = React.createClass({
             // Sets atVenue to true if user is within 100 metres
             atVenue: distance < 100,
             attendeeCount: Object.keys(json.attendees).length
-          },
-          function() {
-            this.getOverallRating();
-          })
+          }, function() {
+            context.getOverallRating();
+          });
         })
     } else {
       this.setState({
         atVenue: distance < 100
+      }, function() {
+        context.getOverallRating();
       })
     }
-    //this.setState({
-    //  venue: venue,
-    //  dataSource: ds.cloneWithRows(venue.comments)
-    //});
+  },
+
+  fetchVenue: function() {
+    var context = this;
+    var venue = this.state.venue;
+    var route = config.serverURL + '/api/venues/' + venue._id;
+    fetch(route)
+      .then(response => response.json())
+      .then(json => {
+        for (var i = 0; i < json.comments.length; i++) {
+          json.comments[i].datetime = moment(json.comments[i].datetime).fromNow();
+        }
+        context.setState({
+          venue: json,
+          dataSource: ds.cloneWithRows(json.comments),
+          // Sets atVenue to true if user is within 100 metres
+          attendeeCount: Object.keys(json.attendees).length
+        });
+      })
   },
 
   componentWillMount: function() {
+    var context = this;
     // retrieve user id, may be replaced with device UUID in the future
     this.eventEmitter = this.props.eventEmitter;
     var context = this;
@@ -170,8 +172,11 @@ var VenueTab = React.createClass({
         body: JSON.stringify({token: uuid})
       }) // no ;
       .then(response => response.json())
-      .then(json => context.setState({user: json._id}));
-      this.getOverallRating();
+      .then(json => context.setState({user: json._id}))
+      .then(function() {
+        context.fetchVenue();
+        context.getOverallRating();
+        })
     })
     .catch((err) => {
       console.log(err);
@@ -182,8 +187,20 @@ var VenueTab = React.createClass({
     var ratings = this.state.venue.ratings;
     var numRatings = Object.keys(ratings).length;
     var sum = 0;
+    var userAlreadyRated = false;
     for (var userID in ratings) {
       sum += ratings[userID];
+      if (userID === this.state.user) {
+        this.setState({userLastRating: ratings[userID]});
+        this.setState({voteValue: ratings[userID] / 10});
+        userAlreadyRated = true;
+      }
+    }
+    if (userAlreadyRated === false) {
+      this.setState({voteValue: 0});
+    }
+    if (userAlreadyRated === false) {
+      this.setState({userLastRating: 'N/A'});
     }
     if (numRatings > 0) {
       var average = Math.round(sum / numRatings);
@@ -193,17 +210,12 @@ var VenueTab = React.createClass({
     this.setState({overallRating: average});
   },
 
-  setRoundVoteValue(voteValue) {
-    voteValue *= 10;
-    voteValue = Math.round(voteValue);
-    this.setState({voteValue: voteValue})
-  },
-
   renderComments(comments) {
     if (comments) {
       var icon = 'fontawesome|' + comments.icon;
       var color = comments.color;
       var atVenue = comments.atVenue;
+      var commentID = comments._id;
       if (atVenue) {
         var commentTextColor = '#000000';
       } else {
@@ -217,10 +229,67 @@ var VenueTab = React.createClass({
             color={color}
             style={styles.icon}
             />
-          <Text flexWrap="wrap" numberOfLines={3} style={{flex: 1, color: commentTextColor}}>{comments.datetime}: {comments.content}</Text>
+          <Text flexWrap="wrap" numberOfLines={3} style={{flex: 1, color: commentTextColor}}>
+            {comments.datetime}: {comments.content}
+          </Text>
+          <TouchableHighlight
+            underlayColor='white'
+            activeOpacity={0.4}
+            onPress={this.flag.bind(this, commentID)}>
+            <Icon
+              name="fontawesome|flag-o"
+              size={19}
+              color="#898888"
+              style={styles.icon} />
+          </TouchableHighlight>
         </View>
       )
     }
+  },
+
+  flag(commentID) {
+    var context = this;
+    var route = config.serverURL + '/api/comments/';
+    var user = this.state.user;
+    var shouldDelete = false;
+    var flags;
+    fetch(route + commentID)
+      .then(response => response.json())
+      .then(json => {
+        var userAlreadyFlagged = false;
+        if (json.flags.length === 0) {
+          flags = [user];
+        } else {
+          for (var i = 0; i < json.flags.length; i++) {
+            if (json.flags[i] === user) {
+              userAlreadyFlagged = true;
+            }
+          }
+          if (userAlreadyFlagged === false) {
+            json.flags.push(user);
+            flags = json.flags;
+          }
+          if (flags.length === 3) {
+            shouldDelete = true;
+          }
+        }
+        if (userAlreadyFlagged === false) {
+          fetch(config.serverURL + '/api/comments/flag/' + json._id, {
+            method: 'post',
+            headers: {
+              'Accept': 'application/json',
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              flags: flags,
+              shouldDelete: shouldDelete
+            })
+          })
+          .then(function() {
+            context.fetchVenue();
+          });
+        }
+      })
   },
 
   getRandomColor() {
@@ -270,6 +339,7 @@ var VenueTab = React.createClass({
           var venue = this.state.venue._id;
           var datetime = new Date().toISOString();
           var atVenue = this.state.atVenue;
+          var flags = [];
           fetch(config.serverURL + '/api/comments/', {
             method: 'post',
             headers: {
@@ -283,12 +353,13 @@ var VenueTab = React.createClass({
               datetime: datetime,
               atVenue: atVenue,
               icon: icon,
-              color: color
+              color: color,
+              flags: flags
             })
           })
             .then(function(res) {
               context.setState({text: ''});
-              context.reloadComments();
+              context.fetchVenue();
               return res.json();
             })
         }
@@ -296,6 +367,8 @@ var VenueTab = React.createClass({
   },
 
   slidingComplete(voteValue, venue) {
+    var voteValue = Math.round(voteValue*10);
+    this.setState({userLastRating: voteValue});
     fetch(config.serverURL + '/api/venues/rate/' + venue._id, {
       method: 'post',
       headers:  {
@@ -304,7 +377,7 @@ var VenueTab = React.createClass({
       },
       body: JSON.stringify({
         user: this.state.user,
-        rating: Math.round(voteValue * 10)
+        rating: voteValue
       })
     })
     .then(response => response.json())
@@ -359,7 +432,7 @@ var VenueTab = React.createClass({
 
   render() {
     var venue = this.props.venue;
-    var THUMB_URLS = ['sneakers', 'pool_party', 'http://www.fubiz.net/wp-content/uploads/2012/03/the-kraken-existence2.jpg', 'http://img2.wikia.nocookie.net/__cb20140311041907/villains/images/b/bb/The_Kraken.jpg', 'http://vignette2.wikia.nocookie.net/reddits-world/images/8/8e/Kraken_v2_by_elmisa-d70nmt4.jpg/revision/latest?cb=20140922042121', 'http://orig11.deviantart.net/ccd8/f/2011/355/0/c/kraken_by_elmisa-d4ju669.jpg', 'http://orig14.deviantart.net/40df/f/2014/018/d/4/the_kraken_by_alexstoneart-d72o83n.jpg', 'http://orig10.deviantart.net/bf30/f/2010/332/f/5/kraken_by_mabuart-d33tchk.jpg', 'http://static.comicvine.com/uploads/original/12/120846/2408132-kraken_by_neo_br.jpg', 'https://upload.wikimedia.org/wikipedia/commons/9/9d/Colossal_octopus_by_Pierre_Denys_de_Montfort.jpg', 'http://www.wallpaper4me.com/images/wallpapers/deathbykraken-39598.jpeg', 'http://img06.deviantart.net/3c5b/i/2012/193/d/9/kraken__work_in_progress_by_rkarl-d56zu66.jpg', 'http://i.gr-assets.com/images/S/photo.goodreads.com/hostedimages/1393990556r/8792967._SY540_.jpg', 'http://static.fjcdn.com/pictures/Kraken+found+on+tumblr_5b3d72_4520925.jpg'];
+    var THUMB_URLS = ['sneakers', 'pool_party', 'http://img2.wikia.nocookie.net/__cb20140311041907/villains/images/b/bb/The_Kraken.jpg', 'http://vignette2.wikia.nocookie.net/reddits-world/images/8/8e/Kraken_v2_by_elmisa-d70nmt4.jpg/revision/latest?cb=20140922042121', 'http://orig11.deviantart.net/ccd8/f/2011/355/0/c/kraken_by_elmisa-d4ju669.jpg', 'http://orig14.deviantart.net/40df/f/2014/018/d/4/the_kraken_by_alexstoneart-d72o83n.jpg', 'http://orig10.deviantart.net/bf30/f/2010/332/f/5/kraken_by_mabuart-d33tchk.jpg', 'http://static.comicvine.com/uploads/original/12/120846/2408132-kraken_by_neo_br.jpg', 'https://upload.wikimedia.org/wikipedia/commons/9/9d/Colossal_octopus_by_Pierre_Denys_de_Montfort.jpg', 'http://www.wallpaper4me.com/images/wallpapers/deathbykraken-39598.jpeg', 'http://img06.deviantart.net/3c5b/i/2012/193/d/9/kraken__work_in_progress_by_rkarl-d56zu66.jpg', 'http://i.gr-assets.com/images/S/photo.goodreads.com/hostedimages/1393990556r/8792967._SY540_.jpg', 'http://static.fjcdn.com/pictures/Kraken+found+on+tumblr_5b3d72_4520925.jpg'];
     return (
       <View style={styles.main}>
         <Modal 
@@ -421,20 +494,19 @@ var VenueTab = React.createClass({
         </View>
 
         <Text style={[styles.text, styles.yourRating]} >
-          Overall rating: {this.state.overallRating} | Your last rating: {this.state.voteValue}
+          Overall rating: {this.state.overallRating} | Your last rating: {this.state.userLastRating}
         </Text>
         <SliderIOS
           style={styles.slider}
-          onValueChange={(voteValue) => this.setState({voteValue: Math.round(voteValue*10)})}
           onSlidingComplete={(voteValue) => this.slidingComplete(voteValue, venue)}
           maximumTrackTintColor='#f92672'
-          minimumTrackTintColor='#66d9ef'/>
-
+          minimumTrackTintColor='#66d9ef'
+          value={this.state.voteValue}/>
         <RefreshableListView
           style={styles.refreshableListView}
           dataSource={this.state.dataSource}
           renderRow={this.renderComments}
-          loadData={this.reloadComments}
+          loadData={this.fetchVenue}
           refreshDescription="Refreshing comments" />
 
         <View style={[styles.inputContainer, {marginBottom: this.state.bottom}]}>  

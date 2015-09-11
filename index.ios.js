@@ -48,11 +48,6 @@ var persnickety = React.createClass({
     this.setState({geolocation: position});
   },
 
-  _handleResponse(response) {
-    this.setState({venue: response});
-    this.getOverallRating();
-  },
-
   selectVenue: function(eventObj) {
     var venue = eventObj.venue;
     //var currDateTime = venue.venue.datetime;
