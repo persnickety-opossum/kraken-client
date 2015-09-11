@@ -269,7 +269,7 @@ var VenueTab = React.createClass({
             json.flags.push(user);
             flags = json.flags;
           }
-          if (flags.length === 2) {
+          if (flags.length === 3) {
             shouldDelete = true;
           }
         }
@@ -505,30 +505,6 @@ var VenueTab = React.createClass({
           maximumTrackTintColor='#f92672'
           minimumTrackTintColor='#66d9ef'
           value={this.state.voteValue}/>
-        <ScrollView
-          horizontal={true}
-          style={styles.horizontalScrollView}
-          showsHorizontalScrollIndicator={false}
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={styles.contentContainer}
-          directionalLockEnabled={true}
-          automaticallyAdjustContentInsets={false}>
-          {THUMB_URLS.map(createThumbRow.bind(this, this.eventEmitter))}
-        </ScrollView>
-        <TextInput
-          style={styles.textInput}
-          onChangeText={(text) => this.setState({text})}
-          value={this.state.text}
-          onSubmitEditing={this.submitComment}
-          returnKeyType='send'
-          placeholder='Submit Comment' />
-        <Button style={styles.commentButton} onPress={this.submitComment}>
-          Submit Comment
-        </Button>
-
-        <Button style={styles.commentButton} onPress={this.toggleCamera}>
-          Take a photo!
-        </Button>
         <RefreshableListView
           style={styles.refreshableListView}
           dataSource={this.state.dataSource}
