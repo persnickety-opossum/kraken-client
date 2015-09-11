@@ -5,18 +5,19 @@ var DeviceUUID = require("react-native-device-uuid");
 //var venue = require('./venueMock');
 var Button = require('react-native-button');
 var moment = require('moment');
-moment().format();
 var Display = require('react-native-device-display');
-var KeyboardEvents = require('react-native-keyboardevents');
-var KeyboardEventEmitter = KeyboardEvents.Emitter;
 var EventEmitter = require('EventEmitter');
 var Subscribable = require('Subscribable');
 var Video = require('react-native-video');
 var { Icon, } = require('react-native-icons');
-
 var KrakenCamera = require('../Camera/camera.index');
+var Modalbox   = require('react-native-modalbox');
+var RefreshableListView = require('react-native-refreshable-listview');
 
 var config = require('../config');
+
+var KeyboardEvents = require('react-native-keyboardevents');
+var KeyboardEventEmitter = KeyboardEvents.Emitter;
 
 var {
   Image,
@@ -32,8 +33,8 @@ var {
   View,
   } = React;
 
-var RefreshableListView = require('react-native-refreshable-listview');
 var ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
+moment().format();
 
 // Sockets
 window.navigator.userAgent = "react-native";
@@ -311,7 +312,7 @@ var VenueTab = React.createClass({
             name={icon}
             size={19}
             color={color}
-            style={styles.icon}
+            style={styles.commentIcon}
             />
           <Text flexWrap="wrap" numberOfLines={3} style={{flex: 1, color: commentTextColor}}>
             {comments.datetime}: {comments.content}
@@ -489,8 +490,8 @@ var VenueTab = React.createClass({
     this.setState({modalCameraVisible: !this.state.modalCameraVisible});
   },
 
-  setPopupVisible(visible) {
-    this.setState({popupVisible: visible});
+  setInfoVisible(visible) {
+    this.refs.info.open();
   },
 
   showImageOrVideo() {
@@ -514,46 +515,52 @@ var VenueTab = React.createClass({
     }
   },
 
+  formatAddress() {
+    return this.state.venue.address.split(',');
+  },
+
   render() {
     var venue = this.props.venue;
+    var THUMB_URLS = ['sneakers', 'pool_party', 'http://img2.wikia.nocookie.net/__cb20140311041907/villains/images/b/bb/The_Kraken.jpg', 'http://vignette2.wikia.nocookie.net/reddits-world/images/8/8e/Kraken_v2_by_elmisa-d70nmt4.jpg/revision/latest?cb=20140922042121', 'http://orig11.deviantart.net/ccd8/f/2011/355/0/c/kraken_by_elmisa-d4ju669.jpg', 'http://orig14.deviantart.net/40df/f/2014/018/d/4/the_kraken_by_alexstoneart-d72o83n.jpg', 'http://orig10.deviantart.net/bf30/f/2010/332/f/5/kraken_by_mabuart-d33tchk.jpg', 'http://static.comicvine.com/uploads/original/12/120846/2408132-kraken_by_neo_br.jpg', 'https://upload.wikimedia.org/wikipedia/commons/9/9d/Colossal_octopus_by_Pierre_Denys_de_Montfort.jpg', 'http://www.wallpaper4me.com/images/wallpapers/deathbykraken-39598.jpeg', 'http://img06.deviantart.net/3c5b/i/2012/193/d/9/kraken__work_in_progress_by_rkarl-d56zu66.jpg', 'http://i.gr-assets.com/images/S/photo.goodreads.com/hostedimages/1393990556r/8792967._SY540_.jpg', 'http://static.fjcdn.com/pictures/Kraken+found+on+tumblr_5b3d72_4520925.jpg'];
+    var address = this.formatAddress();
+
     return (
       <View style={styles.main}>
-        <Modal 
-          visible={this.state.popupVisible === true}
-          animated={true}
-          transparent={true}>
-          <View style={styles.popupContainer}>
-            <View style={styles.innerContainer}>
-              <Text style={styles.venueName}>
-                {venue.title}
-              </Text>
-              <Text style={styles.text} >
-                Venue description: {venue.description}
-              </Text>
-              <Text style={styles.text} >
-                {venue.address}
-              </Text>
-              <Text style={styles.text}>
-                Current attendees: {this.state.attendeeCount}
-              </Text>
-              <Button
-                onPress={this.setPopupVisible.bind(this, false)}
-                style={styles.modalButton}>
-                Close
-              </Button>
-            </View>
-          </View>
-        </Modal>
+
+        <Modalbox
+          ref='info'
+          style={[styles.popupContainer, styles.infoPopup]} 
+          position='center'
+          backdropOpacity={0.9}
+          backdropColor='#47b3c8'>
+            <Text style={[styles.venueName, {marginRight: 0}]}>
+              {venue.title}
+            </Text>
+            <Text style={[styles.text, {flex: 0.5}]} >
+              Venue description: {venue.description}
+            </Text>
+            <Text style={styles.text} >
+              {address[0] + '\n'}
+              {address[1] + ',' + address[2]}
+            </Text>
+            <Text style={styles.text}>
+              Current attendees: {this.state.attendeeCount}
+            </Text>
+            <Button
+              onPress={this.setInfoVisible.bind(this, false)}
+              style={styles.modalButton}>
+              Close
+            </Button>
+        </Modalbox>
 
         <View style={styles.headerContainer}>
           <Button
-            onPress={this.setPopupVisible.bind(this, true)}
-            style={styles.infoButton}>
+            onPress={this.setInfoVisible.bind(this, true)}>
             <Icon
               name='fontawesome|info-circle'
               size={19}
               color='gray'
-              style={styles.icon}/>
+              style={styles.infoIcon}/>
           </Button>
 
           <Text 
@@ -593,12 +600,12 @@ var VenueTab = React.createClass({
           refreshDescription="Refreshing comments" />
 
         <View style={[styles.inputContainer, {marginBottom: this.state.bottom}]}>  
-          <Button style={styles.cameraButton} onPress={this.toggleCamera}>
+          <Button onPress={this.toggleCamera}>
             <Icon
-              name='fontawesome|camera-retro'
-              size={30}
-              color='gray'
-              style={styles.icon}/>
+              name='fontawesome|camera'
+              size={25}
+              color='#47b3c8'
+              style={styles.cameraIcon}/>
           </Button>
           <TextInput
             style={styles.textInput}
@@ -706,6 +713,7 @@ var styles = StyleSheet.create({
 
   // general text style
   text: {
+    flex: 1,
     fontFamily: 'Avenir',
     fontSize: 14,
     textAlign: 'center',
@@ -724,16 +732,10 @@ var styles = StyleSheet.create({
     fontFamily: 'Avenir',
     fontSize: 20,
     textAlign: 'center',
+    marginRight: 25
   },
-  infoButton: {
-    flex: 0,
-    padding: 3
-  },
-
-  alignLeft: {
-    textAlign: 'left'
-  },
-
+  
+  // rating info text
   yourRating: {
     marginBottom: 5
   },
@@ -774,14 +776,17 @@ var styles = StyleSheet.create({
     marginBottom: 5,
   },
 
-
   // comments refreshable view
   refreshableListView: {
     flex: 1,
     flexDirection: 'column',
-    padding: 5,
     marginTop: 10,
     // height: Display.height * 0.49
+  },
+  commentIcon: {
+    height: 20,
+    width: 20,
+    marginRight: 10,
   },
 
   // comment input
@@ -800,12 +805,16 @@ var styles = StyleSheet.create({
   // camera button
   cameraButton: {
     flex: 0,
-    padding: 3,
     height: 30,
     width:30,
   },
+  cameraIcon: {
+    height: 30,
+    width: 30,
+    marginRight: 8,
+  },
 
-
+  // scroll view container for comments
   contentContainer: {
     height: 70,
     //width: 70,
@@ -813,13 +822,32 @@ var styles = StyleSheet.create({
     margin: 0,
     padding: 0
   },
-
+  commentContainer: {
+    flex: 1,
+    padding: 5,
+    flexDirection: 'row',
+    borderWidth: 0.5,
+    borderColor: '#E3E3E3'
+  },
+  commentText: {
+    flex: 1
+  },
   // info modal
   popupContainer: {
+    flex: 1,
     justifyContent: 'center',
+    alignItems: 'center'
+  },
+  infoPopup: {
     height: 300,
-    alignItems: 'center',
-    backgroundColor: '#f5fcff'
+    width: 300,
+    padding: 30
+  },
+  infoIcon: {
+    height: 20,
+    width: 20,
+    marginRight: 10,
+    marginLeft: 10,
   },
 
   // camera modal
@@ -831,7 +859,6 @@ var styles = StyleSheet.create({
     backgroundColor: '#f5fcff',
     
   },
-
 
   // media modal
   modalContainer: {
@@ -845,6 +872,7 @@ var styles = StyleSheet.create({
     alignItems: 'flex-end',
     height: Display.height,
     width: Display.width
+    alignItems: 'center',
   },
   image: {
     flex: 1,
@@ -862,7 +890,6 @@ var styles = StyleSheet.create({
     height: 45,
     width: 45,
   },
-
   video: {
     //position: 'absolute',
     height: Display.width*1.33333,
@@ -878,22 +905,19 @@ var styles = StyleSheet.create({
     margin: 0,
     padding: 0
   },
-  icon: {
-    height: 20,
-    width: 20,
-    marginRight: 5,
-    marginLeft: 0,
-    padding: 0
-  },
-  commentContainer: {
+  modalButton: {
     flex: 1,
-    flexDirection: 'row'
+    marginTop: 10,
+    marginRight: 5,
+    alignSelf: 'flex-end',
+    right: 0,
+    fontSize: 20
   },
-  commentText: {
-    flex: 1
-  }
+
+
 });
 
+// easing animations for layout changes
 var animations = {
   layout: {
     spring: {
