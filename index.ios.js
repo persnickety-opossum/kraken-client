@@ -60,10 +60,10 @@ var persnickety = React.createClass({
     var venue = eventObj.venue;
     
     // Listen to socket for media updates
+    context = this;
     socket.removeAllListeners();
-    socket.on('media-' + venue.id, function (url) {
-      alert('media updated!');
-      this.eventEmitter.emit('mediaUpdated', url);
+    socket.on('media-' + venue.id, function (response) {
+      context.eventEmitter.emit('mediaUpdated', response.url);
     });
 
 

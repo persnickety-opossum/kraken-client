@@ -72,8 +72,14 @@ var VenueTab = React.createClass({
   },
 
   changeVenue(venue) {
-    alert(venue);
     this.setState({'venue': venue});
+  },
+
+  updateMedia(url) {
+    // this.setState({media: [url]});
+    // this.render();
+    // Todo: Get the above working so a call to the database doesn't have to be made.
+    this.fetchMedia();
   },
 
   fetchMedia(venue) {
@@ -88,7 +94,7 @@ var VenueTab = React.createClass({
     })
     .then(response => {
       context.setState({media: JSON.parse(response._bodyInit)});
-      this.render();
+
     });
 
     console.log(context.state.media);
