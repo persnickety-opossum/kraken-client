@@ -14,6 +14,14 @@ var MapboxGLMap = require('react-native-mapbox-gl');
 var mapRef = 'mapRef';
 var moment = require('moment');
 
+var config = require('./app/config');
+
+var io = require('socket.io-client/socket.io');
+var socket = io.connect(config.serverURL);
+
+// Required for sockets
+window.navigator.userAgent = "react-native";
+
 moment().format();
 
 var {
@@ -50,6 +58,16 @@ var persnickety = React.createClass({
 
   selectVenue: function(eventObj) {
     var venue = eventObj.venue;
+    
+    // Listen to socket for media updates
+    socket.removeAllListeners();
+    socket.on('media-' + venue.id, function (url) {
+      alert('media updated!');
+      this.eventEmitter.emit('mediaUpdated', url);
+    });
+
+
+
     //var currDateTime = venue.venue.datetime;
 
     //var currDateTime = new Date(venue.venue.datetime);
@@ -67,6 +85,7 @@ var persnickety = React.createClass({
     //  newVenue.comments[i].datetime = moment(newVenue.comments[i].datetime).fromNow();
     //}
     var context = this
+
 
     this.setState({venueImg: require('image!venue')}, function() {
       context.setState({venue: venue}, function() {

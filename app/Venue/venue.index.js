@@ -53,6 +53,7 @@ var VenueTab = React.createClass({
       bottom: 49,
       modalCameraVisible: false,
       userLastRating: 0
+      media: []
     };
   },
 
@@ -70,11 +71,54 @@ var VenueTab = React.createClass({
     this.setState({bottom: 49});
   },
 
+  changeVenue(venue) {
+    alert(venue);
+    this.setState({'venue': venue});
+  },
+
+  fetchMedia(venue) {
+    var context = this;
+    context.setState({media: []}); // Otherwise it just keeps adding on to media?
+    var route;
+    if (venue) route = config.serverURL + '/api/media?venue=' + venue._id;
+    else route = config.serverURL + '/api/media?venue=' + this.state.venue._id;
+    console.log(route);
+    fetch(route, {
+      method: 'get',
+    })
+    .then(response => {
+      context.setState({media: JSON.parse(response._bodyInit)});
+      this.render();
+    });
+
+    console.log(context.state.media);
+
+  },
+
+
   componentDidMount: function() {
     KeyboardEventEmitter.on(KeyboardEvents.KeyboardWillShowEvent, this.updateKeyboardSpace);
     KeyboardEventEmitter.on(KeyboardEvents.KeyboardWillHideEvent, this.resetKeyboardSpace);
     this.addListenerOn(this.eventEmitter, 'imagePressed', this.imagePressed);
     this.fetchVenue();
+    this.addListenerOn(this.eventEmitter, 'mediaUpdated', this.fetchMedia);
+  },
+
+  reloadComments() {
+    var route = config.serverURL + '/api/venues/' + this.state.venue._id;
+    fetch(route)
+      .then(response => response.json())
+      .then(function(res) {
+        for (var i = 0; i < res.comments.length; i++) {
+          res.comments[i].datetime = moment(res.comments[i].datetime).fromNow();
+        }
+        return res;
+      })
+      .then(json => this.setState({
+        venue: json,
+        dataSource: ds.cloneWithRows(json.comments),
+        attendeeCount: Object.keys(json.attendees).length
+      }))
   },
 
   calculateDistance: function(current, venue) {
@@ -117,6 +161,8 @@ var VenueTab = React.createClass({
       var distance = this.calculateDistance(coords, venue);
     }
     if (venueChanged) {
+      this.fetchMedia(venue);
+      
       fetch(route)
         .then(response => response.json())
         .then(json => {
@@ -133,16 +179,6 @@ var VenueTab = React.createClass({
           }, function() {
             context.getOverallRating();
           });
-
-          // Loading venue images
-          fetch(config.serverURL + '/api/media?venue=' + venue._id, {
-            method: 'get',
-          })
-          .then(response => {
-            console.log(JSON.parse(response._bodyInit));
-            THUMB_URLS = JSON.parse(response._bodyInit);
-          });
-
 
           fetch(route)
             .then(response => response.json())
@@ -192,13 +228,12 @@ var VenueTab = React.createClass({
   },
 
   componentWillMount: function() {
+    this.eventEmitter = this.props.eventEmitter;
     var context = this;
     // retrieve user id, may be replaced with device UUID in the future
-    this.eventEmitter = this.props.eventEmitter;
     var context = this;
     // Get Device UUID
     DeviceUUID.getUUID().then((uuid) => {
-      console.log('Device ID >>>>>>>>> ', uuid);
       return uuid;
     })
     .then((uuid) => {
@@ -527,7 +562,7 @@ var VenueTab = React.createClass({
             contentContainerStyle={styles.contentContainer}
             directionalLockEnabled={true}
             automaticallyAdjustContentInsets={false}>
-            {THUMB_URLS.map(createThumbRow.bind(this, this.eventEmitter))}
+            {this.state.media.map(createThumbRow.bind(this, this.eventEmitter))}
           </ScrollView>
         </View>
 
