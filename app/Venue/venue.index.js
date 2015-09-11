@@ -52,7 +52,7 @@ var VenueTab = React.createClass({
       keyboardSpace: 0,
       bottom: 49,
       modalCameraVisible: false,
-      userLastRating: 0
+      userLastRating: 0,
       media: []
     };
   },
@@ -76,10 +76,13 @@ var VenueTab = React.createClass({
   },
 
   updateMedia(url) {
-    // this.setState({media: [url]});
-    // this.render();
-    // Todo: Get the above working so a call to the database doesn't have to be made.
+    
     this.fetchMedia();
+    // Not sure why the below isn't working.
+    // var media = this.state.media;
+    // media.unshift(url);
+    // this.setState({'media': media});
+    // this.render();
   },
 
   fetchMedia(venue) {
@@ -93,7 +96,7 @@ var VenueTab = React.createClass({
       method: 'get',
     })
     .then(response => {
-      context.setState({media: JSON.parse(response._bodyInit)});
+      context.setState({media: JSON.parse(response._bodyInit).reverse()});
 
     });
 
@@ -107,7 +110,7 @@ var VenueTab = React.createClass({
     KeyboardEventEmitter.on(KeyboardEvents.KeyboardWillHideEvent, this.resetKeyboardSpace);
     this.addListenerOn(this.eventEmitter, 'imagePressed', this.imagePressed);
     this.fetchVenue();
-    this.addListenerOn(this.eventEmitter, 'mediaUpdated', this.fetchMedia);
+    this.addListenerOn(this.eventEmitter, 'mediaUpdated', this.updateMedia);
   },
 
   reloadComments() {
@@ -234,6 +237,7 @@ var VenueTab = React.createClass({
   },
 
   componentWillMount: function() {
+    this.fetchMedia(); // Initially load media
     this.eventEmitter = this.props.eventEmitter;
     var context = this;
     // retrieve user id, may be replaced with device UUID in the future
