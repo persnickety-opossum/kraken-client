@@ -121,7 +121,7 @@ var VenueTab = React.createClass({
             atVenue: distance < 100,
             attendeeCount: Object.keys(json.attendees).length
           }, function() {
-            context.this.getOverallRating();
+            context.getOverallRating();
           });
         })
     } else {
@@ -290,9 +290,6 @@ var VenueTab = React.createClass({
           });
         }
       })
-      .then(function() {
-        context.fetchVenue();
-      });
   },
 
   getRandomColor() {
