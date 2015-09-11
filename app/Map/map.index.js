@@ -11,6 +11,7 @@ moment().format();
 var Display = require('react-native-device-display');
 var config = require('../config');
 var DeviceUUID = require("react-native-device-uuid");
+var { Icon, } = require('react-native-icons');
 
 // require React Native modules
 var {
@@ -87,11 +88,11 @@ var MapTab = React.createClass({
             .then(response => response.json())
             .then(json => {
               json.datetime = moment(json.datetime).format("dddd, MMMM Do YYYY, h:mm:ss a");
-              this.setState({searchPins: []})
-              this.setState({venuePins: []})
-              this._venueQuery(config.serverURL + '/api/venues', true)
-              this.eventEmitter.emit('annotationTapped', { venue: json})
+              this.eventEmitter.emit('annotationTapped', { venue: json});
             })
+            .then(() => this.setState({searchPins: []}))
+            .then(() => this.setState({venuePins: []}))
+            .then(() => this._venueQuery(config.serverURL + '/api/venues', true))
             .catch(function(err) {
               console.log('error');
               console.log(newVenue);
@@ -252,7 +253,6 @@ var MapTab = React.createClass({
 
   // method for recentering and reset zoom level based on current location 
   _onCenterPressed: function () {
-    //this.setCenterCoordinateZoomLevelAnimated(mapRef, 37.783585, -122.408955, 15);
     this.setCenterCoordinateZoomLevelAnimated(mapRef, this.state.center.latitude, this.state.center.longitude, 15)
   },
 
@@ -331,7 +331,7 @@ var MapTab = React.createClass({
             onChange={this._onSearchTextChanged}
             onSubmitEditing={this._onSearchTextSubmit}
             returnKeyType='search'
-            placeholder='Search'/>
+            placeholder=' Search'/>
         </View>
         <TouchableHighlight onPress={this._onCenterPressed}> 
           <Image
@@ -355,9 +355,6 @@ var styles = StyleSheet.create({
     flexDirection: 'column',
     flex: 1,
   },
-  beer:{
-
-  },
   map: {
     flex: 5
   },
@@ -370,13 +367,14 @@ var styles = StyleSheet.create({
   },
   searchInput: {
     position: 'absolute',
-    top: 0,
+    top: 3,
+    left: 3,
     height: 36,
-    width: Display.width*.89,
+    width: Display.width*.80,
     padding: 4,
     fontSize: 12,
     borderWidth: 0.5,
-    borderColor: '#23FCA6',
+    borderColor: '#66d9ef',
     color: '#8C8C8C'
   },
   button: {
@@ -384,7 +382,7 @@ var styles = StyleSheet.create({
     width: 40,
     position: 'absolute',
     bottom: 50,
-    right: 30
+    right: 40
   },
   stylebutton: {
     height: 40,

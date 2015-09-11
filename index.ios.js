@@ -3,14 +3,18 @@
 var React = require('react-native');
 var EventEmitter = require('EventEmitter');
 var Subscribable = require('Subscribable');
+
+// require tab views
 var MapTab = require('./app/Map/map.index');
 var VenueTab = require('./app/Venue/venue.index');
 var SettingsTab = require('./app/Settings/settings.index');
+var VideoTab = require('./app/SCRecorder/screcorder.index');
+
 var MapboxGLMap = require('react-native-mapbox-gl');
 var mapRef = 'mapRef';
 var moment = require('moment');
+
 moment().format();
-var ImagesTab = require('./app/Images/images.index');
 
 var {
   AppRegistry,
@@ -27,7 +31,9 @@ var persnickety = React.createClass({
   getInitialState() {
     return {
       selectedTab: 'map',
-      venue: 'default venue'
+      venue: 'default venue',
+      venueImg: require('image!venue'),
+      venueClicked: 'map',
     }
   },
   componentWillMount: function() {
@@ -65,8 +71,15 @@ var persnickety = React.createClass({
     //for (var i = 0; i < newVenue.comments.length;i++) {
     //  newVenue.comments[i].datetime = moment(newVenue.comments[i].datetime).fromNow();
     //}
-    this.setState({venue: venue}, function() {
-      this.changeTab('venue');
+    var context = this
+
+    this.setState({venueImg: require('image!venue')}, function() {
+      context.setState({venue: venue}, function() {
+        context.setState({venueClicked: 'venue'}, function() {
+          context.changeTab('venue');
+          this.render();
+        });
+      });
     });
   },
 
@@ -79,7 +92,9 @@ var persnickety = React.createClass({
     //StatusBarIOS.setHidden(true);
     return (
       <View style={styles.container}>
-        <TabBarIOS>
+        <TabBarIOS 
+          tintColor="white"
+          barTintColor="#47b3c8">
           <TabBarIOS.Item
             title="Map"
             icon={ require('image!map') }
@@ -90,8 +105,8 @@ var persnickety = React.createClass({
 
           <TabBarIOS.Item
             title="Venue"
-            icon={ require('image!messages') }
-            onPress={ () => this.changeTab('venue') }
+            icon={ this.state.venueImg }
+            onPress={ () => this.changeTab(this.state.venueClicked) }
             selected={ this.state.selectedTab === 'venue' }>
             <View style={ styles.pageView }>
               <VenueTab venue={this.state.venue} geolocation={this.state.geolocation} eventEmitter={this.eventEmitter} />
@@ -108,13 +123,11 @@ var persnickety = React.createClass({
             </View>
           </TabBarIOS.Item>
           <TabBarIOS.Item
-            title="Images"
-            icon={ require('image!messages') }
-            onPress={ () => this.changeTab('images') }
-            selected={ this.state.selectedTab === 'images' }>
-            <View style={ styles.pageView }>
-              <ImagesTab />
-            </View>
+            title="Video"
+            icon={ require('image!video') }
+            onPress={ () => this.changeTab('video') }
+            selected={ this.state.selectedTab === 'video' }>
+            <VideoTab />
           </TabBarIOS.Item>
         </TabBarIOS>
       </View>
@@ -149,5 +162,4 @@ var styles = StyleSheet.create({
     padding: 2
   }
 });
-
 AppRegistry.registerComponent('persnickety', () => persnickety);
