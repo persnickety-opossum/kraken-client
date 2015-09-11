@@ -35,6 +35,11 @@ var {
 var RefreshableListView = require('react-native-refreshable-listview');
 var ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
 
+// Sockets
+window.navigator.userAgent = "react-native";
+var io = require('socket.io-client/socket.io');
+var socket = io.connect(config.serverURL);
+
 var VenueTab = React.createClass({
   mixins: [Subscribable.Mixin],
   getInitialState() {
@@ -99,6 +104,11 @@ var VenueTab = React.createClass({
     var venue = nextProps.venue;
     var route = config.serverURL + '/api/venues/' + venue._id;
     var context = this;
+
+    // socket.on('media-' + venue.id, function (data) {
+    //   alert('media updated!');
+    //   socket.emit('my other event', { my: 'data' });
+    // });
 
     var venueChanged = this.props.venue.id !== venue.id;
 
