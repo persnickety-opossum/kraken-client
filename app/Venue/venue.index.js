@@ -616,11 +616,15 @@ var VenueTab = React.createClass({
           <View style={styles.modalContainer}>
             <View style={styles.innerContainer}>
               {this.showImageOrVideo()}
-              <Button
+              <TouchableHighlight 
                 onPress={this.setModalVisible.bind(this, false)}
-                style={styles.modalButton}>
-                Close
-              </Button>
+                style={[styles.modalButton]}>
+                <Icon  
+                  name='fontawesome|times'
+                  size={45}
+                  color='#FFF'
+                  style={styles.modalButtonIcon} />
+              </TouchableHighlight>
             </View>
           </View>
         </Modal>
@@ -839,10 +843,12 @@ var styles = StyleSheet.create({
   },
   innerContainer: {
     alignItems: 'flex-end',
+    height: Display.height,
+    width: Display.width
   },
   image: {
     flex: 1,
-    height: Display.width*1.33333,
+    height: Display.height,
     width: Display.width
   },
   modalButton: {
