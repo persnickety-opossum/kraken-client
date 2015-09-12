@@ -625,15 +625,21 @@ var VenueTab = React.createClass({
           </View>
         </Modal>
 
-        <Modal visible={this.state.modalCameraVisible === true}>
+        <Modal
+          visible={this.state.modalCameraVisible === true}
+          animated={true}>
           <View style={styles.modalCameraContainer}>
             <View style={styles.innerContainer}>
               <KrakenCamera venue={this.state.venue} user={this.state.user} />
-              <Button 
-                onPress={this.toggleCamera}
-                style={styles.modalButton}>
-                Close
-              </Button>
+              <TouchableHighlight 
+                onPress={this.toggleCamera} 
+                style={[styles.modalButton]}>
+                <Icon  
+                  name='fontawesome|times'
+                  size={45}
+                  color='#FFF'
+                  style={styles.modalButtonIcon} />
+              </TouchableHighlight>
             </View>
           </View>
         </Modal>
@@ -688,6 +694,7 @@ var Thumb = React.createClass({
 var createThumbRow = (eventEmitter, uri, i) => <Thumb eventEmitter={eventEmitter} key={i} uri={uri} />;
 
 var styles = StyleSheet.create({
+
   // venue view container
   main: {
     flex: 1,
@@ -817,7 +824,8 @@ var styles = StyleSheet.create({
     justifyContent: 'center',
     //padding: 20,
     alignItems: 'center',
-    backgroundColor: '#f5fcff'
+    backgroundColor: '#f5fcff',
+    
   },
 
 
@@ -838,12 +846,15 @@ var styles = StyleSheet.create({
     width: Display.width
   },
   modalButton: {
-    flex: 1,
-    marginTop: 10,
-    marginRight: 5,
-    alignSelf: 'flex-end',
-    right: 0,
-    fontSize: 20
+    position: 'absolute',
+    flex: 0,
+    fontSize: 20,
+    bottom: 5,
+    right: 5
+  },
+  modalButtonIcon: {
+    height: 45,
+    width: 45,
   },
 
   video: {
