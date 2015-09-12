@@ -497,7 +497,11 @@ var VenueTab = React.createClass({
   },
 
   setInfoVisible(visible) {
-    this.refs.info.open();
+    if(visible) {
+      this.refs.info.open();
+    } else {
+      this.refs.info.close();
+    }
   },
 
   showImageOrVideo() {
@@ -595,8 +599,8 @@ var VenueTab = React.createClass({
         </View>
 
         <View>
-          <Text style={[styles.text, {marginBottom: 5}]} >
-            Venue Rating: {this.state.overallRating} | Your Rating: {this.state.voteValue}
+          <Text style={[styles.text, styles.yourRating]} >
+            Overall rating: {this.state.overallRating} | Your last rating: {this.state.userLastRating}
           </Text>
           <SliderIOS
             style={styles.slider}
