@@ -887,12 +887,11 @@ var styles = StyleSheet.create({
     width: Display.width
   },
   modalButton: {
-    flex: 1,
-    marginTop: 10,
-    marginRight: 5,
-    alignSelf: 'flex-end',
-    right: 0,
-    fontSize: 20
+    position: 'absolute',
+    flex: 0,
+    fontSize: 20,
+    bottom: 5,
+    right: 5
   },
   modalButtonIcon: {
     height: 45,
