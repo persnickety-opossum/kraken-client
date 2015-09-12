@@ -1,9 +1,10 @@
 var React = require('react-native');
 var Camera = require('react-native-camera');
-var Display = require('react-native-device-display');
 var config = require('../config');
-
+var styles = require('./styles');
+var { Icon, } = require('react-native-icons');
 var mime = require('mime');
+
 var {
   CameraRoll,
   AppRegistry,
@@ -21,42 +22,12 @@ var KrakenCam = React.createClass({
       captureTarget: Camera.constants.CaptureTarget.memory
     }
   },
-
-  render() {
-
-    return (
-      <Camera
-        ref="cam"
-        style={styles.container}
-        // onBarCodeRead={this._onBarCodeRead} New feature we could implement, specials?
-        type={this.state.cameraType}
-        captureTarget={Camera.constants.CaptureTarget.disk}>
-        <Text style={styles.welcome}>
-          Welcome to React Native!
-        </Text>
-        <Text style={styles.instructions}>
-          To get started, edit index.ios.js{'\n'}
-          Press Cmd+R to reload
-        </Text>
-        <TouchableHighlight onPress={this._switchCamera}>
-          <Text>The old switcheroo</Text>
-        </TouchableHighlight>
-        <TouchableHighlight onPress={this._takePicture}>
-          <Text>Take Picture</Text>
-        </TouchableHighlight>
-      </Camera>
-    );
-  },
-  _onBarCodeRead(e) {
-    console.log(e);
-  },
   _switchCamera() {
     var state = this.state;
     state.cameraType = state.cameraType === Camera.constants.Type.back
       ? Camera.constants.Type.front : Camera.constants.Type.back;
     this.setState(state);
   },
-
   _takePicture() {
     var venue = this.props.venue._id;
     var user = this.props.user
@@ -79,29 +50,38 @@ var KrakenCam = React.createClass({
         if (res) console.log('Response:', res);
       });
     });
+  },
+  render() {
+    return (
+      <Camera
+        ref="cam"
+        style={styles.cameraContainer}
+        type={this.state.cameraType}
+        captureTarget={Camera.constants.CaptureTarget.disk}>
+
+        <TouchableHighlight 
+          onPress={this._takePicture} 
+          style={[styles.iconContainer, styles.test]}>
+          <Icon  
+            name='fontawesome|camera-retro'
+            size={45}
+            color='#FFF'
+            style={styles.icon} />
+        </TouchableHighlight>
+
+        <TouchableHighlight 
+          onPress={this._switchCamera} 
+          style={[styles.iconContainer]}>
+          <Icon  
+            name='fontawesome|undo'
+            size={45}
+            color='#FFF'
+            style={styles.icon} />
+        </TouchableHighlight>
+        
+      </Camera>
+    );
   }
 });
-
-
-var styles = StyleSheet.create({
-  container: {
-    height: Display.width,
-    width: Display.width,
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'transparent',
-  },
-  welcome: {
-    fontSize: 20,
-    textAlign: 'center',
-    margin: 10,
-  },
-  instructions: {
-    textAlign: 'center',
-    color: '#333333',
-  },
-});
-
 
 module.exports = KrakenCam;
