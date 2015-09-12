@@ -37,7 +37,7 @@ var {
 var ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
 moment().format();
 
-// Sockets
+// Sockets - might not be needed venue view with event emitter from index
 window.navigator.userAgent = "react-native";
 var io = require('socket.io-client/socket.io');
 var socket = io.connect(config.serverURL);
@@ -99,11 +99,7 @@ var VenueTab = React.createClass({
     })
     .then(response => {
       context.setState({media: JSON.parse(response._bodyInit).reverse()});
-
     });
-
-    console.log(context.state.media);
-
   },
 
 
@@ -115,22 +111,25 @@ var VenueTab = React.createClass({
     this.addListenerOn(this.eventEmitter, 'mediaUpdated', this.updateMedia);
   },
 
-  reloadComments() {
-    var route = config.serverURL + '/api/venues/' + this.state.venue._id;
-    fetch(route)
-      .then(response => response.json())
-      .then(function(res) {
-        for (var i = 0; i < res.comments.length; i++) {
-          res.comments[i].datetime = moment(res.comments[i].datetime).fromNow();
-        }
-        return res;
-      })
-      .then(json => this.setState({
-        venue: json,
-        dataSource: ds.cloneWithRows(json.comments),
-        attendeeCount: Object.keys(json.attendees).length
-      }))
-  },
+  // replaced by sockets
+
+  // reloadComments() {
+  //   var route = config.serverURL + '/api/venues/' + this.state.venue._id;
+  //   fetch(route)
+  //     .then(response => response.json())
+  //     .then(function(res) {
+  //       res.comments.reverse();
+  //       for (var i = 0; i < res.comments.length; i++) {
+  //         res.comments[i].datetime = moment(res.comments[i].datetime).fromNow();
+  //       }
+  //       return res;
+  //     })
+  //     .then(json => this.setState({
+  //       venue: json,
+  //       dataSource: ds.cloneWithRows(json.comments),
+  //       attendeeCount: Object.keys(json.attendees).length
+  //     }))
+  // },
 
   calculateDistance: function(current, venue) {
     Number.prototype.toRadians = function () { return this * Math.PI / 180; };
@@ -191,25 +190,6 @@ var VenueTab = React.createClass({
           }, function() {
             context.getOverallRating();
           });
-
-          fetch(route)
-            .then(response => response.json())
-            .then(json => {
-              json.datetime = moment(json.datetime).format("dddd, MMMM Do YYYY, h:mm:ss a");
-              for (var i = 0; i < json.comments.length; i++) {
-                json.comments[i].datetime = moment(json.comments[i].datetime).fromNow();
-              }
-              this.setState({
-                venue: json,
-                dataSource: ds.cloneWithRows(json.comments),
-                // Sets atVenue to true if user is within 100 metres
-                atVenue: distance < 100,
-                attendeeCount: Object.keys(json.attendees).length
-              },
-              function() {
-                this.getOverallRating();
-              })
-            })
         })
     } else {
       this.setState({
@@ -227,6 +207,7 @@ var VenueTab = React.createClass({
     fetch(route)
       .then(response => response.json())
       .then(json => {
+        json.comments.reverse();
         for (var i = 0; i < json.comments.length; i++) {
           json.comments[i].datetime = moment(json.comments[i].datetime).fromNow();
         }
@@ -861,7 +842,7 @@ var styles = StyleSheet.create({
   infoPopup: {
     height: 300,
     width: 300,
-    padding: 10
+    padding: 20
   },
   infoIcon: {
     height: 20,
@@ -873,7 +854,7 @@ var styles = StyleSheet.create({
     flex: 1,
     borderBottomWidth: 1,
     borderColor: '#47b3c8',
-    marginBottom: 10,
+    marginBottom: 20,
   },
 
   // camera modal
@@ -906,11 +887,12 @@ var styles = StyleSheet.create({
     width: Display.width
   },
   modalButton: {
-    position: 'absolute',
-    flex: 0,
-    fontSize: 20,
-    bottom: 5,
-    right: 5
+    flex: 1,
+    marginTop: 10,
+    marginRight: 5,
+    alignSelf: 'flex-end',
+    right: 0,
+    fontSize: 20
   },
   modalButtonIcon: {
     height: 45,
@@ -931,15 +913,6 @@ var styles = StyleSheet.create({
     margin: 0,
     padding: 0
   },
-  modalButton: {
-    flex: 1,
-    marginTop: 10,
-    marginRight: 5,
-    alignSelf: 'flex-end',
-    right: 0,
-    fontSize: 20
-  },
-
 
 });
 
