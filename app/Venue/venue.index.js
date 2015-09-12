@@ -35,6 +35,11 @@ var {
 var RefreshableListView = require('react-native-refreshable-listview');
 var ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
 
+// Sockets
+window.navigator.userAgent = "react-native";
+var io = require('socket.io-client/socket.io');
+var socket = io.connect(config.serverURL);
+
 var VenueTab = React.createClass({
   mixins: [Subscribable.Mixin],
   getInitialState() {
@@ -47,7 +52,8 @@ var VenueTab = React.createClass({
       keyboardSpace: 0,
       bottom: 49,
       modalCameraVisible: false,
-      userLastRating: 0
+      userLastRating: 0,
+      media: []
     };
   },
 
@@ -65,11 +71,63 @@ var VenueTab = React.createClass({
     this.setState({bottom: 49});
   },
 
+  changeVenue(venue) {
+    this.setState({'venue': venue});
+  },
+
+  updateMedia(url) {
+    
+    this.fetchMedia();
+    // Not sure why the below isn't working.
+    // var media = this.state.media;
+    // media.unshift(url);
+    // this.setState({'media': media});
+    // this.render();
+  },
+
+  fetchMedia(venue) {
+    var context = this;
+    context.setState({media: []}); // Otherwise it just keeps adding on to media?
+    var route;
+    if (venue) route = config.serverURL + '/api/media?venue=' + venue._id;
+    else route = config.serverURL + '/api/media?venue=' + this.state.venue._id;
+    console.log(route);
+    fetch(route, {
+      method: 'get',
+    })
+    .then(response => {
+      context.setState({media: JSON.parse(response._bodyInit).reverse()});
+
+    });
+
+    console.log(context.state.media);
+
+  },
+
+
   componentDidMount: function() {
     KeyboardEventEmitter.on(KeyboardEvents.KeyboardWillShowEvent, this.updateKeyboardSpace);
     KeyboardEventEmitter.on(KeyboardEvents.KeyboardWillHideEvent, this.resetKeyboardSpace);
     this.addListenerOn(this.eventEmitter, 'imagePressed', this.imagePressed);
     this.fetchVenue();
+    this.addListenerOn(this.eventEmitter, 'mediaUpdated', this.updateMedia);
+  },
+
+  reloadComments() {
+    var route = config.serverURL + '/api/venues/' + this.state.venue._id;
+    fetch(route)
+      .then(response => response.json())
+      .then(function(res) {
+        for (var i = 0; i < res.comments.length; i++) {
+          res.comments[i].datetime = moment(res.comments[i].datetime).fromNow();
+        }
+        return res;
+      })
+      .then(json => this.setState({
+        venue: json,
+        dataSource: ds.cloneWithRows(json.comments),
+        attendeeCount: Object.keys(json.attendees).length
+      }))
   },
 
   calculateDistance: function(current, venue) {
@@ -100,6 +158,11 @@ var VenueTab = React.createClass({
     var route = config.serverURL + '/api/venues/' + venue._id;
     var context = this;
 
+    // socket.on('media-' + venue.id, function (data) {
+    //   alert('media updated!');
+    //   socket.emit('my other event', { my: 'data' });
+    // });
+
     var venueChanged = this.props.venue.id !== venue.id;
 
     if (nextProps.geolocation) {
@@ -107,6 +170,8 @@ var VenueTab = React.createClass({
       var distance = this.calculateDistance(coords, venue);
     }
     if (venueChanged) {
+      this.fetchMedia(venue);
+      
       fetch(route)
         .then(response => response.json())
         .then(json => {
@@ -123,6 +188,25 @@ var VenueTab = React.createClass({
           }, function() {
             context.getOverallRating();
           });
+
+          fetch(route)
+            .then(response => response.json())
+            .then(json => {
+              json.datetime = moment(json.datetime).format("dddd, MMMM Do YYYY, h:mm:ss a");
+              for (var i = 0; i < json.comments.length; i++) {
+                json.comments[i].datetime = moment(json.comments[i].datetime).fromNow();
+              }
+              this.setState({
+                venue: json,
+                dataSource: ds.cloneWithRows(json.comments),
+                // Sets atVenue to true if user is within 100 metres
+                atVenue: distance < 100,
+                attendeeCount: Object.keys(json.attendees).length
+              },
+              function() {
+                this.getOverallRating();
+              })
+            })
         })
     } else {
       this.setState({
@@ -153,13 +237,13 @@ var VenueTab = React.createClass({
   },
 
   componentWillMount: function() {
+    this.fetchMedia(); // Initially load media
+    this.eventEmitter = this.props.eventEmitter;
     var context = this;
     // retrieve user id, may be replaced with device UUID in the future
-    this.eventEmitter = this.props.eventEmitter;
     var context = this;
     // Get Device UUID
     DeviceUUID.getUUID().then((uuid) => {
-      console.log('Device ID >>>>>>>>> ', uuid);
       return uuid;
     })
     .then((uuid) => {
@@ -432,7 +516,6 @@ var VenueTab = React.createClass({
 
   render() {
     var venue = this.props.venue;
-    var THUMB_URLS = ['sneakers', 'pool_party', 'http://img2.wikia.nocookie.net/__cb20140311041907/villains/images/b/bb/The_Kraken.jpg', 'http://vignette2.wikia.nocookie.net/reddits-world/images/8/8e/Kraken_v2_by_elmisa-d70nmt4.jpg/revision/latest?cb=20140922042121', 'http://orig11.deviantart.net/ccd8/f/2011/355/0/c/kraken_by_elmisa-d4ju669.jpg', 'http://orig14.deviantart.net/40df/f/2014/018/d/4/the_kraken_by_alexstoneart-d72o83n.jpg', 'http://orig10.deviantart.net/bf30/f/2010/332/f/5/kraken_by_mabuart-d33tchk.jpg', 'http://static.comicvine.com/uploads/original/12/120846/2408132-kraken_by_neo_br.jpg', 'https://upload.wikimedia.org/wikipedia/commons/9/9d/Colossal_octopus_by_Pierre_Denys_de_Montfort.jpg', 'http://www.wallpaper4me.com/images/wallpapers/deathbykraken-39598.jpeg', 'http://img06.deviantart.net/3c5b/i/2012/193/d/9/kraken__work_in_progress_by_rkarl-d56zu66.jpg', 'http://i.gr-assets.com/images/S/photo.goodreads.com/hostedimages/1393990556r/8792967._SY540_.jpg', 'http://static.fjcdn.com/pictures/Kraken+found+on+tumblr_5b3d72_4520925.jpg'];
     return (
       <View style={styles.main}>
         <Modal 
@@ -489,7 +572,7 @@ var VenueTab = React.createClass({
             contentContainerStyle={styles.contentContainer}
             directionalLockEnabled={true}
             automaticallyAdjustContentInsets={false}>
-            {THUMB_URLS.map(createThumbRow.bind(this, this.eventEmitter))}
+            {this.state.media.map(createThumbRow.bind(this, this.eventEmitter))}
           </ScrollView>
         </View>
 
