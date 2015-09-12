@@ -13,6 +13,7 @@ var { Icon, } = require('react-native-icons');
 var KrakenCamera = require('../Camera/camera.index');
 var Modalbox   = require('react-native-modalbox');
 var RefreshableListView = require('react-native-refreshable-listview');
+var Slider = require('react-native-slider');
 
 var config = require('../config');
 
@@ -176,9 +177,10 @@ var VenueTab = React.createClass({
       fetch(route)
         .then(response => response.json())
         .then(json => {
+          json.comments.reverse();
           json.datetime = moment(json.datetime).format("dddd, MMMM Do YYYY, h:mm:ss a");
           for (var i = 0; i < json.comments.length; i++) {
-            json.comments[i].datetime = moment(json.comments[i].datetime).fromNow();
+            json.comments[i].datetime = moment(json.comments[i].datetime).fromNow(true);
           }
           this.setState({
             venue: json,
@@ -311,10 +313,13 @@ var VenueTab = React.createClass({
           <Icon
             name={icon}
             size={19}
-            color={color}
-            style={styles.commentIcon}
+            color={'white'}
+            style={[styles.commentIcon, {backgroundColor: color}]}
             />
-          <Text flexWrap="wrap" numberOfLines={3} style={{flex: 1, color: commentTextColor}}>
+          <Text
+            flexWrap="wrap" 
+            numberOfLines={3}
+            style={{flex: 1, color: commentTextColor}}>
             {comments.datetime}: {comments.content}
           </Text>
           <TouchableHighlight
@@ -406,6 +411,7 @@ var VenueTab = React.createClass({
     fetch(route)
       .then(response => response.json())
       .then(res => {
+        res.comments.reverse();
         for (var i = 0; i < res.comments.length; i++) {
           if (res.comments[i].creator === context.state.user) {
             userAlreadyPosted = true;
@@ -531,13 +537,18 @@ var VenueTab = React.createClass({
           ref='info'
           style={[styles.popupContainer, styles.infoPopup]} 
           position='center'
-          backdropOpacity={0.9}
-          backdropColor='#47b3c8'>
-            <Text style={[styles.venueName, {marginRight: 0}]}>
-              {venue.title}
-            </Text>
-            <Text style={[styles.text, {flex: 0.5}]} >
-              Venue description: {venue.description}
+          backdropOpacity={0.7}
+          backdropColor='#47b3c8'
+          aboveStatusBar={false}>
+            <View style={styles.venueNameLine}>
+              <Text 
+                numberOfLines={1}
+                style={[styles.venueName, {marginRight: 0, color: 'black'}]}>
+                {venue.title}
+              </Text>
+            </View>
+            <Text style={[styles.text, {flex: 1}]} >
+              {venue.description}
             </Text>
             <Text style={styles.text} >
               {address[0] + '\n'}
@@ -559,7 +570,7 @@ var VenueTab = React.createClass({
             <Icon
               name='fontawesome|info-circle'
               size={19}
-              color='gray'
+              color='white'
               style={styles.infoIcon}/>
           </Button>
 
@@ -583,15 +594,18 @@ var VenueTab = React.createClass({
           </ScrollView>
         </View>
 
-        <Text style={[styles.text, styles.yourRating]} >
-          Overall rating: {this.state.overallRating} | Your last rating: {this.state.userLastRating}
-        </Text>
-        <SliderIOS
-          style={styles.slider}
-          onSlidingComplete={(voteValue) => this.slidingComplete(voteValue, venue)}
-          maximumTrackTintColor='#f92672'
-          minimumTrackTintColor='#66d9ef'
-          value={this.state.voteValue}/>
+        <View>
+          <Text style={[styles.text, {marginBottom: 5}]} >
+            Venue Rating: {this.state.overallRating} | Your Rating: {this.state.voteValue}
+          </Text>
+          <SliderIOS
+            style={styles.slider}
+            onSlidingComplete={(voteValue) => this.slidingComplete(voteValue, venue)}
+            maximumTrackTintColor='#f92672'
+            minimumTrackTintColor='#66d9ef'
+            value={this.state.voteValue}/>
+        </View>
+
         <RefreshableListView
           style={styles.refreshableListView}
           dataSource={this.state.dataSource}
@@ -726,20 +740,18 @@ var styles = StyleSheet.create({
     marginTop: 5,
     flexDirection: 'row',
     alignItems: 'center',
+    backgroundColor: "#47b3c8"
   },
   venueName: {
     flex: 1,
     fontFamily: 'Avenir',
     fontSize: 20,
     textAlign: 'center',
-    marginRight: 25
+    marginRight: 30,
+    padding: 5,
+    color: 'white'
   },
   
-  // rating info text
-  yourRating: {
-    marginBottom: 5
-  },
-
   // thumbnail for media
   thumbImage: {
     flex: 1,
@@ -769,11 +781,11 @@ var styles = StyleSheet.create({
 
   // slider
   slider: {
-    marginTop: 5,
-    height: 15,
-    marginLeft: 40,
-    marginRight: 40,
-    marginBottom: 5,
+    flex: 1,
+    marginLeft: 10,
+    marginRight: 10,
+    alignItems: 'stretch',
+    justifyContent: 'center',
   },
 
   // comments refreshable view
@@ -784,9 +796,13 @@ var styles = StyleSheet.create({
     // height: Display.height * 0.49
   },
   commentIcon: {
-    height: 20,
-    width: 20,
+    height: 34,
+    width: 34,
     marginRight: 10,
+    borderWidth: 0,
+    borderRadius: 17,
+    borderColor: 'gray',
+    backgroundColor: 'gray'
   },
 
   // comment input
@@ -836,18 +852,24 @@ var styles = StyleSheet.create({
   popupContainer: {
     flex: 1,
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'stretch'
   },
   infoPopup: {
     height: 300,
     width: 300,
-    padding: 30
+    padding: 10
   },
   infoIcon: {
     height: 20,
     width: 20,
     marginRight: 10,
     marginLeft: 10,
+  },
+  venueNameLine: {
+    flex: 1,
+    borderBottomWidth: 1,
+    borderColor: '#47b3c8',
+    marginBottom: 10,
   },
 
   // camera modal

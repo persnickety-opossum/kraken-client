@@ -265,6 +265,21 @@ var MapTab = React.createClass({
     }
   },
 
+  _searchPlaceholder: function () {
+    return (
+      <View style={styles.commentContainer} flexWrap="wrap">
+        <Icon
+          name='ion|search'
+          size={20}
+          color='#887700'
+          />
+        <Text>
+            Search
+        </Text>
+      </View>
+    );
+  },
+
   render: function() {
     //StatusBarIOS.setHidden(true);
     return (
@@ -331,7 +346,7 @@ var MapTab = React.createClass({
             onChange={this._onSearchTextChanged}
             onSubmitEditing={this._onSearchTextSubmit}
             returnKeyType='search'
-            placeholder=' Search'/>
+            placeholder={this._searchPlaceholder}/>
         </View>
         <TouchableHighlight onPress={this._onCenterPressed}> 
           <Image
@@ -368,7 +383,7 @@ var styles = StyleSheet.create({
   searchInput: {
     position: 'absolute',
     top: 3,
-    left: 3,
+    left: Display.width*.1,
     height: 36,
     width: Display.width*.80,
     padding: 4,
