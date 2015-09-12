@@ -7,7 +7,7 @@ var Subscribable = require('Subscribable');
 // require tab views
 var MapTab = require('./app/Map/map.index');
 var VenueTab = require('./app/Venue/venue.index');
-var SettingsTab = require('./app/Settings/settings.index');
+var UserTab = require('./app/User/user.index');
 var VideoTab = require('./app/SCRecorder/screcorder.index');
 
 var MapboxGLMap = require('react-native-mapbox-gl');
@@ -42,6 +42,7 @@ var persnickety = React.createClass({
       venue: 'default venue',
       venueImg: require('image!venue'),
       venueClicked: 'map',
+      fromUserTab: false
     }
   },
   componentWillMount: function() {
@@ -50,24 +51,30 @@ var persnickety = React.createClass({
   componentDidMount: function() {
     this.addListenerOn(this.eventEmitter, 'annotationTapped', this.selectVenue);
     this.addListenerOn(this.eventEmitter, 'positionUpdated', this.updatePosition);
+    this.addListenerOn(this.eventEmitter, 'userFound', this.setUserState);
   },
 
   updatePosition(position) {
     this.setState({geolocation: position});
   },
 
+  setUserState(userId) {
+    this.setState({userId: userId});
+  },
+
   selectVenue: function(eventObj) {
     var venue = eventObj.venue;
-    
     // Listen to socket for media updates
     context = this;
     socket.removeAllListeners();
     socket.on('media-' + venue.id, function (response) {
       context.eventEmitter.emit('mediaUpdated', response.url);
     });
-
-
-
+    if (eventObj.fromUserTab === true) {
+      this.setState({fromUserTab: true});
+    } else {
+      this.setState({fromUserTab: false});
+    }
     //var currDateTime = venue.venue.datetime;
 
     //var currDateTime = new Date(venue.venue.datetime);
@@ -84,12 +91,13 @@ var persnickety = React.createClass({
     //for (var i = 0; i < newVenue.comments.length;i++) {
     //  newVenue.comments[i].datetime = moment(newVenue.comments[i].datetime).fromNow();
     //}
-    var context = this
+    var context = this;
 
 
     this.setState({venueImg: require('image!venue')}, function() {
       context.setState({venue: venue}, function() {
         context.setState({venueClicked: 'venue'}, function() {
+          context.render();
           context.changeTab('venue');
         });
       });
@@ -122,17 +130,17 @@ var persnickety = React.createClass({
             onPress={ () => this.changeTab(this.state.venueClicked) }
             selected={ this.state.selectedTab === 'venue' }>
             <View style={ styles.pageView }>
-              <VenueTab venue={this.state.venue} geolocation={this.state.geolocation} eventEmitter={this.eventEmitter} />
+              <VenueTab fromUserTab={this.state.fromUserTab} venue={this.state.venue} geolocation={this.state.geolocation} eventEmitter={this.eventEmitter} />
             </View>
           </TabBarIOS.Item>
 
           <TabBarIOS.Item
-            title="Settings"
+            title="My Kraken"
             icon={ require('image!settings') }
-            onPress={ () => this.changeTab('settings') }
-            selected={ this.state.selectedTab === 'settings' }>
+            onPress={ () => this.changeTab('My Kraken') }
+            selected={ this.state.selectedTab === 'My Kraken' }>
             <View style={ styles.pageView }>
-              <SettingsTab />
+              <UserTab eventEmitter={this.eventEmitter}/>
             </View>
           </TabBarIOS.Item>
           <TabBarIOS.Item

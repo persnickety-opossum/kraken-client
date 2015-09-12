@@ -32,6 +32,8 @@ var {
   TextInput,
   TouchableHighlight,
   View,
+  Animated,
+  Easing
   } = React;
 
 var ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
@@ -170,9 +172,8 @@ var VenueTab = React.createClass({
       var coords = nextProps.geolocation.coords;
       var distance = this.calculateDistance(coords, venue);
     }
-    if (venueChanged) {
+    if (venueChanged || nextProps.fromUserTab) {
       this.fetchMedia(venue);
-      
       fetch(route)
         .then(response => response.json())
         .then(json => {
@@ -280,7 +281,11 @@ var VenueTab = React.createClass({
 
   renderComments(comments) {
     if (comments) {
-      var icon = 'fontawesome|' + comments.icon;
+      if (comments.icon == undefined) {
+        var icon = 'fontawesome|flag-o';
+      } else {
+        var icon = 'fontawesome|' + comments.icon;
+      }
       var color = comments.color;
       var atVenue = comments.atVenue;
       var commentID = comments._id;
@@ -599,8 +604,8 @@ var VenueTab = React.createClass({
           dataSource={this.state.dataSource}
           renderRow={this.renderComments}
           loadData={this.fetchVenue}
-          refreshDescription="Refreshing comments" />
-
+          refreshDescription="Refreshing comments"
+          refreshingIndictatorComponent={MyRefreshingIndicator}/>
         <View style={[styles.inputContainer, {marginBottom: this.state.bottom}]}>  
           <Button onPress={this.toggleCamera}>
             <Icon
@@ -660,6 +665,46 @@ var VenueTab = React.createClass({
       </View>
     );
   }
+});
+
+var MyRefreshingIndicator = React.createClass({
+  getInitialState() {
+    return {
+      angle: new Animated.Value(0),
+    };
+  },
+
+  componentDidMount() {
+    this._animate();
+  },
+
+  _animate() {
+    var TIMES = 400;
+    this.state.angle.setValue(0);
+    this._anim = Animated.timing(this.state.angle, {
+      toValue: 140000,
+      duration: 140000,
+      easing: Easing.linear
+    }).start(this._animate);
+  },
+
+  render() {
+    return (
+      <View style={styles.refreshImageContainer}>
+        <Animated.Image
+          source={require('image!pin')}
+          style={[
+              styles.refreshImage,
+              {transform: [
+                {rotate: this.state.angle.interpolate({
+                  inputRange: [0, 360],
+                  outputRange: ['0deg', '360deg']
+                })},
+              ]}]}>
+        </Animated.Image>
+      </View>
+    )
+  },
 });
 
 
@@ -914,7 +959,32 @@ var styles = StyleSheet.create({
     margin: 0,
     padding: 0
   },
-
+  icon: {
+    height: 20,
+    width: 20,
+    marginRight: 5,
+    marginLeft: 0,
+    padding: 0
+  },
+  commentContainer: {
+    flex: 1,
+    flexDirection: 'row'
+  },
+  commentText: {
+    flex: 1
+  },
+  refreshImage: {
+    height: 30,
+    width: 30,
+    justifyContent:'center',
+    backgroundColor:'transparent',
+    marginBottom: 10
+  },
+  refreshImageContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  }
 });
 
 // easing animations for layout changes

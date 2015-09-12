@@ -122,7 +122,10 @@ var MapTab = React.createClass({
           body: JSON.stringify({token: uuid})
         }) // no ;
           .then(response => response.json())
-          .then(json => context.setState({user: json._id}));
+          .then(json => context.setState({user: json._id}, function() {
+            context.eventEmitter.emit('userFound', context.state.user);
+            return;
+          }));
       })
       .catch((err) => {
         console.log(err);
