@@ -63,36 +63,18 @@ var persnickety = React.createClass({
   },
 
   selectVenue: function(eventObj) {
-    var venue = eventObj.venue;
-    // Listen to socket for media updates
-    context = this;
-    socket.removeAllListeners();
-    socket.on('media-' + venue.id, function (response) {
-      context.eventEmitter.emit('mediaUpdated', response.url);
-    });
     if (eventObj.fromUserTab === true) {
       this.setState({fromUserTab: true});
     } else {
       this.setState({fromUserTab: false});
     }
-    //var currDateTime = venue.venue.datetime;
-
-    //var currDateTime = new Date(venue.venue.datetime);
-    //var currYear = currDateTime.getFullYear();
-    //var currMonth = currDateTime.getMonth();
-    //var currDay = currDateTime.getDate();
-    //var currHour = currDateTime.getHours();
-    //var currMinute = currDateTime.getMinutes();
-
-    //get correct datemin format
-    //$scope.datemin = currDateTime.toISOString().split('T')[0] + 'T00:00:00';
-    //venue.venue.datetime = new Date(currYear, currMonth, currDay, currHour, currMinute);
-    //venue.venue.datetime = venue.venue.datetime.split('T')[0]
-    //for (var i = 0; i < newVenue.comments.length;i++) {
-    //  newVenue.comments[i].datetime = moment(newVenue.comments[i].datetime).fromNow();
-    //}
+    var venue = eventObj.venue;
+    // Listen to socket for media updates
     var context = this;
-
+    socket.removeAllListeners();
+    socket.on('media-' + venue.id, function (response) {
+      context.eventEmitter.emit('mediaUpdated', response.url);
+    });
 
     this.setState({venueImg: require('image!venue')}, function() {
       context.setState({venue: venue}, function() {

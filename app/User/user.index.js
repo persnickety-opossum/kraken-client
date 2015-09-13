@@ -29,7 +29,7 @@ var UserTab = React.createClass({
       scalesPageToFit: true,
       userComments: [],
       dataSource: ds.cloneWithRows([]),
-      //media: []
+      medium: []
     };
   },
 
@@ -60,6 +60,7 @@ var UserTab = React.createClass({
   },
 
   fetchUserComments: function() {
+    var context = this;
     fetch(config.serverURL + '/api/users/userInfo/' + this.state.user)
       .then(response => response.json())
       .then(json => {
@@ -72,6 +73,11 @@ var UserTab = React.createClass({
             comments.push(json[i]);
           }
         }
+        for (var i = 0; i < comments.length; i++) {
+          var venue = comments[i].venue;
+          context.fetchMedia(venue);
+        }
+
         this.setState({userComments: comments, dataSource: ds.cloneWithRows(comments)}, function() {
 
         });
@@ -82,35 +88,39 @@ var UserTab = React.createClass({
 
   },
 
-  //fetchMedia(venue) {
-  //  var context = this;
-  //  context.setState({media: []}); // Otherwise it just keeps adding on to media?
-  //  var route;
-  //  if (venue) {
-  //    route = config.serverURL + '/api/media?venue=' + venue._id;
-  //  }
-  //  console.log(route);
-  //  fetch(route, {
-  //    method: 'get',
-  //  })
-  //    .then(response => {
-  //      context.state.media.push(JSON.parse(response._bodyInit).reverse())
-  //      //context.setState({media: JSON.parse(response._bodyInit).reverse()});
-  //      console.log(context.state.media);
-  //    });
-  //
-  //  console.log(context.state.media);
-  //
-  //},
+  fetchMedia(venue) {
+    //console.log(venue);
+    var context = this;
+    context.setState({medium: []}); // Otherwise it just keeps adding on to media?
+    var route;
+    if (venue) route = config.serverURL + '/api/media?venue=' + venue._id;
+    else route = config.serverURL + '/api/media?venue=' + this.state.venue._id;
+    //console.log(route);
+    fetch(route, {
+      method: 'get',
+    })
+      .then(response => {
+        var media = JSON.parse(response._bodyInit).reverse()[0];
+        var medium = context.state.medium;
+        medium.push(media);
+        context.setState({medium: medium}, function() {
+          console.log(medium);
+          //context.renderVenues();
+        });
+        //console.log(this.state.medium);
+      });
+
+    //console.log(context.state.media);
+
+  },
 
   renderVenues: function(comment, sectionID, rowID) {
     var venue = comment.venue;
-    //this.fetchMedia(venue);
     if (comment) {
       return (
         <TouchableHighlight onPress={this.onPressVenue.bind(this, venue)}>
           <View style={styles.venueItemContainer} flexWrap="wrap">
-            <Image style={styles.thumbImage} source={{uri:'https://yt3.ggpht.com/-LEEONgzhe5c/AAAAAAAAAAI/AAAAAAAAAAA/vMJE9HNtN_M/s900-c-k-no/photo.jpg'}} />
+            <Image style={styles.thumbImage} source={{uri: this.state.medium[rowID]}} />
             <View style={{flex: 1}}>
               <Text style={{flex: 1}}>
                 {venue.title}

@@ -39,7 +39,6 @@ var {
 var ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
 moment().format();
 
-// Sockets - might not be needed venue view with event emitter from index
 window.navigator.userAgent = "react-native";
 var io = require('socket.io-client/socket.io');
 var socket = io.connect(config.serverURL);
@@ -95,7 +94,7 @@ var VenueTab = React.createClass({
     var route;
     if (venue) route = config.serverURL + '/api/media?venue=' + venue._id;
     else route = config.serverURL + '/api/media?venue=' + this.state.venue._id;
-    console.log(route);
+    //console.log(route);
     fetch(route, {
       method: 'get',
     })
@@ -112,26 +111,6 @@ var VenueTab = React.createClass({
     this.fetchVenue();
     this.addListenerOn(this.eventEmitter, 'mediaUpdated', this.updateMedia);
   },
-
-  // replaced by sockets
-
-  // reloadComments() {
-  //   var route = config.serverURL + '/api/venues/' + this.state.venue._id;
-  //   fetch(route)
-  //     .then(response => response.json())
-  //     .then(function(res) {
-  //       res.comments.reverse();
-  //       for (var i = 0; i < res.comments.length; i++) {
-  //         res.comments[i].datetime = moment(res.comments[i].datetime).fromNow();
-  //       }
-  //       return res;
-  //     })
-  //     .then(json => this.setState({
-  //       venue: json,
-  //       dataSource: ds.cloneWithRows(json.comments),
-  //       attendeeCount: Object.keys(json.attendees).length
-  //     }))
-  // },
 
   calculateDistance: function(current, venue) {
     Number.prototype.toRadians = function () { return this * Math.PI / 180; };
@@ -160,20 +139,25 @@ var VenueTab = React.createClass({
     var venue = nextProps.venue;
     var route = config.serverURL + '/api/venues/' + venue._id;
     var context = this;
+    if (nextProps.fromUserTab) {
+      this.setState({fromUserTab: true});
+    }
 
     // socket.on('media-' + venue.id, function (data) {
     //   alert('media updated!');
     //   socket.emit('my other event', { my: 'data' });
     // });
 
-    var venueChanged = this.props.venue.id !== venue.id;
+    var venueChanged = this.state.venue._id !== nextProps.venue._id;
 
     if (nextProps.geolocation) {
       var coords = nextProps.geolocation.coords;
       var distance = this.calculateDistance(coords, venue);
     }
-    if (venueChanged || nextProps.fromUserTab) {
-      this.fetchMedia(venue);
+    //if (venueChanged || nextProps.fromUserTab) {
+    if (venueChanged) {
+    //if (venueChanged || this.state.fromUserTab) {
+    //  this.fetchMedia(venue);
       fetch(route)
         .then(response => response.json())
         .then(json => {
@@ -190,6 +174,7 @@ var VenueTab = React.createClass({
             attendeeCount: Object.keys(json.attendees).length
           }, function() {
             context.getOverallRating();
+            context.fetchMedia(venue);
           });
         })
     } else {
@@ -965,13 +950,6 @@ var styles = StyleSheet.create({
     marginRight: 5,
     marginLeft: 0,
     padding: 0
-  },
-  commentContainer: {
-    flex: 1,
-    flexDirection: 'row'
-  },
-  commentText: {
-    flex: 1
   },
   refreshImage: {
     height: 30,
