@@ -466,16 +466,11 @@ var VenueTab = React.createClass({
   },
 
   imagePressed(uri) {
-    this.setMediaVisible(true, uri);
+    this.setModalVisible(true, uri);
   },
 
-  setMediaVisible(visible, uri) {
-    if(visible) {
-      this.refs.media.open();
-      this.setState({uri: uri});
-    } else {
-      this.refs.media.close();
-    }
+  setModalVisible(visible, uri) {
+    this.setState({modalVisible: visible, uri: uri});
   },
 
   toggleCamera(visible) {
@@ -633,7 +628,7 @@ var VenueTab = React.createClass({
               <TouchableHighlight 
                 onPress={this.setModalVisible.bind(this, false)}
                 style={[styles.modalButton]}>
-                <Icon  
+                <Icon
                   name='fontawesome|times'
                   size={45}
                   color='#FFF'
@@ -886,8 +881,7 @@ var styles = StyleSheet.create({
   innerContainer: {
     alignItems: 'flex-end',
     height: Display.height,
-    width: Display.width
-    alignItems: 'center',
+    width: Display.width,
   },
   image: {
     flex: 1,
