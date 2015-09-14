@@ -466,11 +466,16 @@ var VenueTab = React.createClass({
   },
 
   imagePressed(uri) {
-    this.setModalVisible(true, uri);
+    this.setMediaVisible(true, uri);
   },
 
-  setModalVisible(visible, uri) {
-    this.setState({modalVisible: visible, uri: uri});
+  setMediaVisible(visible, uri) {
+    if(visible) {
+      this.refs.media.open();
+      this.setState({uri: uri});
+    } else {
+      this.refs.media.close();
+    }
   },
 
   toggleCamera(visible) {
@@ -545,7 +550,11 @@ var VenueTab = React.createClass({
             <Button
               onPress={this.setInfoVisible.bind(this, false)}
               style={styles.modalButton}>
-              Close
+              <Icon  
+                name='fontawesome|times'
+                size={30}
+                color='gray'
+                style={styles.modalButtonIcon} />
             </Button>
         </Modalbox>
 
@@ -587,8 +596,7 @@ var VenueTab = React.createClass({
             style={styles.slider}
             onSlidingComplete={(voteValue) => this.slidingComplete(voteValue, venue)}
             maximumTrackTintColor='#f92672'
-            minimumTrackTintColor='#66d9ef'
-            value={this.state.voteValue}/>
+            minimumTrackTintColor='#66d9ef'/>
         </View>
 
         <RefreshableListView
