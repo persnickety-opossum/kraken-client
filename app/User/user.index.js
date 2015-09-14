@@ -66,61 +66,63 @@ var UserTab = React.createClass({
       .then(json => {
         json.reverse();
         var comments = [];
+        var venues = [];
         var currentComments = {};
         for (var i = 0; i < json.length; i++) {
           if (!currentComments[json[i].venue._id]) {
             currentComments[json[i].venue._id] = true;
             comments.push(json[i]);
+            venues.push(json[i].venue);
           }
         }
-        for (var i = 0; i < comments.length; i++) {
-          var venue = comments[i].venue;
-          context.fetchMedia(venue);
+        for (var i = 0; i < venues.length; i++) {
+          context.fetchMedia(venues[i], i);
         }
-
         this.setState({userComments: comments, dataSource: ds.cloneWithRows(comments)}, function() {
-
         });
       })
   },
 
-  componentWillUpdate: function() {
-
-  },
-
-  fetchMedia(venue) {
-    //console.log(venue);
+  fetchMedia(venue, i) {
     var context = this;
-    context.setState({medium: []}); // Otherwise it just keeps adding on to media?
     var route;
     if (venue) route = config.serverURL + '/api/media?venue=' + venue._id;
     else route = config.serverURL + '/api/media?venue=' + this.state.venue._id;
-    //console.log(route);
     fetch(route, {
       method: 'get',
     })
       .then(response => {
         var media = JSON.parse(response._bodyInit).reverse()[0];
         var medium = context.state.medium;
-        medium.push(media);
+        medium[i] = media;
         context.setState({medium: medium}, function() {
-          console.log(medium);
-          //context.renderVenues();
         });
-        //console.log(this.state.medium);
       });
-
-    //console.log(context.state.media);
-
   },
 
   renderVenues: function(comment, sectionID, rowID) {
     var venue = comment.venue;
-    if (comment) {
+    if (comment && this.state.medium[rowID]) {
       return (
         <TouchableHighlight onPress={this.onPressVenue.bind(this, venue)}>
           <View style={styles.venueItemContainer} flexWrap="wrap">
             <Image style={styles.thumbImage} source={{uri: this.state.medium[rowID]}} />
+            <View style={{flex: 1}}>
+              <Text style={{flex: 1}}>
+                {venue.title}
+              </Text>
+              <Text style={{flex: 1}}>
+                {venue.description}
+              </Text>
+            </View>
+          </View>
+        </TouchableHighlight>
+      )
+    } else if (comment && !this.state.medium[rowID]) {
+      return (
+        <TouchableHighlight onPress={this.onPressVenue.bind(this, venue)}>
+          <View style={styles.venueItemContainer} flexWrap="wrap">
+            <Image style={styles.thumbImage} source={require('image!logo')} />
             <View style={{flex: 1}}>
               <Text style={{flex: 1}}>
                 {venue.title}

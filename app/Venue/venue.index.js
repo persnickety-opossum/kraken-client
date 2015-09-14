@@ -79,7 +79,7 @@ var VenueTab = React.createClass({
   },
 
   updateMedia(url) {
-    
+
     this.fetchMedia();
     // Not sure why the below isn't working.
     // var media = this.state.media;
