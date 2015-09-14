@@ -13,7 +13,7 @@ var { Icon, } = require('react-native-icons');
 var KrakenCamera = require('../Camera/camera.index');
 var Modalbox   = require('react-native-modalbox');
 var RefreshableListView = require('react-native-refreshable-listview');
-var Slider = require('react-native-slider');
+//var Slider = require('react-native-slider');
 
 var config = require('../config');
 
@@ -860,7 +860,7 @@ var styles = StyleSheet.create({
     flex: 1,
     padding: 5,
     flexDirection: 'row',
-    borderWidth: 0.5,
+    borderWidth: 1,
     borderColor: '#E3E3E3'
   },
   commentText: {

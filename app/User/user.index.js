@@ -122,7 +122,7 @@ var UserTab = React.createClass({
       return (
         <TouchableHighlight onPress={this.onPressVenue.bind(this, venue)}>
           <View style={styles.venueItemContainer} flexWrap="wrap">
-            <Image style={styles.thumbImage} source={require('image!logo')} />
+            <Image style={styles.thumbImage} source={require('image!icon_2x')} />
             <View style={{flex: 1}}>
               <Text style={{flex: 1}}>
                 {venue.title}

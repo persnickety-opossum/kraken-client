@@ -24,6 +24,10 @@
 		047D598C1B9E0F460094BE98 /* testMov.MOV in Resources */ = {isa = PBXBuildFile; fileRef = 047D598B1B9E0F460094BE98 /* testMov.MOV */; };
 		047D59931B9E48A80094BE98 /* libReactNativeIcons.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 047D59921B9E485D0094BE98 /* libReactNativeIcons.a */; };
 		047D59951B9E499B0094BE98 /* FontAwesome.otf in Resources */ = {isa = PBXBuildFile; fileRef = 047D59941B9E499B0094BE98 /* FontAwesome.otf */; };
+		04A0DB641BA743160093F973 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 04A0DB631BA743160093F973 /* Info.plist */; settings = {ASSET_TAGS = (); }; };
+		04A0DB791BA743E30093F973 /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 04A0DB781BA743E30093F973 /* Launch Screen.storyboard */; settings = {ASSET_TAGS = (); }; };
+		04A0DB8E1BA744C30093F973 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 04A0DB8D1BA744C30093F973 /* Info.plist */; settings = {ASSET_TAGS = (); }; };
+		04A0DBA81BA7461A0093F973 /* libRNModalbox.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 04A0DBA71BA745D20093F973 /* libRNModalbox.a */; };
 		04DD39321BA0B3D900919C2F /* libRCTCamera.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 04DD39221BA0B3A900919C2F /* libRCTCamera.a */; };
 		04EE92DF1BA6AF1300036482 /* persnickety.xcodeproj in Frameworks */ = {isa = PBXBuildFile; fileRef = 04EE92B61BA687C800036482 /* persnickety.xcodeproj */; };
 		133E29F31AD74F7200F7D852 /* libRCTLinking.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 78C398B91ACF4ADC00677621 /* libRCTLinking.a */; };
@@ -33,7 +37,6 @@
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		146834051AC3E58100842450 /* libReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 146834041AC3E56700842450 /* libReact.a */; };
-		586835C61B9A402000933EB5 /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 586835C51B9A402000933EB5 /* Launch Screen.storyboard */; settings = {ASSET_TAGS = (); }; };
 		5876B0511B94D2330015FD2C /* libRCTMapboxGL.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5876B0481B94D1FE0015FD2C /* libRCTMapboxGL.a */; };
 		5876B0531B94D2AD0015FD2C /* MapboxGL.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 5876B0521B94D2AD0015FD2C /* MapboxGL.bundle */; };
 		5876B0551B94D2ED0015FD2C /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 5876B0541B94D2ED0015FD2C /* Settings.bundle */; };
@@ -133,6 +136,13 @@
 			remoteGlobalIDString = 2F5A3EB81ACDBF8000439386;
 			remoteInfo = ReactNativeIcons;
 		};
+		04A0DBA61BA745D20093F973 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 04A0DBA21BA745D20093F973 /* RNModalbox.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = D4CC547F1B5986F500F31148;
+			remoteInfo = RNModalbox;
+		};
 		04DD39211BA0B3A900919C2F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 04DD391C1BA0B3A900919C2F /* RCTCamera.xcodeproj */;
@@ -206,7 +216,6 @@
 		00C302D31ABCB9D200DB3ED1 /* RCTNetwork.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTNetwork.xcodeproj; path = "../node_modules/react-native/Libraries/Network/RCTNetwork.xcodeproj"; sourceTree = "<group>"; };
 		00C302DF1ABCB9EE00DB3ED1 /* RCTVibration.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTVibration.xcodeproj; path = "../node_modules/react-native/Libraries/Vibration/RCTVibration.xcodeproj"; sourceTree = "<group>"; };
 		00E356EE1AD99517003FC87E /* persnicketyTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = persnicketyTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		00E356F11AD99517003FC87E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		00E356F21AD99517003FC87E /* persnicketyTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = persnicketyTests.m; sourceTree = "<group>"; };
 		0412B4CA1B91876A00B1626C /* main.jsbundle */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = main.jsbundle; path = ../main.jsbundle; sourceTree = "<group>"; };
 		041ABA591B97BB6A00EA1CA0 /* RNKeyboardEvents.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RNKeyboardEvents.xcodeproj; path = "../node_modules/react-native-keyboardevents/RNKeyboardEvents.xcodeproj"; sourceTree = "<group>"; };
@@ -218,6 +227,10 @@
 		047D598B1B9E0F460094BE98 /* testMov.MOV */ = {isa = PBXFileReference; lastKnownFileType = video.quicktime; path = testMov.MOV; sourceTree = "<group>"; };
 		047D598D1B9E485D0094BE98 /* ReactNativeIcons.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ReactNativeIcons.xcodeproj; path = "../node_modules/react-native-icons/ios/ReactNativeIcons.xcodeproj"; sourceTree = "<group>"; };
 		047D59941B9E499B0094BE98 /* FontAwesome.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = FontAwesome.otf; sourceTree = "<group>"; };
+		04A0DB631BA743160093F973 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		04A0DB781BA743E30093F973 /* Launch Screen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = "Launch Screen.storyboard"; sourceTree = "<group>"; };
+		04A0DB8D1BA744C30093F973 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		04A0DBA21BA745D20093F973 /* RNModalbox.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RNModalbox.xcodeproj; path = "../node_modules/react-native-modalbox/RNModalbox.xcodeproj"; sourceTree = "<group>"; };
 		04DD391C1BA0B3A900919C2F /* RCTCamera.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTCamera.xcodeproj; path = "../node_modules/react-native-camera/RCTCamera.xcodeproj"; sourceTree = "<group>"; };
 		04EE92B61BA687C800036482 /* persnickety.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = persnickety.xcodeproj; sourceTree = "<group>"; };
 		139105B61AF99BAD00B5F7CC /* RCTSettings.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTSettings.xcodeproj; path = "../node_modules/react-native/Libraries/Settings/RCTSettings.xcodeproj"; sourceTree = "<group>"; };
@@ -226,10 +239,8 @@
 		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		13B07FB01A68108700A75B9A /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
-		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		146833FF1AC3E56700842450 /* React.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = React.xcodeproj; path = "../node_modules/react-native/React/React.xcodeproj"; sourceTree = "<group>"; };
-		586835C51B9A402000933EB5 /* Launch Screen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = "Launch Screen.storyboard"; sourceTree = "<group>"; };
 		5876B03E1B94D1FE0015FD2C /* RCTMapboxGL.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTMapboxGL.xcodeproj; path = "../node_modules/react-native-mapbox-gl/RCTMapboxGL.xcodeproj"; sourceTree = "<group>"; };
 		5876B0521B94D2AD0015FD2C /* MapboxGL.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = MapboxGL.bundle; sourceTree = "<group>"; };
 		5876B0541B94D2ED0015FD2C /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
@@ -290,6 +301,7 @@
 				047D59931B9E48A80094BE98 /* libReactNativeIcons.a in Frameworks */,
 				0470E31A1BA254F70058DDCC /* libRNRecorder.a in Frameworks */,
 				045FF7651B9D4385004E4E11 /* libRCTVideo.a in Frameworks */,
+				04A0DBA81BA7461A0093F973 /* libRNModalbox.a in Frameworks */,
 				00C302EA1ABCBA2D00DB3ED1 /* libRCTVibration.a in Frameworks */,
 				139FDEF61B0652A700C62182 /* libRCTWebSocket.a in Frameworks */,
 			);
@@ -350,7 +362,7 @@
 		00E356F01AD99517003FC87E /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				00E356F11AD99517003FC87E /* Info.plist */,
+				04A0DB8D1BA744C30093F973 /* Info.plist */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -384,6 +396,14 @@
 			isa = PBXGroup;
 			children = (
 				047D59921B9E485D0094BE98 /* libReactNativeIcons.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		04A0DBA31BA745D20093F973 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				04A0DBA71BA745D20093F973 /* libRNModalbox.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -425,10 +445,10 @@
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
 				045FF7661B9D4536004E4E11 /* pool_party.mp4 */,
 				045FF7681B9D489C004E4E11 /* sneakers.mp4 */,
-				13B07FB61A68108700A75B9A /* Info.plist */,
 				008F07F21AC5B25A0029DE68 /* main.jsbundle */,
 				13B07FB71A68108700A75B9A /* main.m */,
-				586835C51B9A402000933EB5 /* Launch Screen.storyboard */,
+				04A0DB631BA743160093F973 /* Info.plist */,
+				04A0DB781BA743E30093F973 /* Launch Screen.storyboard */,
 			);
 			path = persnickety;
 			sourceTree = "<group>";
@@ -485,6 +505,7 @@
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
+				04A0DBA21BA745D20093F973 /* RNModalbox.xcodeproj */,
 				0470E2FF1BA254C90058DDCC /* RNRecorder.xcodeproj */,
 				04DD391C1BA0B3A900919C2F /* RCTCamera.xcodeproj */,
 				047D598D1B9E485D0094BE98 /* ReactNativeIcons.xcodeproj */,
@@ -688,6 +709,10 @@
 					ProjectRef = 041ABA591B97BB6A00EA1CA0 /* RNKeyboardEvents.xcodeproj */;
 				},
 				{
+					ProductGroup = 04A0DBA31BA745D20093F973 /* Products */;
+					ProjectRef = 04A0DBA21BA745D20093F973 /* RNModalbox.xcodeproj */;
+				},
+				{
 					ProductGroup = 0470E3001BA254C90058DDCC /* Products */;
 					ProjectRef = 0470E2FF1BA254C90058DDCC /* RNRecorder.xcodeproj */;
 				},
@@ -771,6 +796,13 @@
 			remoteRef = 047D59911B9E485D0094BE98 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
+		04A0DBA71BA745D20093F973 /* libRNModalbox.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libRNModalbox.a;
+			remoteRef = 04A0DBA61BA745D20093F973 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		04DD39221BA0B3A900919C2F /* libRCTCamera.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
@@ -841,6 +873,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				04A0DB8E1BA744C30093F973 /* Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -848,16 +881,17 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				04A0DB641BA743160093F973 /* Info.plist in Resources */,
 				047D59951B9E499B0094BE98 /* FontAwesome.otf in Resources */,
 				047D598C1B9E0F460094BE98 /* testMov.MOV in Resources */,
 				047D597B1B9E0DC20094BE98 /* sneakersMov.mov in Resources */,
-				586835C61B9A402000933EB5 /* Launch Screen.storyboard in Resources */,
 				5876B0551B94D2ED0015FD2C /* Settings.bundle in Resources */,
 				58DA62B11B9B6E6E0061748A /* .npmignore in Resources */,
 				5876B0531B94D2AD0015FD2C /* MapboxGL.bundle in Resources */,
 				58DA62B41B9B6E6E0061748A /* package.json in Resources */,
 				58DA62B21B9B6E6E0061748A /* DeviceUUID.ios.js in Resources */,
 				045FF7671B9D4536004E4E11 /* pool_party.mp4 in Resources */,
+				04A0DB791BA743E30093F973 /* Launch Screen.storyboard in Resources */,
 				008F07F31AC5B25A0029DE68 /* main.jsbundle in Resources */,
 				58DA62B31B9B6E6E0061748A /* LICENSE in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
