@@ -32,6 +32,7 @@ var KrakenCam = React.createClass({
     var venue = this.props.venue._id;
     var user = this.props.user
     this.refs.cam.capture(function(err, path) {
+      alert('Picture Taken!');
       var obj = {
           uri: path,
           uploadUrl: config.serverURL + '/api/media/',
@@ -46,8 +47,8 @@ var KrakenCam = React.createClass({
           mimeType: mime.lookup(path)
       };
       NativeModules.FileTransfer.upload(obj, (err, res) => {
-        if (err) console.log('Error:', err);
-        if (res) console.log('Response:', res);
+        if (res) console.log('File Transfer Response:', res);
+        else if (err) console.log('File Transfer Error:', err);
       });
     });
   },
