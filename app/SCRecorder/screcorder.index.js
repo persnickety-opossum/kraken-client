@@ -23,11 +23,14 @@ var VideoTab = React.createClass({
   record: function() {
     this.refs.recorder.record();
     this.setState({recording: true});
-    console.log('recording');
   },
 
   capture: function() {
     this.refs.recorder.capture((err, url) => {
+      if(err) {
+        console.log(err);
+      }
+      console.log(url);
       // Playing with the picture
     });
   },
@@ -39,6 +42,10 @@ var VideoTab = React.createClass({
 
   save: function() {
     this.refs.recorder.save((err, url) => {
+      if(err) {
+        console.log(err);
+      }
+      console.log(url);
       // Playing with the generated video
     });
   },
@@ -65,7 +72,8 @@ var VideoTab = React.createClass({
         <View style={styles.controls}>
           <Button onPressOut={this.setDevice} style={styles.device}>flip </Button>
           <Button style={styles.device} onPressIn={this.record} onPressOut={this.pause}>record</Button>
-          <Button style={styles.device} onPressOut={this.save} icon="heart">save</Button>
+          <Button style={styles.device} onPressOut={this.save}>save</Button>
+          <Button style={styles.device} onPressOut={this.capture}>take photo</Button>
         </View>
       </View>
 

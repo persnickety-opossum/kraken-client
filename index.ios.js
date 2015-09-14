@@ -91,7 +91,6 @@ var persnickety = React.createClass({
       context.setState({venue: venue}, function() {
         context.setState({venueClicked: 'venue'}, function() {
           context.changeTab('venue');
-          this.render();
         });
       });
     });

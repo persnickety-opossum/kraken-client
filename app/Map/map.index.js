@@ -331,7 +331,7 @@ var MapTab = React.createClass({
             onChange={this._onSearchTextChanged}
             onSubmitEditing={this._onSearchTextSubmit}
             returnKeyType='search'
-            placeholder=' Search'/>
+            placeholder={'  Search'}/>
         </View>
         <TouchableHighlight onPress={this._onCenterPressed}> 
           <Image
@@ -368,9 +368,9 @@ var styles = StyleSheet.create({
   searchInput: {
     position: 'absolute',
     top: 3,
-    left: 3,
+    left: Display.width*.15,
     height: 36,
-    width: Display.width*.80,
+    width: Display.width*.70,
     padding: 4,
     fontSize: 12,
     borderWidth: 0.5,

@@ -5,18 +5,20 @@ var DeviceUUID = require("react-native-device-uuid");
 //var venue = require('./venueMock');
 var Button = require('react-native-button');
 var moment = require('moment');
-moment().format();
 var Display = require('react-native-device-display');
-var KeyboardEvents = require('react-native-keyboardevents');
-var KeyboardEventEmitter = KeyboardEvents.Emitter;
 var EventEmitter = require('EventEmitter');
 var Subscribable = require('Subscribable');
 var Video = require('react-native-video');
 var { Icon, } = require('react-native-icons');
-
 var KrakenCamera = require('../Camera/camera.index');
+var Modalbox   = require('react-native-modalbox');
+var RefreshableListView = require('react-native-refreshable-listview');
+var Slider = require('react-native-slider');
 
 var config = require('../config');
+
+var KeyboardEvents = require('react-native-keyboardevents');
+var KeyboardEventEmitter = KeyboardEvents.Emitter;
 
 var {
   Image,
@@ -32,10 +34,10 @@ var {
   View,
   } = React;
 
-var RefreshableListView = require('react-native-refreshable-listview');
 var ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
+moment().format();
 
-// Sockets
+// Sockets - might not be needed venue view with event emitter from index
 window.navigator.userAgent = "react-native";
 var io = require('socket.io-client/socket.io');
 var socket = io.connect(config.serverURL);
@@ -97,11 +99,7 @@ var VenueTab = React.createClass({
     })
     .then(response => {
       context.setState({media: JSON.parse(response._bodyInit).reverse()});
-
     });
-
-    console.log(context.state.media);
-
   },
 
 
@@ -113,22 +111,25 @@ var VenueTab = React.createClass({
     this.addListenerOn(this.eventEmitter, 'mediaUpdated', this.updateMedia);
   },
 
-  reloadComments() {
-    var route = config.serverURL + '/api/venues/' + this.state.venue._id;
-    fetch(route)
-      .then(response => response.json())
-      .then(function(res) {
-        for (var i = 0; i < res.comments.length; i++) {
-          res.comments[i].datetime = moment(res.comments[i].datetime).fromNow();
-        }
-        return res;
-      })
-      .then(json => this.setState({
-        venue: json,
-        dataSource: ds.cloneWithRows(json.comments),
-        attendeeCount: Object.keys(json.attendees).length
-      }))
-  },
+  // replaced by sockets
+
+  // reloadComments() {
+  //   var route = config.serverURL + '/api/venues/' + this.state.venue._id;
+  //   fetch(route)
+  //     .then(response => response.json())
+  //     .then(function(res) {
+  //       res.comments.reverse();
+  //       for (var i = 0; i < res.comments.length; i++) {
+  //         res.comments[i].datetime = moment(res.comments[i].datetime).fromNow();
+  //       }
+  //       return res;
+  //     })
+  //     .then(json => this.setState({
+  //       venue: json,
+  //       dataSource: ds.cloneWithRows(json.comments),
+  //       attendeeCount: Object.keys(json.attendees).length
+  //     }))
+  // },
 
   calculateDistance: function(current, venue) {
     Number.prototype.toRadians = function () { return this * Math.PI / 180; };
@@ -175,9 +176,10 @@ var VenueTab = React.createClass({
       fetch(route)
         .then(response => response.json())
         .then(json => {
+          json.comments.reverse();
           json.datetime = moment(json.datetime).format("dddd, MMMM Do YYYY, h:mm:ss a");
           for (var i = 0; i < json.comments.length; i++) {
-            json.comments[i].datetime = moment(json.comments[i].datetime).fromNow();
+            json.comments[i].datetime = moment(json.comments[i].datetime).fromNow(true);
           }
           this.setState({
             venue: json,
@@ -188,25 +190,6 @@ var VenueTab = React.createClass({
           }, function() {
             context.getOverallRating();
           });
-
-          fetch(route)
-            .then(response => response.json())
-            .then(json => {
-              json.datetime = moment(json.datetime).format("dddd, MMMM Do YYYY, h:mm:ss a");
-              for (var i = 0; i < json.comments.length; i++) {
-                json.comments[i].datetime = moment(json.comments[i].datetime).fromNow();
-              }
-              this.setState({
-                venue: json,
-                dataSource: ds.cloneWithRows(json.comments),
-                // Sets atVenue to true if user is within 100 metres
-                atVenue: distance < 100,
-                attendeeCount: Object.keys(json.attendees).length
-              },
-              function() {
-                this.getOverallRating();
-              })
-            })
         })
     } else {
       this.setState({
@@ -224,6 +207,7 @@ var VenueTab = React.createClass({
     fetch(route)
       .then(response => response.json())
       .then(json => {
+        json.comments.reverse();
         for (var i = 0; i < json.comments.length; i++) {
           json.comments[i].datetime = moment(json.comments[i].datetime).fromNow();
         }
@@ -310,10 +294,13 @@ var VenueTab = React.createClass({
           <Icon
             name={icon}
             size={19}
-            color={color}
-            style={styles.icon}
+            color={'white'}
+            style={[styles.commentIcon, {backgroundColor: color}]}
             />
-          <Text flexWrap="wrap" numberOfLines={3} style={{flex: 1, color: commentTextColor}}>
+          <Text
+            flexWrap="wrap" 
+            numberOfLines={3}
+            style={{flex: 1, color: commentTextColor}}>
             {comments.datetime}: {comments.content}
           </Text>
           <TouchableHighlight
@@ -405,6 +392,7 @@ var VenueTab = React.createClass({
     fetch(route)
       .then(response => response.json())
       .then(res => {
+        res.comments.reverse();
         for (var i = 0; i < res.comments.length; i++) {
           if (res.comments[i].creator === context.state.user) {
             userAlreadyPosted = true;
@@ -489,8 +477,12 @@ var VenueTab = React.createClass({
     this.setState({modalCameraVisible: !this.state.modalCameraVisible});
   },
 
-  setPopupVisible(visible) {
-    this.setState({popupVisible: visible});
+  setInfoVisible(visible) {
+    if(visible) {
+      this.refs.info.open();
+    } else {
+      this.refs.info.close();
+    }
   },
 
   showImageOrVideo() {
@@ -514,46 +506,61 @@ var VenueTab = React.createClass({
     }
   },
 
+  formatAddress() {
+    return this.state.venue.address.split(',');
+  },
+
   render() {
     var venue = this.props.venue;
+    var THUMB_URLS = ['sneakers', 'pool_party', 'http://img2.wikia.nocookie.net/__cb20140311041907/villains/images/b/bb/The_Kraken.jpg', 'http://vignette2.wikia.nocookie.net/reddits-world/images/8/8e/Kraken_v2_by_elmisa-d70nmt4.jpg/revision/latest?cb=20140922042121', 'http://orig11.deviantart.net/ccd8/f/2011/355/0/c/kraken_by_elmisa-d4ju669.jpg', 'http://orig14.deviantart.net/40df/f/2014/018/d/4/the_kraken_by_alexstoneart-d72o83n.jpg', 'http://orig10.deviantart.net/bf30/f/2010/332/f/5/kraken_by_mabuart-d33tchk.jpg', 'http://static.comicvine.com/uploads/original/12/120846/2408132-kraken_by_neo_br.jpg', 'https://upload.wikimedia.org/wikipedia/commons/9/9d/Colossal_octopus_by_Pierre_Denys_de_Montfort.jpg', 'http://www.wallpaper4me.com/images/wallpapers/deathbykraken-39598.jpeg', 'http://img06.deviantart.net/3c5b/i/2012/193/d/9/kraken__work_in_progress_by_rkarl-d56zu66.jpg', 'http://i.gr-assets.com/images/S/photo.goodreads.com/hostedimages/1393990556r/8792967._SY540_.jpg', 'http://static.fjcdn.com/pictures/Kraken+found+on+tumblr_5b3d72_4520925.jpg'];
+    var address = this.formatAddress();
+
     return (
       <View style={styles.main}>
-        <Modal 
-          visible={this.state.popupVisible === true}
-          animated={true}
-          transparent={true}>
-          <View style={styles.popupContainer}>
-            <View style={styles.innerContainer}>
-              <Text style={styles.venueName}>
+
+        <Modalbox
+          ref='info'
+          style={[styles.popupContainer, styles.infoPopup]} 
+          position='center'
+          backdropOpacity={0.7}
+          backdropColor='#47b3c8'
+          aboveStatusBar={false}>
+            <View style={styles.venueNameLine}>
+              <Text 
+                numberOfLines={1}
+                style={[styles.venueName, {marginRight: 0, color: 'black'}]}>
                 {venue.title}
               </Text>
-              <Text style={styles.text} >
-                Venue description: {venue.description}
-              </Text>
-              <Text style={styles.text} >
-                {venue.address}
-              </Text>
-              <Text style={styles.text}>
-                Current attendees: {this.state.attendeeCount}
-              </Text>
-              <Button
-                onPress={this.setPopupVisible.bind(this, false)}
-                style={styles.modalButton}>
-                Close
-              </Button>
             </View>
-          </View>
-        </Modal>
+            <Text style={[styles.text, {flex: 1}]} >
+              {venue.description}
+            </Text>
+            <Text style={styles.text} >
+              {address[0] + '\n'}
+              {address[1] + ',' + address[2]}
+            </Text>
+            <Text style={styles.text}>
+              Current attendees: {this.state.attendeeCount}
+            </Text>
+            <Button
+              onPress={this.setInfoVisible.bind(this, false)}
+              style={styles.modalButton}>
+              <Icon  
+                name='fontawesome|times'
+                size={30}
+                color='gray'
+                style={styles.modalButtonIcon} />
+            </Button>
+        </Modalbox>
 
         <View style={styles.headerContainer}>
           <Button
-            onPress={this.setPopupVisible.bind(this, true)}
-            style={styles.infoButton}>
+            onPress={this.setInfoVisible.bind(this, true)}>
             <Icon
               name='fontawesome|info-circle'
               size={19}
-              color='gray'
-              style={styles.icon}/>
+              color='white'
+              style={styles.infoIcon}/>
           </Button>
 
           <Text 
@@ -576,15 +583,17 @@ var VenueTab = React.createClass({
           </ScrollView>
         </View>
 
-        <Text style={[styles.text, styles.yourRating]} >
-          Overall rating: {this.state.overallRating} | Your last rating: {this.state.userLastRating}
-        </Text>
-        <SliderIOS
-          style={styles.slider}
-          onSlidingComplete={(voteValue) => this.slidingComplete(voteValue, venue)}
-          maximumTrackTintColor='#f92672'
-          minimumTrackTintColor='#66d9ef'
-          value={this.state.voteValue}/>
+        <View>
+          <Text style={[styles.text, styles.yourRating]} >
+            Overall rating: {this.state.overallRating} | Your last rating: {this.state.userLastRating}
+          </Text>
+          <SliderIOS
+            style={styles.slider}
+            onSlidingComplete={(voteValue) => this.slidingComplete(voteValue, venue)}
+            maximumTrackTintColor='#f92672'
+            minimumTrackTintColor='#66d9ef'/>
+        </View>
+
         <RefreshableListView
           style={styles.refreshableListView}
           dataSource={this.state.dataSource}
@@ -593,12 +602,12 @@ var VenueTab = React.createClass({
           refreshDescription="Refreshing comments" />
 
         <View style={[styles.inputContainer, {marginBottom: this.state.bottom}]}>  
-          <Button style={styles.cameraButton} onPress={this.toggleCamera}>
+          <Button onPress={this.toggleCamera}>
             <Icon
-              name='fontawesome|camera-retro'
-              size={30}
-              color='gray'
-              style={styles.icon}/>
+              name='fontawesome|camera'
+              size={25}
+              color='#47b3c8'
+              style={styles.cameraIcon}/>
           </Button>
           <TextInput
             style={styles.textInput}
@@ -619,7 +628,7 @@ var VenueTab = React.createClass({
               <TouchableHighlight 
                 onPress={this.setModalVisible.bind(this, false)}
                 style={[styles.modalButton]}>
-                <Icon  
+                <Icon
                   name='fontawesome|times'
                   size={45}
                   color='#FFF'
@@ -706,6 +715,7 @@ var styles = StyleSheet.create({
 
   // general text style
   text: {
+    flex: 1,
     fontFamily: 'Avenir',
     fontSize: 14,
     textAlign: 'center',
@@ -718,26 +728,18 @@ var styles = StyleSheet.create({
     marginTop: 5,
     flexDirection: 'row',
     alignItems: 'center',
+    backgroundColor: "#47b3c8"
   },
   venueName: {
     flex: 1,
     fontFamily: 'Avenir',
     fontSize: 20,
     textAlign: 'center',
+    marginRight: 30,
+    padding: 5,
+    color: 'white'
   },
-  infoButton: {
-    flex: 0,
-    padding: 3
-  },
-
-  alignLeft: {
-    textAlign: 'left'
-  },
-
-  yourRating: {
-    marginBottom: 5
-  },
-
+  
   // thumbnail for media
   thumbImage: {
     flex: 1,
@@ -767,21 +769,28 @@ var styles = StyleSheet.create({
 
   // slider
   slider: {
-    marginTop: 5,
-    height: 15,
-    marginLeft: 40,
-    marginRight: 40,
-    marginBottom: 5,
+    flex: 1,
+    marginLeft: 10,
+    marginRight: 10,
+    alignItems: 'stretch',
+    justifyContent: 'center',
   },
-
 
   // comments refreshable view
   refreshableListView: {
     flex: 1,
     flexDirection: 'column',
-    padding: 5,
     marginTop: 10,
     // height: Display.height * 0.49
+  },
+  commentIcon: {
+    height: 34,
+    width: 34,
+    marginRight: 10,
+    borderWidth: 0,
+    borderRadius: 17,
+    borderColor: 'gray',
+    backgroundColor: 'gray'
   },
 
   // comment input
@@ -800,12 +809,16 @@ var styles = StyleSheet.create({
   // camera button
   cameraButton: {
     flex: 0,
-    padding: 3,
     height: 30,
     width:30,
   },
+  cameraIcon: {
+    height: 30,
+    width: 30,
+    marginRight: 8,
+  },
 
-
+  // scroll view container for comments
   contentContainer: {
     height: 70,
     //width: 70,
@@ -813,13 +826,38 @@ var styles = StyleSheet.create({
     margin: 0,
     padding: 0
   },
-
+  commentContainer: {
+    flex: 1,
+    padding: 5,
+    flexDirection: 'row',
+    borderWidth: 0.5,
+    borderColor: '#E3E3E3'
+  },
+  commentText: {
+    flex: 1
+  },
   // info modal
   popupContainer: {
+    flex: 1,
     justifyContent: 'center',
+    alignItems: 'stretch'
+  },
+  infoPopup: {
     height: 300,
-    alignItems: 'center',
-    backgroundColor: '#f5fcff'
+    width: 300,
+    padding: 20
+  },
+  infoIcon: {
+    height: 20,
+    width: 20,
+    marginRight: 10,
+    marginLeft: 10,
+  },
+  venueNameLine: {
+    flex: 1,
+    borderBottomWidth: 1,
+    borderColor: '#47b3c8',
+    marginBottom: 20,
   },
 
   // camera modal
@@ -832,7 +870,6 @@ var styles = StyleSheet.create({
     
   },
 
-
   // media modal
   modalContainer: {
     flex: 1,
@@ -844,7 +881,7 @@ var styles = StyleSheet.create({
   innerContainer: {
     alignItems: 'flex-end',
     height: Display.height,
-    width: Display.width
+    width: Display.width,
   },
   image: {
     flex: 1,
@@ -862,7 +899,6 @@ var styles = StyleSheet.create({
     height: 45,
     width: 45,
   },
-
   video: {
     //position: 'absolute',
     height: Display.width*1.33333,
@@ -878,22 +914,10 @@ var styles = StyleSheet.create({
     margin: 0,
     padding: 0
   },
-  icon: {
-    height: 20,
-    width: 20,
-    marginRight: 5,
-    marginLeft: 0,
-    padding: 0
-  },
-  commentContainer: {
-    flex: 1,
-    flexDirection: 'row'
-  },
-  commentText: {
-    flex: 1
-  }
+
 });
 
+// easing animations for layout changes
 var animations = {
   layout: {
     spring: {
