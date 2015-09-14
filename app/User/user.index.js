@@ -96,6 +96,7 @@ var UserTab = React.createClass({
         var medium = context.state.medium;
         medium[i] = media;
         context.setState({medium: medium}, function() {
+          context.render();
         });
       });
   },
@@ -107,8 +108,8 @@ var UserTab = React.createClass({
         <TouchableHighlight onPress={this.onPressVenue.bind(this, venue)}>
           <View style={styles.venueItemContainer} flexWrap="wrap">
             <Image style={styles.thumbImage} source={{uri: this.state.medium[rowID]}} />
-            <View style={{flex: 1}}>
-              <Text style={{flex: 1}}>
+            <View style={{flex: 1, marginTop: 17}}>
+              <Text style={{flex: 1, fontWeight: 'bold'}}>
                 {venue.title}
               </Text>
               <Text style={{flex: 1}}>
@@ -123,8 +124,8 @@ var UserTab = React.createClass({
         <TouchableHighlight onPress={this.onPressVenue.bind(this, venue)}>
           <View style={styles.venueItemContainer} flexWrap="wrap">
             <Image style={styles.thumbImage} source={require('image!icon_2x')} />
-            <View style={{flex: 1}}>
-              <Text style={{flex: 1}}>
+            <View style={{flex: 1, marginTop: 17}}>
+              <Text style={{flex: 1, fontWeight: 'bold'}}>
                 {venue.title}
               </Text>
               <Text style={{flex: 1}}>
@@ -213,7 +214,6 @@ var styles = StyleSheet.create({
   ListView: {
     flex: 1,
     flexDirection: 'column',
-    padding: 5,
     marginTop: 10,
     height: Display.height - 49
   },
@@ -221,25 +221,38 @@ var styles = StyleSheet.create({
     flex: 1,
     //padding: 5,
     flexDirection: 'column',
-    marginBottom: 5
+    borderTopWidth: 1,
+    borderColor: '#E3E3E3'
+  },
+  headerContainer: {
+    marginTop: 5,
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: "#47b3c8"
   },
   tabName: {
     flex: 1,
     fontFamily: 'Avenir',
     fontSize: 20,
     textAlign: 'center',
+    padding: 5,
+    color: 'white'
   },
   thumbImage: {
     //flex: 1,
     width: 70,
     height: 70,
+    borderRadius: 35,
     margin: 0,
     padding: 0,
-    marginRight: 5
+    marginRight: 10
   },
   venueItemContainer: {
     flex: 1,
-    flexDirection: 'row'
+    flexDirection: 'row',
+    padding: 5,
+    borderTopWidth: 1,
+    borderColor: '#E3E3E3'
   },
   refreshImage: {
     height: 30,

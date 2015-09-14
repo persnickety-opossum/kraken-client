@@ -581,7 +581,8 @@ var VenueTab = React.createClass({
             style={styles.slider}
             onSlidingComplete={(voteValue) => this.slidingComplete(voteValue, venue)}
             maximumTrackTintColor='#f92672'
-            minimumTrackTintColor='#66d9ef'/>
+            minimumTrackTintColor='#66d9ef'
+            value={this.state.voteValue} />
         </View>
 
         <RefreshableListView
@@ -860,7 +861,7 @@ var styles = StyleSheet.create({
     flex: 1,
     padding: 5,
     flexDirection: 'row',
-    borderWidth: 1,
+    borderTopWidth: 1,
     borderColor: '#E3E3E3'
   },
   commentText: {
