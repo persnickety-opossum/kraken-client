@@ -293,7 +293,7 @@ var VenueTab = React.createClass({
           <TouchableHighlight
             underlayColor='white'
             activeOpacity={0.4}
-            onPress={this.flag.bind(this, commentID)}>
+            onPress={this.flag.bind(this, 'comment', commentID)}>
             <Icon
               name="fontawesome|flag-o"
               size={19}
@@ -305,13 +305,19 @@ var VenueTab = React.createClass({
     }
   },
 
-  flag(commentID) {
+  flag(targetType, targetID) {
     var context = this;
-    var route = config.serverURL + '/api/comments/';
+
+    var typeRoutes = {
+      comment: '/api/comments/',
+      media: '/api/media/'
+    };
+
+    var route = config.serverURL + typeRoutes[targetType];
     var user = this.state.user;
     var shouldDelete = false;
     var flags;
-    fetch(route + commentID)
+    fetch(route + targetID)
       .then(response => response.json())
       .then(json => {
         var userAlreadyFlagged = false;
@@ -332,7 +338,7 @@ var VenueTab = React.createClass({
           }
         }
         if (userAlreadyFlagged === false) {
-          fetch(config.serverURL + '/api/comments/flag/' + json._id, {
+          fetch(config.serverURL + typeRoutes[targetType] + 'flag/' + json._id, {
             method: 'post',
             headers: {
               'Accept': 'application/json',
