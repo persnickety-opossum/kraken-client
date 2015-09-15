@@ -13,7 +13,7 @@ var { Icon, } = require('react-native-icons');
 var KrakenCamera = require('../Camera/camera.index');
 var Modalbox   = require('react-native-modalbox');
 var RefreshableListView = require('react-native-refreshable-listview');
-var Slider = require('react-native-slider');
+//var Slider = require('react-native-slider');
 
 var config = require('../config');
 
@@ -32,12 +32,13 @@ var {
   TextInput,
   TouchableHighlight,
   View,
+  Animated,
+  Easing
   } = React;
 
 var ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
 moment().format();
 
-// Sockets - might not be needed venue view with event emitter from index
 window.navigator.userAgent = "react-native";
 var io = require('socket.io-client/socket.io');
 var socket = io.connect(config.serverURL);
@@ -78,7 +79,7 @@ var VenueTab = React.createClass({
   },
 
   updateMedia(url) {
-    
+
     this.fetchMedia();
     // Not sure why the below isn't working.
     // var media = this.state.media;
@@ -93,7 +94,7 @@ var VenueTab = React.createClass({
     var route;
     if (venue) route = config.serverURL + '/api/media?venue=' + venue._id;
     else route = config.serverURL + '/api/media?venue=' + this.state.venue._id;
-    console.log(route);
+    //console.log(route);
     fetch(route, {
       method: 'get',
     })
@@ -110,26 +111,6 @@ var VenueTab = React.createClass({
     this.fetchVenue();
     this.addListenerOn(this.eventEmitter, 'mediaUpdated', this.updateMedia);
   },
-
-  // replaced by sockets
-
-  // reloadComments() {
-  //   var route = config.serverURL + '/api/venues/' + this.state.venue._id;
-  //   fetch(route)
-  //     .then(response => response.json())
-  //     .then(function(res) {
-  //       res.comments.reverse();
-  //       for (var i = 0; i < res.comments.length; i++) {
-  //         res.comments[i].datetime = moment(res.comments[i].datetime).fromNow();
-  //       }
-  //       return res;
-  //     })
-  //     .then(json => this.setState({
-  //       venue: json,
-  //       dataSource: ds.cloneWithRows(json.comments),
-  //       attendeeCount: Object.keys(json.attendees).length
-  //     }))
-  // },
 
   calculateDistance: function(current, venue) {
     Number.prototype.toRadians = function () { return this * Math.PI / 180; };
@@ -158,21 +139,22 @@ var VenueTab = React.createClass({
     var venue = nextProps.venue;
     var route = config.serverURL + '/api/venues/' + venue._id;
     var context = this;
+    if (nextProps.fromUserTab) {
+      this.setState({fromUserTab: true});
+    }
 
     // socket.on('media-' + venue.id, function (data) {
     //   alert('media updated!');
     //   socket.emit('my other event', { my: 'data' });
     // });
 
-    var venueChanged = this.props.venue.id !== venue.id;
+    var venueChanged = this.state.venue._id !== nextProps.venue._id;
 
     if (nextProps.geolocation) {
       var coords = nextProps.geolocation.coords;
       var distance = this.calculateDistance(coords, venue);
     }
     if (venueChanged) {
-      this.fetchMedia(venue);
-      
       fetch(route)
         .then(response => response.json())
         .then(json => {
@@ -189,6 +171,7 @@ var VenueTab = React.createClass({
             attendeeCount: Object.keys(json.attendees).length
           }, function() {
             context.getOverallRating();
+            context.fetchMedia(venue);
           });
         })
     } else {
@@ -280,7 +263,11 @@ var VenueTab = React.createClass({
 
   renderComments(comments) {
     if (comments) {
-      var icon = 'fontawesome|' + comments.icon;
+      if (comments.icon == undefined) {
+        var icon = 'fontawesome|flag-o';
+      } else {
+        var icon = 'fontawesome|' + comments.icon;
+      }
       var color = comments.color;
       var atVenue = comments.atVenue;
       var commentID = comments._id;
@@ -591,7 +578,8 @@ var VenueTab = React.createClass({
             style={styles.slider}
             onSlidingComplete={(voteValue) => this.slidingComplete(voteValue, venue)}
             maximumTrackTintColor='#f92672'
-            minimumTrackTintColor='#66d9ef'/>
+            minimumTrackTintColor='#66d9ef'
+            value={this.state.voteValue} />
         </View>
 
         <RefreshableListView
@@ -599,8 +587,8 @@ var VenueTab = React.createClass({
           dataSource={this.state.dataSource}
           renderRow={this.renderComments}
           loadData={this.fetchVenue}
-          refreshDescription="Refreshing comments" />
-
+          refreshDescription="Refreshing comments"
+          refreshingIndictatorComponent={MyRefreshingIndicator}/>
         <View style={[styles.inputContainer, {marginBottom: this.state.bottom}]}>  
           <Button onPress={this.toggleCamera}>
             <Icon
@@ -660,6 +648,46 @@ var VenueTab = React.createClass({
       </View>
     );
   }
+});
+
+var MyRefreshingIndicator = React.createClass({
+  getInitialState() {
+    return {
+      angle: new Animated.Value(0),
+    };
+  },
+
+  componentDidMount() {
+    this._animate();
+  },
+
+  _animate() {
+    var TIMES = 400;
+    this.state.angle.setValue(0);
+    this._anim = Animated.timing(this.state.angle, {
+      toValue: 140000,
+      duration: 140000,
+      easing: Easing.linear
+    }).start(this._animate);
+  },
+
+  render() {
+    return (
+      <View style={styles.refreshImageContainer}>
+        <Animated.Image
+          source={require('image!pin')}
+          style={[
+              styles.refreshImage,
+              {transform: [
+                {rotate: this.state.angle.interpolate({
+                  inputRange: [0, 360],
+                  outputRange: ['0deg', '360deg']
+                })},
+              ]}]}>
+        </Animated.Image>
+      </View>
+    )
+  },
 });
 
 
@@ -830,7 +858,7 @@ var styles = StyleSheet.create({
     flex: 1,
     padding: 5,
     flexDirection: 'row',
-    borderWidth: 0.5,
+    borderTopWidth: 1,
     borderColor: '#E3E3E3'
   },
   commentText: {
@@ -914,7 +942,25 @@ var styles = StyleSheet.create({
     margin: 0,
     padding: 0
   },
-
+  icon: {
+    height: 20,
+    width: 20,
+    marginRight: 5,
+    marginLeft: 0,
+    padding: 0
+  },
+  refreshImage: {
+    height: 30,
+    width: 30,
+    justifyContent:'center',
+    backgroundColor:'transparent',
+    marginBottom: 10
+  },
+  refreshImageContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  }
 });
 
 // easing animations for layout changes
