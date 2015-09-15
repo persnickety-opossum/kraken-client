@@ -154,10 +154,7 @@ var VenueTab = React.createClass({
       var coords = nextProps.geolocation.coords;
       var distance = this.calculateDistance(coords, venue);
     }
-    //if (venueChanged || nextProps.fromUserTab) {
     if (venueChanged) {
-    //if (venueChanged || this.state.fromUserTab) {
-    //  this.fetchMedia(venue);
       fetch(route)
         .then(response => response.json())
         .then(json => {
