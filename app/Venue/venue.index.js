@@ -337,23 +337,23 @@ var VenueTab = React.createClass({
             shouldDelete = true;
           }
         }
-        if (userAlreadyFlagged === false) {
-          fetch(config.serverURL + typeRoutes[targetType] + 'flag/' + json._id, {
-            method: 'post',
-            headers: {
-              'Accept': 'application/json',
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-              flags: flags,
-              shouldDelete: shouldDelete
-            })
+      if (userAlreadyFlagged === false) {
+        fetch(config.serverURL + typeRoutes[targetType] + 'flag/' + json._id, {
+          method: 'post',
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            flags: flags,
+            shouldDelete: shouldDelete
           })
-          .then(function() {
-            context.fetchVenue();
-          });
-        }
-      })
+        })
+        .then(function() {
+          context.fetchVenue();
+        });
+      }
+    })
   },
 
   getRandomColor() {
@@ -458,12 +458,16 @@ var VenueTab = React.createClass({
     });
   },
 
-  imagePressed(uri) {
-    this.setModalVisible(true, uri);
+  imagePressed(props) {
+    this.setModalVisible(true, props);
   },
 
-  setModalVisible(visible, uri) {
-    this.setState({modalVisible: visible, uri: uri});
+  setModalVisible(visible, props) {
+    this.setState({
+      modalVisible: visible,
+      uri: props ? props.uri : null,
+      mediumID: props ? this.state.media[props.index] : null
+    });
   },
 
   toggleCamera(visible) {
@@ -619,6 +623,26 @@ var VenueTab = React.createClass({
           <View style={styles.modalContainer}>
             <View style={styles.innerContainer}>
               {this.showImageOrVideo()}
+              {/*<TouchableHighlight
+                
+                onPress={this.flag.bind(this, 'media', this.state.uri)}>
+                <Icon
+                  name="fontawesome|flag-o"
+                  size={19}
+                  color="#898888"
+                  style={styles.modalFlag} />
+              </TouchableHighlight>*/}
+              <TouchableHighlight 
+                underlayColor='black'
+                activeOpacity={0.4}
+                onPress={this.flag.bind(this, 'media', this.state.mediumID)}
+                style={[styles.modalButtonLeft]}>
+                <Icon
+                  name="fontawesome|flag-o"
+                  size={45}
+                  color='#FFF'
+                  style={styles.modalButtonIcon} />
+              </TouchableHighlight>
               <TouchableHighlight 
                 onPress={this.setModalVisible.bind(this, false)}
                 style={[styles.modalButton]}>
@@ -707,7 +731,10 @@ var Thumb = React.createClass({
   },
 
   onPressImage() {
-    this.eventEmitter.emit('imagePressed', this.props.uri);
+    this.eventEmitter.emit('imagePressed', {
+      uri: this.props.uri,
+      index: this.props.index
+    });
   },
 
   imageOrVideo() {
@@ -738,7 +765,9 @@ var Thumb = React.createClass({
   }
 });
 
-var createThumbRow = (eventEmitter, uri, i) => <Thumb eventEmitter={eventEmitter} key={i} uri={uri} />;
+var createThumbRow = (eventEmitter, uri, i) => {
+  return <Thumb eventEmitter={eventEmitter} index={i} uri={uri} />;
+}
 
 var styles = StyleSheet.create({
 
@@ -925,13 +954,25 @@ var styles = StyleSheet.create({
   modalButton: {
     position: 'absolute',
     flex: 0,
-    fontSize: 20,
     bottom: 5,
     right: 5
+  },
+  modalButtonLeft: {
+    position: 'absolute',
+    flex: 0,
+    bottom: 5,
+    left: 5
   },
   modalButtonIcon: {
     height: 45,
     width: 45,
+  },
+  modalFlag: {
+    position: 'absolute',
+    height: 20,
+    width: 20,
+    bottom: 5,
+    left: 5
   },
   video: {
     //position: 'absolute',
