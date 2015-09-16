@@ -20,6 +20,14 @@ var VideoTab = React.createClass({
     }
   },
 
+  //componentWillReceiveProps: function(nextProps) {
+  //  console.log(nextProps);
+  //},
+  //
+  componentWillUpdate: function(nextProps, nextState) {
+    //console.log(nextProps);
+  },
+
   record: function() {
     this.refs.recorder.record();
     this.setState({recording: true});

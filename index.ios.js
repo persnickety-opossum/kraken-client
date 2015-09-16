@@ -55,7 +55,7 @@ var persnickety = React.createClass({
   },
 
   updatePosition(position) {
-    this.setState({geolocation: position});
+    this.setState({geolocation: position}); //THIS LINE CAUSES THE GEOLOCATION BEING PASSED TO ALL TABS
   },
 
   setUserState(userId) {
