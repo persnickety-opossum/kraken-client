@@ -202,7 +202,6 @@ var VenueTab = React.createClass({
         });
       })
   },
-
   componentWillMount: function() {
     this.fetchMedia(); // Initially load media
     this.eventEmitter = this.props.eventEmitter;
