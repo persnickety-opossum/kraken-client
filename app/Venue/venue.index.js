@@ -466,7 +466,7 @@ var VenueTab = React.createClass({
     this.setState({
       modalVisible: visible,
       uri: props ? props.uri : null,
-      mediumID: props ? this.state.media[props.index] : null
+      mediumID: props ? props.mediumID : null
     });
   },
 
@@ -733,7 +733,7 @@ var Thumb = React.createClass({
   onPressImage() {
     this.eventEmitter.emit('imagePressed', {
       uri: this.props.uri,
-      index: this.props.index
+      mediumID: this.props.mediumID
     });
   },
 
@@ -765,8 +765,8 @@ var Thumb = React.createClass({
   }
 });
 
-var createThumbRow = (eventEmitter, uri, i) => {
-  return <Thumb eventEmitter={eventEmitter} index={i} uri={uri} />;
+var createThumbRow = (eventEmitter, medium, i) => {
+  return <Thumb eventEmitter={eventEmitter} index={i} uri={medium.path} mediumID={medium._id} />;
 }
 
 var styles = StyleSheet.create({
