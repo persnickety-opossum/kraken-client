@@ -56,6 +56,7 @@ var VideoTab = React.createClass({
   },
 
   onNewSegment: function(segment) {
+    console.log(segment);
     this.setState({segment: segment});
   },
 

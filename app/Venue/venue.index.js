@@ -202,7 +202,7 @@ var VenueTab = React.createClass({
         });
       })
   },
-
+  
   componentWillMount: function() {
     this.fetchMedia(); // Initially load media
     this.eventEmitter = this.props.eventEmitter;
@@ -539,15 +539,17 @@ var VenueTab = React.createClass({
             <Text style={styles.text}>
               Current attendees: {this.state.attendeeCount}
             </Text>
-            <Button
-              onPress={this.setInfoVisible.bind(this, false)}
-              style={styles.modalButton}>
-              <Icon  
-                name='fontawesome|times'
-                size={30}
-                color='gray'
-                style={styles.modalButtonIcon} />
-            </Button>
+            <View style={styles.infoButton}>
+              <Button
+                onPress={this.setInfoVisible.bind(this, false)}
+                >
+                <Icon  
+                  name='fontawesome|times'
+                  size={30}
+                  color='gray'
+                  style={styles.modalButtonIcon} />
+              </Button>
+            </View>
         </Modalbox>
 
         <View style={styles.headerContainer}>
@@ -582,7 +584,7 @@ var VenueTab = React.createClass({
 
         <View>
           <Text style={[styles.text, styles.yourRating]} >
-            Overall rating: {this.state.overallRating} | Your last rating: {this.state.userLastRating}
+            Venue Rating: {this.state.overallRating} | Your Rating: {this.state.userLastRating}
           </Text>
           <SliderIOS
             style={styles.slider}
@@ -751,7 +753,7 @@ var Thumb = React.createClass({
       )
     } else { //if image
       return (
-        <Image style={styles.thumbImage} source={{uri:this.props.uri}} />
+        <Image style={styles.thumbImage} source={{uri: this.props.thumb}} />
       )
     }
   },
@@ -765,9 +767,7 @@ var Thumb = React.createClass({
   }
 });
 
-var createThumbRow = (eventEmitter, medium, i) => {
-  return <Thumb eventEmitter={eventEmitter} index={i} uri={medium.path} mediumID={medium._id} />;
-}
+var createThumbRow = (eventEmitter, media, i) => <Thumb eventEmitter={eventEmitter} index={i} thumb={media.thumbPath} uri={media.path} />;
 
 var styles = StyleSheet.create({
 
@@ -909,6 +909,10 @@ var styles = StyleSheet.create({
     height: 300,
     width: 300,
     padding: 20
+  },
+  infoButton: {
+    flex: 1,
+    alignSelf: 'flex-end',
   },
   infoIcon: {
     height: 20,

@@ -125,13 +125,6 @@ var persnickety = React.createClass({
               <UserTab eventEmitter={this.eventEmitter}/>
             </View>
           </TabBarIOS.Item>
-          <TabBarIOS.Item
-            title="Video"
-            icon={ require('image!video') }
-            onPress={ () => this.changeTab('video') }
-            selected={ this.state.selectedTab === 'video' }>
-            <VideoTab />
-          </TabBarIOS.Item>
         </TabBarIOS>
       </View>
     );
