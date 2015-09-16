@@ -78,13 +78,15 @@ var VenueTab = React.createClass({
     this.setState({'venue': venue});
   },
 
-  updateMedia(url) {
+  updateMedia(response) {
 
     this.fetchMedia();
     // Not sure why the below isn't working.
-    // var media = this.state.media;
-    // media.unshift(url);
+    // var media = this.state.media.slice();
+    // media.unshift(response);
+    //
     // this.setState({'media': media});
+    //  console.log(this.state.media);
     // this.render();
   },
 
