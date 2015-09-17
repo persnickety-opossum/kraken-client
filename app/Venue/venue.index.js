@@ -478,7 +478,12 @@ var VenueTab = React.createClass({
   },
 
   toggleCamera(visible) {
-    this.setState({modalCameraVisible: !this.state.modalCameraVisible});
+    // always allow user to close the modal, but only open it if they're at the venue
+    if (this.state.modalCameraVisible || this.state.atVenue) {
+      this.setState({modalCameraVisible: !this.state.modalCameraVisible});
+    } else {
+      alert('Sorry, you need to be there to do that!')
+    }
   },
 
   setInfoVisible(visible) {
@@ -609,6 +614,7 @@ var VenueTab = React.createClass({
           refreshDescription="Refreshing comments"
           refreshingIndictatorComponent={MyRefreshingIndicator}/>
         <View style={[styles.inputContainer, {marginBottom: this.state.bottom}]}>  
+          
           <Button onPress={this.toggleCamera}>
             <Icon
               name='fontawesome|camera'
