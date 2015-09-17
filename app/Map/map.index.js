@@ -151,10 +151,8 @@ var MapTab = React.createClass({
   componentDidMount: function() {
     var context = this;
     this.addListenerOn(this.eventEmitter, 'refreshMap', function() {
-      context.setState({venuePins: []}, function() {
-        context.setState({annotations: []}, function() {
-          context._venueQuery(config.serverURL + '/api/venues', true);
-        });
+      context.setState({venuePins: [], annotations: [], searchPins: []}, function() {
+        context._venueQuery(config.serverURL + '/api/venues', true);
       });
     });
   },
@@ -260,6 +258,7 @@ var MapTab = React.createClass({
   },
 
   _displayPins: function () {
+<<<<<<< HEAD
     var context = this;
     var pins = this.state.searchPins.concat(this.state.venuePins);
 
@@ -269,6 +268,11 @@ var MapTab = React.createClass({
         setTimeout(context.selectAnnotationAnimated.bind(context, mapRef, 0), 1000);
       }
       this.setState({autocomplete: false});
+=======
+    var pins = this.state.venuePins.concat(this.state.searchPins);
+    this.setState({annotations: pins}, function() {
+      this.render();
+>>>>>>> Fixing.
     });
   },
 
