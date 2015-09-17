@@ -39,9 +39,9 @@ var MapTab = React.createClass({
       venuePins: [],
       searchPins: [],
       annotations: [],
-      mapStyle: ['asset://styles/emerald-v7.json', 'asset://styles/dark-v7.json', 'asset://styles/light-v7.json', 'asset://styles/mapbox-streets-v7.json', 'asset://styles/satellite-v7.json'],
-      currentMap: 1,
-      autocomplete: false
+      autocomplete: false,
+      mapStyle: ['asset://styles/emerald-v8.json', 'asset://styles/dark-v8.json', 'asset://styles/light-v8.json', 'asset://styles/mapbox-streets-v8.json', 'asset://styles/satellite-v8.json'],
+      currentMap: 1
     };
   },
 
@@ -258,7 +258,6 @@ var MapTab = React.createClass({
   },
 
   _displayPins: function () {
-<<<<<<< HEAD
     var context = this;
     var pins = this.state.searchPins.concat(this.state.venuePins);
 
@@ -268,11 +267,6 @@ var MapTab = React.createClass({
         setTimeout(context.selectAnnotationAnimated.bind(context, mapRef, 0), 1000);
       }
       this.setState({autocomplete: false});
-=======
-    var pins = this.state.venuePins.concat(this.state.searchPins);
-    this.setState({annotations: pins}, function() {
-      this.render();
->>>>>>> Fixing.
     });
   },
 
@@ -326,7 +320,7 @@ var MapTab = React.createClass({
           showsUserLocation={true}
           ref={mapRef}
           accessToken={'pk.eyJ1IjoibWFyeW1hc29uIiwiYSI6IjM1NGVhNWZmNzQ5Yjk5NTczMDFhMzc3Zjg2ZGEyYzI0In0.7IdD26iFQhD2b6LbTIw_Sw'}
-          styleURL={'asset://styles/light-v7.json'}
+          styleURL={'asset://styles/light-v8.json'}
           centerCoordinate={this.state.center}
           userLocationVisible={true}
           zoomLevel={this.state.zoom}
