@@ -22,5 +22,12 @@ module.exports = StyleSheet.create({
     height: 45,
     width: 45,
   },
+  counter: {
+    position: 'absolute',
+    fontSize: 80,
+    color: 'white',
+    width: Display.width,
+    textAlign: 'center'
+  }
 });
 

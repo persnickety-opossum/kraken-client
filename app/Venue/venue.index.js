@@ -484,7 +484,7 @@ var VenueTab = React.createClass({
 
   showImageOrVideo() {
     if (this.state.uri) {
-      if (this.state.uri.indexOf('.') === -1) { //(if video) this will have to be changed later.
+      if (this.state.uri.indexOf('.mp4') >= 0) { //(if video) this will have to be changed later.
         return (
           <Video source={{uri: this.state.uri}}
             rate={1.0}
