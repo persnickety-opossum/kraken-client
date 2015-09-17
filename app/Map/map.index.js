@@ -29,7 +29,7 @@ var {
 
 // create MapTab class
 var MapTab = React.createClass({
-  mixins: [MapboxGLMap.Mixin],
+  mixins: [MapboxGLMap.Mixin, Subscribable.Mixin],
   // initialize class with base states
   getInitialState() {
     return {
@@ -91,7 +91,6 @@ var MapTab = React.createClass({
           })
             .then(response => response.json())
             .then(json => {
-              json.datetime = moment(json.datetime).format("dddd, MMMM Do YYYY, h:mm:ss a");
               this.eventEmitter.emit('annotationTapped', { venue: json});
             })
             .then(() => this.setState({searchPins: []}))
@@ -111,6 +110,7 @@ var MapTab = React.createClass({
   componentWillMount: function() {
     // retrieve user id, may be replaced with device UUID in the future
     var context = this;
+    this.eventEmitter = this.props.eventEmitter;
     // Get Device UUID
     DeviceUUID.getUUID().then((uuid) => {
       console.log('Device ID >>>>>>>>> ', uuid);
@@ -145,9 +145,18 @@ var MapTab = React.createClass({
     });
     //navigator.geolocation.stopObserving();
 
-    this.eventEmitter = this.props.eventEmitter;
-
     this._venueQuery(config.serverURL + '/api/venues', true);
+  },
+
+  componentDidMount: function() {
+    var context = this;
+    this.addListenerOn(this.eventEmitter, 'refreshMap', function() {
+      context.setState({venuePins: []}, function() {
+        context.setState({annotations: []}, function() {
+          context._venueQuery(config.serverURL + '/api/venues', true);
+        });
+      });
+    });
   },
 
   componentWillUnmount: function() {
@@ -221,7 +230,7 @@ var MapTab = React.createClass({
             height: 47,
             width: 44
           };
-        } else if (attendees > 1) {
+        } else if (attendees > 0) {
           venue.annotationImage = {
             url: 'image!marker-2',
             height: 27,
@@ -234,7 +243,6 @@ var MapTab = React.createClass({
             width: 41
           };
         }
-        venue.datetime = moment(venue.datetime).format("dddd, MMMM Do YYYY, h:mm:ss a");
         context.setState({venuePins: context.state.venuePins.concat(venue)});
       } else {
         venue.annotationImage = {
