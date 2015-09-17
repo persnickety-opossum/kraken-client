@@ -352,9 +352,11 @@ var VenueTab = React.createClass({
         .then(function() {
           if (targetType === 'comment') {
             context.fetchVenue();
-          } else if (targetType === 'media' && shouldDelete) {
+          } else if (targetType === 'media') {
             context.setModalVisible(false);
-            context.fetchMedia();
+            if (shouldDelete) {
+              context.fetchMedia();
+            }
           }
         });
       }
