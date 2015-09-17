@@ -4,6 +4,8 @@ var React = require('react-native');
 var config = require('../config');
 var DeviceUUID = require("react-native-device-uuid");
 var Display = require('react-native-device-display');
+var EventEmitter = require('EventEmitter');
+var Subscribable = require('Subscribable');
 var {
   StyleSheet,
   Text,
@@ -22,19 +24,20 @@ var ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
 var RefreshableListView = require('react-native-refreshable-listview');
 
 var UserTab = React.createClass({
-
+  mixins: [Subscribable.Mixin],
   getInitialState: function() {
     return {
       loading: true,
       scalesPageToFit: true,
       userComments: [],
       dataSource: ds.cloneWithRows([]),
-      medium: []
+      //medium: []
     };
   },
 
   componentWillMount: function() {
     var context = this;
+    this.eventEmitter = this.props.eventEmitter;
     DeviceUUID.getUUID().then((uuid) => {
       console.log('Device ID >>>>>>>>> ', uuid);
       return uuid;
@@ -56,11 +59,15 @@ var UserTab = React.createClass({
       .catch((err) => {
         console.log(err);
       });
-    this.eventEmitter = this.props.eventEmitter;
+  },
+
+  componentDidMount: function() {
+    this.addListenerOn(this.eventEmitter, 'refreshUserView', this.fetchUserComments);
   },
 
   fetchUserComments: function() {
     var context = this;
+    this.setState({medium: []});
     fetch(config.serverURL + '/api/users/userInfo/' + this.state.user)
       .then(response => response.json())
       .then(json => {
@@ -74,29 +81,34 @@ var UserTab = React.createClass({
             comments.push(json[i]);
             venues.push(json[i].venue);
           }
+          if (venues.length === 20) {
+            break;
+          }
         }
         for (var i = 0; i < venues.length; i++) {
-          context.fetchMedia(venues[i], i);
+          context.fetchMedia(venues[i], i, comments);
         }
         this.setState({userComments: comments, dataSource: ds.cloneWithRows(comments)}, function() {
         });
       })
   },
 
-  fetchMedia(venue, i) {
+  fetchMedia(venue, i, comments) {
     var context = this;
     var route;
     if (venue) route = config.serverURL + '/api/media?venue=' + venue._id;
-    else route = config.serverURL + '/api/media?venue=' + this.state.venue._id;
+    //else route = config.serverURL + '/api/media?venue=' + this.state.venue._id;
     fetch(route, {
       method: 'get',
     })
       .then(response => {
-        var media = JSON.parse(response._bodyInit).reverse()[0];
+        var media = JSON.parse(response._bodyInit).reverse()[0].thumbPath;
         var medium = context.state.medium;
         medium[i] = media;
         context.setState({medium: medium}, function() {
-          context.render();
+          context.setState({dataSource: ds.cloneWithRows(comments)}, function() {
+            context.render();
+          });
         });
       });
   },
