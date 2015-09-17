@@ -318,25 +318,25 @@ var VenueTab = React.createClass({
     var shouldDelete = false;
     var flags;
     fetch(route + targetID)
-      .then(response => response.json())
-      .then(json => {
-        var userAlreadyFlagged = false;
-        if (json.flags.length === 0) {
-          flags = [user];
-        } else {
-          for (var i = 0; i < json.flags.length; i++) {
-            if (json.flags[i] === user) {
-              userAlreadyFlagged = true;
-            }
-          }
-          if (userAlreadyFlagged === false) {
-            json.flags.push(user);
-            flags = json.flags;
-          }
-          if (flags.length === 3) {
-            shouldDelete = true;
+    .then(response => response.json())
+    .then(json => {
+      var userAlreadyFlagged = false;
+      if (json.flags.length === 0) {
+        flags = [user];
+      } else {
+        for (var i = 0; i < json.flags.length; i++) {
+          if (json.flags[i] === user) {
+            userAlreadyFlagged = true;
           }
         }
+        if (userAlreadyFlagged === false) {
+          json.flags.push(user);
+          flags = json.flags;
+        }
+        if (flags.length === 3) {
+          shouldDelete = true;
+        }
+      }
       if (userAlreadyFlagged === false) {
         fetch(config.serverURL + typeRoutes[targetType] + 'flag/' + json._id, {
           method: 'post',
@@ -350,10 +350,15 @@ var VenueTab = React.createClass({
           })
         })
         .then(function() {
-          context.fetchVenue();
+          if (targetType === 'comment') {
+            context.fetchVenue();
+          } else if (targetType === 'media' && shouldDelete) {
+            context.setModalVisible(false);
+            context.fetchMedia();
+          }
         });
       }
-    })
+    });
   },
 
   getRandomColor() {
@@ -767,7 +772,7 @@ var Thumb = React.createClass({
   }
 });
 
-var createThumbRow = (eventEmitter, media, i) => <Thumb eventEmitter={eventEmitter} index={i} thumb={media.thumbPath} uri={media.path} />;
+var createThumbRow = (eventEmitter, media, i) => <Thumb eventEmitter={eventEmitter} index={i} thumb={media.thumbPath} uri={media.path} mediumID={media._id} />;
 
 var styles = StyleSheet.create({
 
