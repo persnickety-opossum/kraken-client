@@ -35,12 +35,13 @@ var MapTab = React.createClass({
     return {
       searchString: '',
       zoom: 15,
-      autocomplete: [],
+      autoSearch: [],
       venuePins: [],
       searchPins: [],
       annotations: [],
       mapStyle: ['asset://styles/emerald-v7.json', 'asset://styles/dark-v7.json', 'asset://styles/light-v7.json', 'asset://styles/mapbox-streets-v7.json', 'asset://styles/satellite-v7.json'],
-      currentMap: 1
+      currentMap: 1,
+      autocomplete: false
     };
   },
 
@@ -246,30 +247,37 @@ var MapTab = React.createClass({
     var pins = this.state.searchPins.concat(this.state.venuePins);
 
     this.setState({annotations: pins}, function() {
-      if(context.state.searchPins.length > 0) {
+      if(this.state.autocomplete) {
         this.setCenterCoordinateZoomLevelAnimated(mapRef, this.state.searchPins[0].latitude, this.state.searchPins[0].longitude, 15);
         setTimeout(context.selectAnnotationAnimated.bind(context, mapRef, 0), 1000);
-        
       }
+      this.setState({autocomplete: false});
     });
   },
 
+  // update autocomplete by querying data as search text changes
   _onSearchTextChanged: function (text) {
     this.setState({ searchString: text });
     this.setState({searchPins: []});
     fetch(config.serverURL + '/api/search/query/'+this.state.searchString+'/'+this.state.latitude+','+this.state.longitude)
       .then(response => response.json())
-      .then(json => this.setState({autocomplete: json.map(function(search) {
+      .then(json => this.setState({autoSearch: json.map(function(search) {
         return search.title;
       })}));
   },
 
-  _onSearchTextSubmit: function (query) {
-    // this._textInput.setNativeProps({text: ''});
-    this.setState({searchPins: []});
+  // search based on autocomplete selection
+  _onAutoSubmit: function (query) {
+    this.setState({searchPins: [], autocomplete: true});
     this._venueQuery(config.serverURL + '/api/search/query/'+query+'/'+this.state.latitude+','+this.state.longitude, false);
   },
 
+  // search using submit button
+  _onSearchTextSubmit: function () {
+    // this._textInput.setNativeProps({text: ''});
+    this.setState({searchPins: []});
+    this._venueQuery(config.serverURL + '/api/search/query/'+this.state.searchString+'/'+this.state.latitude+','+this.state.longitude, false);
+  },
   // method for recentering and reset zoom level based on current location 
   _onCenterPressed: function () {
     this.setCenterCoordinateZoomLevelAnimated(mapRef, this.state.center.latitude, this.state.center.longitude, 15);
@@ -284,46 +292,10 @@ var MapTab = React.createClass({
     }
   },
 
+  // map view render
   render: function() {
-    //StatusBarIOS.setHidden(true);
     return (
       <View style={styles.container}>
-        {/*<Text style={styles.text} onPress={() => this.setDirectionAnimated(mapRef, 0)}>
-         Set direction to 0
-         </Text>
-         <Text style={styles.text} onPress={() => this.setZoomLevelAnimated(mapRef, 6)}>
-         Zoom out to zoom level 6
-         </Text>
-         <Text style={styles.text} onPress={() => this.setCenterCoordinateAnimated(mapRef, 48.8589, 2.3447)}>
-         Go to Paris at current zoom level {parseInt(this.state.currentZoom)}
-         </Text>
-         <Text style={styles.text} onPress={() => this.setCenterCoordinateZoomLevelAnimated(mapRef, 35.68829, 139.77492, 14)}>
-         Go to Tokyo at fixed zoom level 14
-         </Text>
-         <Text style={styles.text} onPress={() => {
-         this.annotate({
-         latitude: this.state.latitude,
-         longitude:  this.state.longitude,
-         title: 'This is a new marker',
-         annotationImage: {
-         url: 'https://cldup.com/CnRLZem9k9.png',
-         height: 25,
-         width: 25
-         }
-         });
-         }}>
-         Add new marker
-         </Text>
-         <Text style={styles.text} onPress={() => this.selectAnnotationAnimated(mapRef, 0)}>
-         Open first popup
-         </Text>
-         <Text style={styles.text} onPress={() => {
-         this.setState({
-         annotations: this.state.annotations.slice(1, this.state.annotations.length)
-         });
-         }}>
-         Remove first annotation
-         </Text> */}
         <MapboxGLMap
           style={styles.map}
           direction={0}
@@ -349,10 +321,10 @@ var MapTab = React.createClass({
           style={styles.autocomplete}
 
           onTyping={this._onSearchTextChanged}
-          onSelect={this._onSearchTextSubmit}
+          onSelect={this._onAutoSubmit}
           onSubmitEditing={this._onSearchTextSubmit}
 
-          suggestions={this.state.autocomplete}
+          suggestions={this.state.autoSearch}
 
           placeholder='Search'
           clearButtonMode='always'
