@@ -12,9 +12,11 @@ var Display = require('react-native-device-display');
 var config = require('../config');
 var DeviceUUID = require("react-native-device-uuid");
 var { Icon, } = require('react-native-icons');
+var AutoComplete = require('react-native-autocomplete');
 
 // require React Native modules
 var {
+  AlertIOS,
   AppRegistry,
   StyleSheet,
   StatusBarIOS,
@@ -33,6 +35,7 @@ var MapTab = React.createClass({
     return {
       searchString: '',
       zoom: 15,
+      autocomplete: [],
       venuePins: [],
       searchPins: [],
       annotations: [],
@@ -190,7 +193,7 @@ var MapTab = React.createClass({
       venue.subtitle = venue.description;
       if(inDb) {
         venue.id = venue._id;
-        var numRatings = Object.keys(venue.ratings).length
+        var numRatings = Object.keys(venue.ratings).length;
         var ratingsSum = 0;
 
         if (numRatings > 0) {
@@ -201,7 +204,7 @@ var MapTab = React.createClass({
         } else {
           venue.overallRating = 'Be the first to vote!'
         }
-        var attendees = Object.keys(venue.attendees).length
+        var attendees = Object.keys(venue.attendees).length;
         if (attendees > 3) {
           venue.annotationImage = {
             url: 'image!marker-kraken',
@@ -239,24 +242,37 @@ var MapTab = React.createClass({
   },
 
   _displayPins: function () {
-    var pins = this.state.venuePins.concat(this.state.searchPins);
-    this.setState({annotations: pins});
+    var context = this;
+    var pins = this.state.searchPins.concat(this.state.venuePins);
+
+    this.setState({annotations: pins}, function() {
+      if(context.state.searchPins.length > 0) {
+        this.setCenterCoordinateZoomLevelAnimated(mapRef, this.state.searchPins[0].latitude, this.state.searchPins[0].longitude, 15);
+        setTimeout(context.selectAnnotationAnimated.bind(context, mapRef, 0), 1000);
+        
+      }
+    });
   },
 
-  _onSearchTextChanged: function (event) {
-    this.setState({ searchString: event.nativeEvent.text });
-  },
-
-  _onSearchTextSubmit: function () {
-    this._textInput.setNativeProps({text: ''});
+  _onSearchTextChanged: function (text) {
+    this.setState({ searchString: text });
     this.setState({searchPins: []});
-    this._venueQuery(config.serverURL + '/api/search/query/'+this.state.searchString+'/'+this.state.latitude+','+this.state.longitude, false);
+    fetch(config.serverURL + '/api/search/query/'+this.state.searchString+'/'+this.state.latitude+','+this.state.longitude)
+      .then(response => response.json())
+      .then(json => this.setState({autocomplete: json.map(function(search) {
+        return search.title;
+      })}));
   },
 
+  _onSearchTextSubmit: function (query) {
+    // this._textInput.setNativeProps({text: ''});
+    this.setState({searchPins: []});
+    this._venueQuery(config.serverURL + '/api/search/query/'+query+'/'+this.state.latitude+','+this.state.longitude, false);
+  },
 
   // method for recentering and reset zoom level based on current location 
   _onCenterPressed: function () {
-    this.setCenterCoordinateZoomLevelAnimated(mapRef, this.state.center.latitude, this.state.center.longitude, 15)
+    this.setCenterCoordinateZoomLevelAnimated(mapRef, this.state.center.latitude, this.state.center.longitude, 15);
   },
 
   // method for changing style of map on button press - NOT in working state because new map style covers old pins
@@ -327,7 +343,43 @@ var MapTab = React.createClass({
           onOpenAnnotation={this.onOpenAnnotation}
           onRightAnnotationTapped={this.onRightAnnotationTapped}
           onUpdateUserLocation={this.onUpdateUserLocation} />
-        <View style={styles.flowRight}>
+
+        <AutoComplete
+          ref={component => this._textInput = component}
+          style={styles.autocomplete}
+
+          onTyping={this._onSearchTextChanged}
+          onSelect={this._onSearchTextSubmit}
+          onSubmitEditing={this._onSearchTextSubmit}
+
+          suggestions={this.state.autocomplete}
+
+          placeholder='Search'
+          clearButtonMode='always'
+          returnKeyType='search'
+          textAlign='center'
+          clearTextOnFocus={true}
+
+          maximumNumberOfAutoCompleteRows='5'
+          applyBoldEffectToAutoCompleteSuggestions={true}
+          reverseAutoCompleteSuggestionsBoldEffect={true}
+          showTextFieldDropShadowWhenAutoCompleteTableIsOpen={false}
+          disableAutoCompleteTableUserInteractionWhileFetching={true}
+          autoCompleteTableViewHidden={false}
+
+          autoCompleteTableBorderColor='lightblue'
+          autoCompleteTableBackgroundColor='azure'
+          autoCompleteTableCornerRadius={0}
+          autoCompleteTableBorderWidth={1}
+
+          autoCompleteRowHeight={30}
+
+          autoCompleteFontSize={15}
+          autoCompleteRegularFontName='Helvetica Neue'
+          autoCompleteBoldFontName='Helvetica Bold'
+          autoCompleteTableCellTextColor={'lightblue'}
+        />
+        {/* <View style={styles.searchContainer}>
           <TextInput
             ref={component => this._textInput = component}
             style={styles.searchInput}
@@ -335,64 +387,54 @@ var MapTab = React.createClass({
             onSubmitEditing={this._onSearchTextSubmit}
             returnKeyType='search'
             placeholder={'  Search'}/>
-        </View>
+        </View> */}
         <TouchableHighlight onPress={this._onCenterPressed}> 
           <Image
             style={styles.button}
             source={require('image!target')}
           />
         </TouchableHighlight>
-        {/*<TouchableHighlight 
-          style={styles.stylebutton}
-          underlayColor='#99d9f4'
-          onPress={this._onStylePressed}>
-          <Text style={styles.buttonText}>Style</Text>
-        </TouchableHighlight>*/}
       </View>
     );
   }
 });
 
 var styles = StyleSheet.create({
+
+  // main view container
   container: {
     flexDirection: 'column',
     flex: 1,
   },
+  // map view
   map: {
     flex: 5
   },
-  flowRight: {
+  // search bar
+  searchContainer: {
     position: 'absolute',
     top: 0,
     flexDirection: 'row',
     alignItems: 'center',
     alignSelf: 'stretch'
   },
-  searchInput: {
-    position: 'absolute',
-    top: 3,
-    left: Display.width*.15,
-    height: 36,
-    width: Display.width*.70,
-    padding: 4,
-    fontSize: 12,
-    borderWidth: 0.5,
-    borderColor: '#66d9ef',
-    color: '#8C8C8C'
+  autocomplete: {
+      position: 'absolute',
+      top: 3,
+      left: Display.width*.15,
+      height: 36,
+      width: Display.width*.70,
+      padding: 4,
+      fontSize: 12,
+      color: '#8C8C8C'
   },
+  // center button
   button: {
     height: 40,
     width: 40,
     position: 'absolute',
     bottom: 50,
     right: 40
-  },
-  stylebutton: {
-    height: 40,
-    width: 40,
-    position: 'absolute',
-    bottom: 50,
-    left: 30
   },
 });
 

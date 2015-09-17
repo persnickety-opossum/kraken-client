@@ -73,7 +73,7 @@ var persnickety = React.createClass({
     var context = this;
     socket.removeAllListeners();
     socket.on('media-' + venue.id, function (response) {
-      context.eventEmitter.emit('mediaUpdated', response.url);
+      context.eventEmitter.emit('mediaUpdated', response);
     });
 
     this.setState({venueImg: require('image!venue')}, function() {
