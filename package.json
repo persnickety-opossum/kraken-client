@@ -29,7 +29,7 @@
     "react-native-file-transfer": "0.0.3",
     "react-native-icons": "^0.3.6",
     "react-native-keyboardevents": "^0.4.5",
-    "react-native-mapbox-gl": "0.4.2",
+    "react-native-mapbox-gl": "^0.4.2",
     "react-native-modalbox": "^1.1.4",
     "react-native-refreshable-listview": "^1.3.0",
     "react-native-screcorder": "0.0.5",
