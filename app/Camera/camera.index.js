@@ -1,5 +1,7 @@
 var React = require('react-native');
 var Camera = require('react-native-camera');
+var Button = require('./button');
+var RecordButton = require('./recordButton');
 var config = require('../config');
 var styles = require('./styles');
 var { Icon, } = require('react-native-icons');
@@ -52,39 +54,54 @@ var KrakenCam = React.createClass({
       });
     });
   },
-  _takeVideo() {
+  _record() {
     var venue = this.props.venue._id;
     var user = this.props.user;
-    this.refs.cam.capture({mode: 'video', audio: true}, function(err, path) {
-      var obj = {
-        uri: path,
-        uploadUrl: config.serverURL + '/api/media/',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-        },
-        data: {
-          venue: venue,
-          creator: user
-        },
-        mimeType: mime.lookup(path)
-      };
-      NativeModules.FileTransfer.upload(obj, (err, res) => {
-        if (res) console.log('File Transfer Response:', res);
-        else if (err) console.log('File Transfer Error:', err);
+    if (!this.state.isRecording) {
+
+      // Start Countdown
+      var context = this;
+      var counterInterval = setInterval(function() {
+        context.setState({counter: context.state.counter - 1});
+      },1000);
+      var counterTimeout = setTimeout(function() {
+        this._stopRecording();
+      }, 7000);  
+
+      this.setState({'isRecording': true, 'counter': 7, 'counterInterval': counterInterval, 'counterTimeout': counterTimeout});
+      this.refs.cam.capture({mode: 'video', audio: true}, function(err, path) {
+        // This body is called when capture is complete
+        var obj = {
+          uri: path,
+          uploadUrl: config.serverURL + '/api/media/',
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+          },
+          data: {
+            venue: venue,
+            creator: user
+          },
+          mimeType: mime.lookup(path)
+        };
+        // This starts the upload to S3
+        NativeModules.FileTransfer.upload(obj, (err, res) => {
+          if (res) console.log('File Transfer Response:', res);
+          else if (err) console.log('File Transfer Error:', err);
+        });
       });
-    });
-    var context = this;
-    context.setState({counter: 7});
-    var counting = setInterval(function() {
-      context.state.counter -= 1;
-    },1000)
-    setTimeout(function() {
-      context.refs.cam.stopCapture();
-      context.state.counter = '';
-      clearInterval(counting);
-      alert('Done! Uploading');
-    }, 7000);
+
+    } else {
+      this._stopRecording();
+    }
+  },
+
+  _stopRecording() {
+    clearInterval(this.state.counterInterval);
+    clearTimeout(this.state.counterTimeout);
+    this.setState({'counter': '', 'isRecording': false});
+    this.refs.cam.stopCapture();
+    alert('Uploading, your video will appear shortly!');
   },
   render() {
     return (
@@ -97,36 +114,15 @@ var KrakenCam = React.createClass({
 
         <Text style={styles.counter}>{this.state.counter}</Text>
 
-        <TouchableHighlight 
-          onPress={this._takePicture} 
-          style={[styles.iconContainer, styles.test]}>
-          <Icon  
-            name='fontawesome|camera-retro'
-            size={45}
-            color='#FFF'
-            style={styles.icon} />
-        </TouchableHighlight>
-
-        <TouchableHighlight 
-          onPress={this._takeVideo} 
-          style={[styles.iconContainer, styles.test]}>
-          <Icon  
-            name='fontawesome|video-camera'
-            size={45}
-            color='#FFF'
-            style={styles.icon} />
-        </TouchableHighlight>
-
-        <TouchableHighlight 
-          onPress={this._switchCamera} 
-          style={[styles.iconContainer]}>
-          <Icon  
-            name='fontawesome|undo'
-            size={45}
-            color='#FFF'
-            style={styles.icon} />
-        </TouchableHighlight>
-        
+        <Button
+          onPress={this._takePicture}
+          icon='camera-retro' />
+        <RecordButton
+          onPress={this._record} 
+          isRecording={this.state.isRecording} />
+        <Button
+           onPress={this._switchCamera}
+           icon='undo' />
       </Camera>
     );
   }
