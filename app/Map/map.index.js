@@ -92,7 +92,6 @@ var MapTab = React.createClass({
           })
             .then(response => response.json())
             .then(json => {
-              console.log('JSON received:', json)
               this.eventEmitter.emit('annotationTapped', { venue: json});
             })
             .then(() => this.setState({searchPins: []}))
