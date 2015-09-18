@@ -29,7 +29,7 @@ var {
 
 // create MapTab class
 var MapTab = React.createClass({
-  mixins: [MapboxGLMap.Mixin],
+  mixins: [MapboxGLMap.Mixin, Subscribable.Mixin],
   // initialize class with base states
   getInitialState() {
     return {
@@ -39,9 +39,9 @@ var MapTab = React.createClass({
       venuePins: [],
       searchPins: [],
       annotations: [],
-      mapStyle: ['asset://styles/emerald-v7.json', 'asset://styles/dark-v7.json', 'asset://styles/light-v7.json', 'asset://styles/mapbox-streets-v7.json', 'asset://styles/satellite-v7.json'],
-      currentMap: 1,
-      autocomplete: false
+      autocomplete: false,
+      mapStyle: ['asset://styles/emerald-v8.json', 'asset://styles/dark-v8.json', 'asset://styles/light-v8.json', 'asset://styles/mapbox-streets-v8.json', 'asset://styles/satellite-v8.json'],
+      currentMap: 1
     };
   },
 
@@ -91,7 +91,6 @@ var MapTab = React.createClass({
           })
             .then(response => response.json())
             .then(json => {
-              json.datetime = moment(json.datetime).format("dddd, MMMM Do YYYY, h:mm:ss a");
               this.eventEmitter.emit('annotationTapped', { venue: json});
             })
             .then(() => this.setState({searchPins: []}))
@@ -111,6 +110,7 @@ var MapTab = React.createClass({
   componentWillMount: function() {
     // retrieve user id, may be replaced with device UUID in the future
     var context = this;
+    this.eventEmitter = this.props.eventEmitter;
     // Get Device UUID
     DeviceUUID.getUUID().then((uuid) => {
       console.log('Device ID >>>>>>>>> ', uuid);
@@ -144,9 +144,24 @@ var MapTab = React.createClass({
       this.eventEmitter.emit('positionUpdated', lastPosition);
     });
 
-    this.eventEmitter = this.props.eventEmitter;
-
     this._venueQuery(config.serverURL + '/api/venues', true);
+  },
+
+  componentDidMount: function() {
+    var context = this;
+    this.addListenerOn(this.eventEmitter, 'refreshMap', function() {
+      var annotations = context.state.annotations;
+      var length = annotations.length;
+      //console.log(annotations);
+      //for (var i = 0; i < length - 1; i++) {
+      //  context.removeAnnotation(mapRef, 0);
+      //}
+      //setTimeout(function() {
+      //  context.setState({annotations: [], venuePins: [], searchPins: []}, function() {
+      context._venueQuery(config.serverURL + '/api/venues', true);
+        //});
+      //}, 1000);
+    });
   },
 
   // helper function to fetch venue data from server
@@ -178,7 +193,7 @@ var MapTab = React.createClass({
         });
         alert(error.message);
       },
-      {enableHighAccuracy: true, timeout: 20000, maximumAge: 1000}
+      {enableHighAccuracy: true, timeout: 20000, maximumAge: 30000}
     );
     //this.setState({user: this.props.user});
   },
@@ -225,7 +240,6 @@ var MapTab = React.createClass({
             width: 41
           };
         }
-        venue.datetime = moment(venue.datetime).format("dddd, MMMM Do YYYY, h:mm:ss a");
         context.setState({venuePins: context.state.venuePins.concat(venue)});
       } else {
         venue.annotationImage = {
@@ -305,7 +319,7 @@ var MapTab = React.createClass({
           showsUserLocation={true}
           ref={mapRef}
           accessToken={'pk.eyJ1IjoibWFyeW1hc29uIiwiYSI6IjM1NGVhNWZmNzQ5Yjk5NTczMDFhMzc3Zjg2ZGEyYzI0In0.7IdD26iFQhD2b6LbTIw_Sw'}
-          styleURL={'asset://styles/light-v7.json'}
+          styleURL={'asset://styles/light-v8.json'}
           centerCoordinate={this.state.center}
           userLocationVisible={true}
           zoomLevel={this.state.zoom}
