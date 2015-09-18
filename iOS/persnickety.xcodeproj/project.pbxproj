@@ -52,6 +52,7 @@
 		58DA62B51B9B6E6E0061748A /* RCTDeviceUUID.m in Sources */ = {isa = PBXBuildFile; fileRef = 58DA62AC1B9B6E6E0061748A /* RCTDeviceUUID.m */; };
 		58DA62B61B9B6E6E0061748A /* README.md in Sources */ = {isa = PBXBuildFile; fileRef = 58DA62B01B9B6E6E0061748A /* README.md */; };
 		832341BD1AAA6AB300B99B32 /* libRCTText.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 832341B51AAA6A8300B99B32 /* libRCTText.a */; };
+		D3CF50DF1BAA246D006838CC /* libRCTAutoComplete.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D3CF50CB1BAA245E006838CC /* libRCTAutoComplete.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -202,6 +203,13 @@
 			remoteGlobalIDString = 58B5119B1A9E6C1200147676;
 			remoteInfo = RCTText;
 		};
+		D3CF50CA1BAA245E006838CC /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D3CF50C51BAA245D006838CC /* RCTAutoComplete.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 134814201AA4EA6300B7C361;
+			remoteInfo = RCTAutoComplete;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
@@ -255,6 +263,7 @@
 		58DA62B01B9B6E6E0061748A /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		78C398B01ACF4ADC00677621 /* RCTLinking.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTLinking.xcodeproj; path = "../node_modules/react-native/Libraries/LinkingIOS/RCTLinking.xcodeproj"; sourceTree = "<group>"; };
 		832341B01AAA6A8300B99B32 /* RCTText.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTText.xcodeproj; path = "../node_modules/react-native/Libraries/Text/RCTText.xcodeproj"; sourceTree = "<group>"; };
+		D3CF50C51BAA245D006838CC /* RCTAutoComplete.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTAutoComplete.xcodeproj; path = "../node_modules/react-native-autocomplete/RCTAutoComplete.xcodeproj"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -269,6 +278,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D3CF50DF1BAA246D006838CC /* libRCTAutoComplete.a in Frameworks */,
 				04EE92DF1BA6AF1300036482 /* persnickety.xcodeproj in Frameworks */,
 				04DD39321BA0B3D900919C2F /* libRCTCamera.a in Frameworks */,
 				041ABA6B1B97BC9200EA1CA0 /* libRNKeyboardEvents.a in Frameworks */,
@@ -495,6 +505,7 @@
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
+				D3CF50C51BAA245D006838CC /* RCTAutoComplete.xcodeproj */,
 				04A0DBA21BA745D20093F973 /* RNModalbox.xcodeproj */,
 				0470E2FF1BA254C90058DDCC /* RNRecorder.xcodeproj */,
 				04DD391C1BA0B3A900919C2F /* RCTCamera.xcodeproj */,
@@ -556,6 +567,14 @@
 			children = (
 				13B07F961A680F5B00A75B9A /* Kraken.app */,
 				00E356EE1AD99517003FC87E /* persnicketyTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		D3CF50C61BAA245D006838CC /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				D3CF50CB1BAA245E006838CC /* libRCTAutoComplete.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -635,6 +654,10 @@
 				{
 					ProductGroup = 00C302A81ABCB8CE00DB3ED1 /* Products */;
 					ProjectRef = 00C302A71ABCB8CE00DB3ED1 /* RCTActionSheet.xcodeproj */;
+				},
+				{
+					ProductGroup = D3CF50C61BAA245D006838CC /* Products */;
+					ProjectRef = D3CF50C51BAA245D006838CC /* RCTAutoComplete.xcodeproj */;
 				},
 				{
 					ProductGroup = 04DD391D1BA0B3A900919C2F /* Products */;
@@ -852,6 +875,13 @@
 			fileType = archive.ar;
 			path = libRCTText.a;
 			remoteRef = 832341B41AAA6A8300B99B32 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		D3CF50CB1BAA245E006838CC /* libRCTAutoComplete.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libRCTAutoComplete.a;
+			remoteRef = D3CF50CA1BAA245E006838CC /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */

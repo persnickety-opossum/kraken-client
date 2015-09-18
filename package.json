@@ -21,6 +21,7 @@
     "path": "^0.11.14",
     "q": "^1.4.1",
     "react-native": "^0.10.1",
+    "react-native-autocomplete": "^0.1.0",
     "react-native-button": "^1.2.1",
     "react-native-camera": "^0.3.3",
     "react-native-device-display": "^1.0.4",
