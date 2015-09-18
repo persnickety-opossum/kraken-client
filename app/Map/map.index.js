@@ -143,7 +143,6 @@ var MapTab = React.createClass({
       });
       this.eventEmitter.emit('positionUpdated', lastPosition);
     });
-    //navigator.geolocation.stopObserving();
 
     this._venueQuery(config.serverURL + '/api/venues', true);
   },
@@ -159,18 +158,10 @@ var MapTab = React.createClass({
       //}
       //setTimeout(function() {
       //  context.setState({annotations: [], venuePins: [], searchPins: []}, function() {
-          context._venueQuery(config.serverURL + '/api/venues', true);
+      context._venueQuery(config.serverURL + '/api/venues', true);
         //});
       //}, 1000);
     });
-  },
-
-  componentWillUnmount: function() {
-    navigator.geolocation.clearWatch(this.watchID);
-  },
-
-  componentWillUpdate: function(nextProps, nextState) {
-    //console.log(nextProps);
   },
 
   // helper function to fetch venue data from server
@@ -202,7 +193,7 @@ var MapTab = React.createClass({
         });
         alert(error.message);
       },
-      {enableHighAccuracy: false, timeout: 20000, maximumAge: 30000}
+      {enableHighAccuracy: true, timeout: 20000, maximumAge: 30000}
     );
     //this.setState({user: this.props.user});
   },
@@ -236,7 +227,7 @@ var MapTab = React.createClass({
             height: 47,
             width: 44
           };
-        } else if (attendees > 0) {
+        } else if (attendees > 1) {
           venue.annotationImage = {
             url: 'image!marker-2',
             height: 27,
