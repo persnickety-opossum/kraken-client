@@ -151,9 +151,18 @@ var MapTab = React.createClass({
   componentDidMount: function() {
     var context = this;
     this.addListenerOn(this.eventEmitter, 'refreshMap', function() {
-      context.setState({venuePins: [], annotations: [], searchPins: []}, function() {
-        context._venueQuery(config.serverURL + '/api/venues', true);
-      });
+      var annotations = context.state.annotations;
+      var length = annotations.length;
+      //console.log(annotations);
+      for (var i = 0; i < length - 1; i++) {
+        context.removeAnnotation(mapRef, 0);
+      }
+      setTimeout(function() {
+        console.log(context.state.annotations);
+        context.setState({annotations: [], venuePins: [], searchPins: []}, function() {
+          context._venueQuery(config.serverURL + '/api/venues', true);
+        });
+      }, 1000);
     });
   },
 
