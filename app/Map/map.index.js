@@ -193,7 +193,7 @@ var MapTab = React.createClass({
         });
         alert(error.message);
       },
-      {enableHighAccuracy: true, timeout: 20000, maximumAge: 30000}
+      {enableHighAccuracy: true, timeout: 20000, maximumAge: 1000}
     );
     //this.setState({user: this.props.user});
   },
