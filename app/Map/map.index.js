@@ -80,6 +80,7 @@ var MapTab = React.createClass({
             },
             body: JSON.stringify({
               title: currVenue.title,
+              foursquareID: currVenue.id,
               description: currVenue.description,
               address: currVenue.address,
               latitude: currVenue.latitude,
