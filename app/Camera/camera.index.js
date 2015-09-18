@@ -65,7 +65,7 @@ var KrakenCam = React.createClass({
         context.setState({counter: context.state.counter - 1});
       },1000);
       var counterTimeout = setTimeout(function() {
-        this._stopRecording();
+        context._stopRecording();
       }, 7000);  
 
       this.setState({'isRecording': true, 'counter': 7, 'counterInterval': counterInterval, 'counterTimeout': counterTimeout});

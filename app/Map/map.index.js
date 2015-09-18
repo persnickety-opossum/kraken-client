@@ -311,6 +311,11 @@ var MapTab = React.createClass({
   render: function() {
     return (
       <View style={styles.container}>
+      <View style={styles.headerContainer}>
+        <Image style={styles.logo}
+          source={require('image!tab-logo')} />
+
+      </View>
         <MapboxGLMap
           style={styles.map}
           direction={0}
@@ -330,6 +335,7 @@ var MapTab = React.createClass({
           onOpenAnnotation={this.onOpenAnnotation}
           onRightAnnotationTapped={this.onRightAnnotationTapped}
           onUpdateUserLocation={this.onUpdateUserLocation} />
+
 
         <AutoComplete
           ref={component => this._textInput = component}
@@ -378,7 +384,7 @@ var MapTab = React.createClass({
         <TouchableHighlight onPress={this._onCenterPressed}> 
           <Image
             style={styles.button}
-            source={require('image!target')}
+            source={require('image!icon-target')}
           />
         </TouchableHighlight>
       </View>
@@ -397,23 +403,48 @@ var styles = StyleSheet.create({
   map: {
     flex: 5
   },
+  // main logo
+  logo: {
+  },
+
+
+  autocomplete: {
+      position: 'absolute',
+      top: 60,
+      width: Display.width * 0.9,
+      marginLeft: Display.width * 0.05,
+      height: 36,
+      padding: 4,
+      fontSize: 16,
+      color: '#8C8C8C',
+      borderRadius: 0,
+  },
+  // header container and children
+  headerContainer: {
+    justifyContent: 'center',
+    width: Display.width,
+    height: 48,
+    marginTop: 5,
+    alignItems: 'center',
+    
+    backgroundColor: "#47b3c8"
+  },
   // search bar
   searchContainer: {
     position: 'absolute',
-    top: 0,
+    top: 60,
     flexDirection: 'row',
     alignItems: 'center',
     alignSelf: 'stretch'
   },
-  autocomplete: {
-      position: 'absolute',
-      top: 3,
-      left: Display.width*.15,
-      height: 36,
-      width: Display.width*.70,
-      padding: 4,
-      fontSize: 12,
-      color: '#8C8C8C'
+  venueName: {
+    flex: 1,
+    fontFamily: 'Avenir',
+    fontSize: 20,
+    textAlign: 'center',
+    marginRight: 30,
+    padding: 10,
+    color: 'white',
   },
   // center button
   button: {
