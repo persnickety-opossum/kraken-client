@@ -110,6 +110,8 @@ var VenueTab = React.createClass({
     this.addListenerOn(this.eventEmitter, 'imagePressed', this.imagePressed);
     this.fetchVenue();
     this.addListenerOn(this.eventEmitter, 'mediaUpdated', this.updateMedia);
+    this.addListenerOn(this.eventEmitter, 'mediaDeleted', this.fetchMedia);
+    this.addListenerOn(this.eventEmitter, 'commentDeleted', this.fetchVenue);
   },
 
   calculateDistance: function(current, venue) {
