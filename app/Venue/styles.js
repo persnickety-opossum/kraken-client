@@ -23,10 +23,13 @@ var styles = StyleSheet.create({
 
   // header container and children
   headerContainer: {
-    marginTop: 5,
     flexDirection: 'row',
+    justifyContent: 'center',
+    width: Display.width,
+    height: 60,
     alignItems: 'center',
-    backgroundColor: "#47b3c8"
+    backgroundColor: "#47b3c8",
+    paddingTop: 16
   },
   venueName: {
     flex: 1,
@@ -157,8 +160,7 @@ var styles = StyleSheet.create({
   infoIcon: {
     height: 20,
     width: 20,
-    marginRight: 10,
-    marginLeft: 10,
+    marginLeft: 10
   },
   venueNameLine: {
     flex: 1,

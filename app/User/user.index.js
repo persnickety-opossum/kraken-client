@@ -236,11 +236,14 @@ var styles = StyleSheet.create({
     borderTopWidth: 1,
     borderColor: '#E3E3E3'
   },
+  // header container and children
   headerContainer: {
-    marginTop: 5,
-    flexDirection: 'row',
+    justifyContent: 'center',
+    width: Display.width,
+    height: 60,
     alignItems: 'center',
-    backgroundColor: "#47b3c8"
+    backgroundColor: "#47b3c8",
+    paddingTop: 16
   },
   tabName: {
     flex: 1,
