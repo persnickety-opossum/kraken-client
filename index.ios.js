@@ -40,7 +40,7 @@ var persnickety = React.createClass({
     return {
       selectedTab: 'map',
       venue: 'default venue',
-      venueImg: require('image!venue'),
+      venueImg: require('image!icon-venue'),
       venueClicked: 'map',
       fromUserTab: false
     }
@@ -83,7 +83,7 @@ var persnickety = React.createClass({
       context.eventEmitter.emit('commentDeleted', response);
     });
 
-    this.setState({venueImg: require('image!venue')}, function() {
+    this.setState({venueImg: require('image!icon-venue')}, function() {
       context.setState({venue: venue}, function() {
         context.setState({venueClicked: 'venue'}, function() {
           context.render();
@@ -111,10 +111,10 @@ var persnickety = React.createClass({
       <View style={styles.container}>
         <TabBarIOS 
           tintColor="white"
-          barTintColor="#47b3c8">
+          barTintColor="#333">
           <TabBarIOS.Item
             title="Map"
-            icon={ require('image!map') }
+            icon={ require('image!icon-map') }
             onPress={ () => this.changeTab('map') }
             selected={ this.state.selectedTab === 'map' }>
             <MapTab eventEmitter={this.eventEmitter}/>
@@ -136,7 +136,7 @@ var persnickety = React.createClass({
 
           <TabBarIOS.Item
             title="My Kraken"
-            icon={ require('image!settings') }
+            icon={ require('image!icon-fav') }
             onPress={ () => this.changeTab('My Kraken') }
             selected={ this.state.selectedTab === 'My Kraken' }>
             <View style={ styles.pageView }>

@@ -247,8 +247,8 @@ var styles = StyleSheet.create({
     fontFamily: 'Avenir',
     fontSize: 20,
     textAlign: 'center',
-    padding: 5,
-    color: 'white'
+    padding: 10,
+    color: 'white',
   },
   thumbImage: {
     //flex: 1,

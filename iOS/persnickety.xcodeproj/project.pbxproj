@@ -16,8 +16,6 @@
 		00E356F31AD99517003FC87E /* persnicketyTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* persnicketyTests.m */; };
 		0412B4CB1B91876A00B1626C /* main.jsbundle in Resources */ = {isa = PBXBuildFile; fileRef = 0412B4CA1B91876A00B1626C /* main.jsbundle */; };
 		041ABA6B1B97BC9200EA1CA0 /* libRNKeyboardEvents.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 041ABA6A1B97BB6A00EA1CA0 /* libRNKeyboardEvents.a */; };
-		04343AAA1BAB91CE000BD032 /* libRCTMapboxGL.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 04343AA91BAB91CE000BD032 /* libRCTMapboxGL.a */; };
-		04343AAC1BAB91F7000BD032 /* Mapbox.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 04343AAB1BAB91F7000BD032 /* Mapbox.bundle */; };
 		045FF7651B9D4385004E4E11 /* libRCTVideo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 045FF7611B9D42C7004E4E11 /* libRCTVideo.a */; };
 		0470E31A1BA254F70058DDCC /* libRNRecorder.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0470E3171BA254CA0058DDCC /* libRNRecorder.a */; };
 		047D59931B9E48A80094BE98 /* libReactNativeIcons.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 047D59921B9E485D0094BE98 /* libReactNativeIcons.a */; };
@@ -45,6 +43,8 @@
 		5876B0641B94D3950015FD2C /* libc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 5876B0631B94D3950015FD2C /* libc++.tbd */; };
 		5876B0661B94D39F0015FD2C /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 5876B0651B94D39F0015FD2C /* libsqlite3.tbd */; };
 		5876B0681B94D3AE0015FD2C /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 5876B0671B94D3AE0015FD2C /* libz.tbd */; };
+		58C7A8551BAC842600529F51 /* libRCTMapboxGL.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 58C7A8521BAC83E400529F51 /* libRCTMapboxGL.a */; };
+		58C7A8571BAC846300529F51 /* Mapbox.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 58C7A8561BAC846300529F51 /* Mapbox.bundle */; };
 		58DA62B11B9B6E6E0061748A /* .npmignore in Resources */ = {isa = PBXBuildFile; fileRef = 58DA62A71B9B6E6E0061748A /* .npmignore */; };
 		58DA62B21B9B6E6E0061748A /* DeviceUUID.ios.js in Resources */ = {isa = PBXBuildFile; fileRef = 58DA62A81B9B6E6E0061748A /* DeviceUUID.ios.js */; };
 		58DA62B31B9B6E6E0061748A /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = 58DA62A91B9B6E6E0061748A /* LICENSE */; };
@@ -104,20 +104,6 @@
 			proxyType = 2;
 			remoteGlobalIDString = F12AFB9B1ADAF8F800E0535D;
 			remoteInfo = RNKeyboardEvents;
-		};
-		04343AA51BAB9196000BD032 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 04343AA01BAB9196000BD032 /* RCTMapboxGL.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = C5DBB3401AF2EF2B00E611A9;
-			remoteInfo = RCTMapboxGL;
-		};
-		04343AA71BAB9196000BD032 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 04343AA01BAB9196000BD032 /* RCTMapboxGL.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = C5DBB34B1AF2EF2B00E611A9;
-			remoteInfo = RCTMapboxGLTests;
 		};
 		045FF7601B9D42C7004E4E11 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -182,6 +168,20 @@
 			remoteGlobalIDString = 83CBBA2E1A601D0E00E9B192;
 			remoteInfo = React;
 		};
+		58C7A8511BAC83E400529F51 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 58C7A84C1BAC83E400529F51 /* RCTMapboxGL.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = C5DBB3401AF2EF2B00E611A9;
+			remoteInfo = RCTMapboxGL;
+		};
+		58C7A8531BAC83E400529F51 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 58C7A84C1BAC83E400529F51 /* RCTMapboxGL.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = C5DBB34B1AF2EF2B00E611A9;
+			remoteInfo = RCTMapboxGLTests;
+		};
 		58DA62B91B9B6E6E0061748A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 58DA62AD1B9B6E6E0061748A /* RCTDeviceUUID.xcodeproj */;
@@ -223,9 +223,6 @@
 		00E356F21AD99517003FC87E /* persnicketyTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = persnicketyTests.m; sourceTree = "<group>"; };
 		0412B4CA1B91876A00B1626C /* main.jsbundle */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = main.jsbundle; path = ../main.jsbundle; sourceTree = "<group>"; };
 		041ABA591B97BB6A00EA1CA0 /* RNKeyboardEvents.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RNKeyboardEvents.xcodeproj; path = "../node_modules/react-native-keyboardevents/RNKeyboardEvents.xcodeproj"; sourceTree = "<group>"; };
-		04343AA01BAB9196000BD032 /* RCTMapboxGL.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTMapboxGL.xcodeproj; path = "../node_modules/react-native-mapbox-gl/RCTMapboxGL.xcodeproj"; sourceTree = "<group>"; };
-		04343AA91BAB91CE000BD032 /* libRCTMapboxGL.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libRCTMapboxGL.a; path = "../../../Library/Developer/Xcode/DerivedData/persnickety-bmhzlwlwzmcdbwfjfujseiukgelf/Build/Products/Debug-iphoneos/libRCTMapboxGL.a"; sourceTree = "<group>"; };
-		04343AAB1BAB91F7000BD032 /* Mapbox.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Mapbox.bundle; sourceTree = "<group>"; };
 		04343AAD1BAB921B000BD032 /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
 		045FF7511B9D42C7004E4E11 /* RCTVideo.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTVideo.xcodeproj; path = "../node_modules/react-native-video/RCTVideo.xcodeproj"; sourceTree = "<group>"; };
 		0470E2FF1BA254C90058DDCC /* RNRecorder.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RNRecorder.xcodeproj; path = "../node_modules/react-native-screcorder/ios/RNRecorder.xcodeproj"; sourceTree = "<group>"; };
@@ -255,6 +252,8 @@
 		5876B0631B94D3950015FD2C /* libc++.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libc++.tbd"; path = "usr/lib/libc++.tbd"; sourceTree = SDKROOT; };
 		5876B0651B94D39F0015FD2C /* libsqlite3.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.tbd; path = usr/lib/libsqlite3.tbd; sourceTree = SDKROOT; };
 		5876B0671B94D3AE0015FD2C /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
+		58C7A84C1BAC83E400529F51 /* RCTMapboxGL.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTMapboxGL.xcodeproj; path = "../node_modules/react-native-mapbox-gl/RCTMapboxGL.xcodeproj"; sourceTree = "<group>"; };
+		58C7A8561BAC846300529F51 /* Mapbox.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Mapbox.bundle; sourceTree = "<group>"; };
 		58DA62A71B9B6E6E0061748A /* .npmignore */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = .npmignore; sourceTree = "<group>"; };
 		58DA62A81B9B6E6E0061748A /* DeviceUUID.ios.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = DeviceUUID.ios.js; sourceTree = "<group>"; };
 		58DA62A91B9B6E6E0061748A /* LICENSE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
@@ -280,11 +279,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				04343AAA1BAB91CE000BD032 /* libRCTMapboxGL.a in Frameworks */,
-				D3CF50DF1BAA246D006838CC /* libRCTAutoComplete.a in Frameworks */,
-				04EE92DF1BA6AF1300036482 /* persnickety.xcodeproj in Frameworks */,
-				04DD39321BA0B3D900919C2F /* libRCTCamera.a in Frameworks */,
-				041ABA6B1B97BC9200EA1CA0 /* libRNKeyboardEvents.a in Frameworks */,
 				5876B0681B94D3AE0015FD2C /* libz.tbd in Frameworks */,
 				5876B0661B94D39F0015FD2C /* libsqlite3.tbd in Frameworks */,
 				5876B0641B94D3950015FD2C /* libc++.tbd in Frameworks */,
@@ -292,8 +286,13 @@
 				5876B0601B94D36F0015FD2C /* QuartzCore.framework in Frameworks */,
 				5876B05E1B94D3650015FD2C /* MobileCoreServices.framework in Frameworks */,
 				5876B05C1B94D35C0015FD2C /* ImageIO.framework in Frameworks */,
-				5876B05A1B94D3520015FD2C /* GLKit.framework in Frameworks */,
 				5876B0581B94D34A0015FD2C /* CoreTelephony.framework in Frameworks */,
+				58C7A8551BAC842600529F51 /* libRCTMapboxGL.a in Frameworks */,
+				D3CF50DF1BAA246D006838CC /* libRCTAutoComplete.a in Frameworks */,
+				04EE92DF1BA6AF1300036482 /* persnickety.xcodeproj in Frameworks */,
+				04DD39321BA0B3D900919C2F /* libRCTCamera.a in Frameworks */,
+				041ABA6B1B97BC9200EA1CA0 /* libRNKeyboardEvents.a in Frameworks */,
+				5876B05A1B94D3520015FD2C /* GLKit.framework in Frameworks */,
 				146834051AC3E58100842450 /* libReact.a in Frameworks */,
 				00C302E51ABCBA2D00DB3ED1 /* libRCTActionSheet.a in Frameworks */,
 				00C302E71ABCBA2D00DB3ED1 /* libRCTGeolocation.a in Frameworks */,
@@ -375,15 +374,6 @@
 			isa = PBXGroup;
 			children = (
 				041ABA6A1B97BB6A00EA1CA0 /* libRNKeyboardEvents.a */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
-		04343AA11BAB9196000BD032 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				04343AA61BAB9196000BD032 /* libRCTMapboxGL.a */,
-				04343AA81BAB9196000BD032 /* RCTMapboxGLTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -472,6 +462,15 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		58C7A84D1BAC83E400529F51 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				58C7A8521BAC83E400529F51 /* libRCTMapboxGL.a */,
+				58C7A8541BAC83E400529F51 /* RCTMapboxGLTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		58DA62A61B9B6E6E0061748A /* react-native-device-uuid */ = {
 			isa = PBXGroup;
 			children = (
@@ -507,6 +506,7 @@
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
+				58C7A84C1BAC83E400529F51 /* RCTMapboxGL.xcodeproj */,
 				D3CF50C51BAA245D006838CC /* RCTAutoComplete.xcodeproj */,
 				04A0DBA21BA745D20093F973 /* RNModalbox.xcodeproj */,
 				0470E2FF1BA254C90058DDCC /* RNRecorder.xcodeproj */,
@@ -540,10 +540,8 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
+				58C7A8561BAC846300529F51 /* Mapbox.bundle */,
 				04343AAD1BAB921B000BD032 /* Settings.bundle */,
-				04343AAB1BAB91F7000BD032 /* Mapbox.bundle */,
-				04343AA91BAB91CE000BD032 /* libRCTMapboxGL.a */,
-				04343AA01BAB9196000BD032 /* RCTMapboxGL.xcodeproj */,
 				04EE92B61BA687C800036482 /* persnickety.xcodeproj */,
 				047D59941B9E499B0094BE98 /* FontAwesome.otf */,
 				5876B0671B94D3AE0015FD2C /* libz.tbd */,
@@ -635,7 +633,7 @@
 						TestTargetID = 13B07F861A680F5B00A75B9A;
 					};
 					13B07F861A680F5B00A75B9A = {
-						DevelopmentTeam = ZH9MLA6FW4;
+						DevelopmentTeam = G94YC2Z5HH;
 					};
 				};
 			};
@@ -684,8 +682,8 @@
 					ProjectRef = 78C398B01ACF4ADC00677621 /* RCTLinking.xcodeproj */;
 				},
 				{
-					ProductGroup = 04343AA11BAB9196000BD032 /* Products */;
-					ProjectRef = 04343AA01BAB9196000BD032 /* RCTMapboxGL.xcodeproj */;
+					ProductGroup = 58C7A84D1BAC83E400529F51 /* Products */;
+					ProjectRef = 58C7A84C1BAC83E400529F51 /* RCTMapboxGL.xcodeproj */;
 				},
 				{
 					ProductGroup = 00C302D41ABCB9D200DB3ED1 /* Products */;
@@ -783,20 +781,6 @@
 			remoteRef = 041ABA691B97BB6A00EA1CA0 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		04343AA61BAB9196000BD032 /* libRCTMapboxGL.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libRCTMapboxGL.a;
-			remoteRef = 04343AA51BAB9196000BD032 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		04343AA81BAB9196000BD032 /* RCTMapboxGLTests.xctest */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = RCTMapboxGLTests.xctest;
-			remoteRef = 04343AA71BAB9196000BD032 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
 		045FF7611B9D42C7004E4E11 /* libRCTVideo.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
@@ -860,6 +844,20 @@
 			remoteRef = 146834031AC3E56700842450 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
+		58C7A8521BAC83E400529F51 /* libRCTMapboxGL.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libRCTMapboxGL.a;
+			remoteRef = 58C7A8511BAC83E400529F51 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		58C7A8541BAC83E400529F51 /* RCTMapboxGLTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = RCTMapboxGLTests.xctest;
+			remoteRef = 58C7A8531BAC83E400529F51 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		58DA62BA1B9B6E6E0061748A /* libRCTDeviceUUID.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
@@ -903,8 +901,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				58C7A8571BAC846300529F51 /* Mapbox.bundle in Resources */,
 				5876B0551B94D2ED0015FD2C /* Settings.bundle in Resources */,
-				04343AAC1BAB91F7000BD032 /* Mapbox.bundle in Resources */,
 				04A0DB641BA743160093F973 /* Info.plist in Resources */,
 				047D59951B9E499B0094BE98 /* FontAwesome.otf in Resources */,
 				58DA62B11B9B6E6E0061748A /* .npmignore in Resources */,
@@ -1006,8 +1004,12 @@
 				INFOPLIST_FILE = "$(SRCROOT)/persnickety/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.4;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/RCTMapboxGL",
+				);
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.kraken-Corey";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.kraken-darryl";
 				PRODUCT_NAME = Kraken;
 				PROVISIONING_PROFILE = "";
 			};
@@ -1029,8 +1031,12 @@
 				INFOPLIST_FILE = "$(SRCROOT)/persnickety/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.4;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/RCTMapboxGL",
+				);
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.kraken-Corey";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.kraken-darryl";
 				PRODUCT_NAME = Kraken;
 				PROVISIONING_PROFILE = "";
 			};
