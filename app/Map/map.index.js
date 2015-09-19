@@ -401,7 +401,8 @@ var styles = StyleSheet.create({
   },
   // map view
   map: {
-    flex: 5
+    flex: 5,
+    top: 30
   },
   // main logo
   logo: {
