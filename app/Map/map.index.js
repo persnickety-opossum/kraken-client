@@ -152,14 +152,14 @@ var MapTab = React.createClass({
     this.addListenerOn(this.eventEmitter, 'refreshMap', function() {
       var annotations = context.state.annotations;
       var length = annotations.length;
-      //console.log(annotations);
-      //for (var i = 0; i < length - 1; i++) {
-      //  context.removeAnnotation(mapRef, 0);
-      //}
+      console.log(annotations);
+      for (var i = 0; i < length; i++) {
+        context.removeAnnotation(mapRef, 0);
+      }
       //setTimeout(function() {
-      //  context.setState({annotations: [], venuePins: [], searchPins: []}, function() {
-      context._venueQuery(config.serverURL + '/api/venues', true);
-        //});
+        context.setState({annotations: [], venuePins: [], searchPins: []}, function() {
+          context._venueQuery(config.serverURL + '/api/venues', true);
+        });
       //}, 1000);
     });
   },
@@ -208,6 +208,7 @@ var MapTab = React.createClass({
       };
       venue.subtitle = venue.description;
       if(inDb) {
+        venue.id = '';
         venue.id = venue._id;
         var numRatings = Object.keys(venue.ratings).length;
         var ratingsSum = 0;
@@ -221,13 +222,14 @@ var MapTab = React.createClass({
           venue.overallRating = 'Be the first to vote!'
         }
         var attendees = Object.keys(venue.attendees).length;
+        venue.annotationImage = {};
         if (attendees > 3) {
           venue.annotationImage = {
             url: 'image!marker-kraken',
             height: 47,
             width: 44
           };
-        } else if (attendees > 1) {
+        } else if (attendees > 0) {
           venue.annotationImage = {
             url: 'image!marker-2',
             height: 27,
@@ -251,7 +253,7 @@ var MapTab = React.createClass({
         context.setState({searchPins: context.state.searchPins.concat(venue)});
       }
     });
-    //this.setState({annotations: venues});
+    this.setState({annotations: venues});
     this._displayPins();
 
   },
