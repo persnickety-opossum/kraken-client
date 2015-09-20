@@ -572,7 +572,7 @@ var VenueTab = React.createClass({
         </Modalbox>
 
         <View style={styles.headerContainer}>
-          <Button
+          <Button style={styles.infoIconButton}
             onPress={this.setInfoVisible.bind(this, true)}>
             <Icon
               name='fontawesome|info'

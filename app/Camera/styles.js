@@ -21,6 +21,7 @@ module.exports = StyleSheet.create({
   icon: {
     height: 45,
     width: 45,
+    marginRight: 15
   },
   counter: {
     position: 'absolute',

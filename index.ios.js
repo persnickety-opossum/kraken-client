@@ -156,7 +156,6 @@ var styles = StyleSheet.create({
     justifyContent: 'center',
     //alignItems: 'center',
     backgroundColor: '#F5FCFF',
-    marginTop: 20
   },
   pageView: {
     flex: 1,

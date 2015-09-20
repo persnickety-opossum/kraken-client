@@ -114,7 +114,6 @@ var MapTab = React.createClass({
     this.eventEmitter = this.props.eventEmitter;
     // Get Device UUID
     DeviceUUID.getUUID().then((uuid) => {
-      console.log('Device ID >>>>>>>>> ', uuid);
       return uuid;
     })
       .then((uuid) => {
@@ -337,6 +336,7 @@ var MapTab = React.createClass({
           onUpdateUserLocation={this.onUpdateUserLocation} />
 
 
+      <View style={styles.autocompleteContainer}>
         <AutoComplete
           ref={component => this._textInput = component}
           style={styles.autocomplete}
@@ -353,14 +353,14 @@ var MapTab = React.createClass({
           textAlign='center'
           clearTextOnFocus={true}
 
-          maximumNumberOfAutoCompleteRows='5'
+          maximumNumberOfAutoCompleteRows={7}
           applyBoldEffectToAutoCompleteSuggestions={true}
           reverseAutoCompleteSuggestionsBoldEffect={true}
           showTextFieldDropShadowWhenAutoCompleteTableIsOpen={false}
           disableAutoCompleteTableUserInteractionWhileFetching={true}
           autoCompleteTableViewHidden={false}
 
-          autoCompleteTableBorderColor='lightblue'
+          autoCompleteTableBorderColor='#DDDDDD'
           autoCompleteTableBackgroundColor='azure'
           autoCompleteTableCornerRadius={0}
           autoCompleteTableBorderWidth={1}
@@ -370,8 +370,8 @@ var MapTab = React.createClass({
           autoCompleteFontSize={15}
           autoCompleteRegularFontName='Helvetica Neue'
           autoCompleteBoldFontName='Helvetica Bold'
-          autoCompleteTableCellTextColor={'lightblue'}
-        />
+          autoCompleteTableCellTextColor='#47b3c8' />
+        </View>
         {/* <View style={styles.searchContainer}>
           <TextInput
             ref={component => this._textInput = component}
@@ -401,38 +401,43 @@ var styles = StyleSheet.create({
   },
   // map view
   map: {
-    flex: 5
+    flex: 5,
+    top: 30
   },
   // main logo
   logo: {
   },
 
-
+  autocompleteContainer: {
+    position: 'absolute',
+    top: 60,
+    width: Display.width,
+    paddingTop: 5,
+    paddingBottom: 6,
+    backgroundColor: '#CCC',
+  },
   autocomplete: {
-      position: 'absolute',
-      top: 60,
-      width: Display.width * 0.9,
-      marginLeft: Display.width * 0.05,
-      height: 36,
-      padding: 4,
-      fontSize: 16,
-      color: '#8C8C8C',
-      borderRadius: 0,
+    width: Display.width * 0.95,
+    marginLeft: Display.width * 0.025,
+    height: 36,
+    padding: 4,
+    fontSize: 16,
+    color: '#8C8C8C',
+    borderRadius: 10,
+    backgroundColor: 'white'
   },
   // header container and children
   headerContainer: {
     justifyContent: 'center',
     width: Display.width,
-    height: 48,
-    marginTop: 5,
+    height: 76,
     alignItems: 'center',
-    
-    backgroundColor: "#47b3c8"
+    backgroundColor: "#47b3c8",
   },
   // search bar
   searchContainer: {
     position: 'absolute',
-    top: 60,
+    top: 90,
     flexDirection: 'row',
     alignItems: 'center',
     alignSelf: 'stretch'
