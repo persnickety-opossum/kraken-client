@@ -143,6 +143,7 @@ var styles = StyleSheet.create({
     flex: 1
   },
   // info modal
+// info modal
   popupContainer: {
     flex: 1,
     justifyContent: 'center',
@@ -160,7 +161,8 @@ var styles = StyleSheet.create({
   infoIcon: {
     height: 20,
     width: 20,
-    marginLeft: 10
+    marginRight: 10,
+    marginLeft: 10,
   },
   venueNameLine: {
     flex: 1,
@@ -168,6 +170,13 @@ var styles = StyleSheet.create({
     borderColor: '#47b3c8',
     marginBottom: 20,
   },
+  attendeeContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+
 
   // camera modal
   modalCameraContainer: {

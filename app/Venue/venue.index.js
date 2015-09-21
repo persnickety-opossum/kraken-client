@@ -533,42 +533,47 @@ var VenueTab = React.createClass({
 
     return (
       <View style={styles.main}>
-
-        <Modalbox
-          ref='info'
-          style={[styles.popupContainer, styles.infoPopup]} 
-          position='center'
-          backdropOpacity={0.7}
-          backdropColor='#47b3c8'
-          aboveStatusBar={false}>
-            <View style={styles.venueNameLine}>
-              <Text 
-                numberOfLines={1}
-                style={[styles.venueName, {marginRight: 0, color: 'black'}]}>
-                {venue.title}
-              </Text>
-            </View>
-            <Text style={[styles.text, {flex: 1}]} >
-              {venue.description}
+      
+      <Modalbox
+        ref='info'
+        style={[styles.popupContainer, styles.infoPopup]} 
+        position='center'
+        backdropOpacity={0.7}
+        backdropColor='#47b3c8'
+        aboveStatusBar={false}>
+          <View style={styles.venueNameLine}>
+            <Text 
+              numberOfLines={1}
+              style={[styles.venueName, {marginRight: 0, color: 'black'}]}>
+              {venue.title}
             </Text>
-            <Text style={styles.text} >
-              {address[0] + '\n'}
-              {address[1] + ',' + address[2]}
+          </View>
+          <Text style={styles.text} >
+            {venue.description}
+          </Text>
+          <Text style={[styles.text, {flex: 2}]} >
+            {address[0] + '\n'}
+            {address[1] + ',' + address[2]}
+          </Text>
+          <View style={styles.attendeeContainer}>
+            <Text style={[styles.text, {flex: 0}]}>
+              Attendees: 
             </Text>
-            <Text style={styles.text}>
-              Current attendees: {this.state.attendeeCount}
+            <Text style={[styles.text, {flex: 0, fontSize: 30, fontWeight: '900', color: '#f92672'}]}>
+              {this.state.attendeeCount}
             </Text>
-            <View style={styles.infoButton}>
-              <Button
-                onPress={this.setInfoVisible.bind(this, false)}
-                >
-                <Icon  
-                  name='fontawesome|times'
-                  size={30}
-                  color='gray'
-                  style={styles.modalButtonIcon} />
-              </Button>
-            </View>
+          </View>
+          <View style={styles.infoButton}>
+            <Button
+              onPress={this.setInfoVisible.bind(this, false)}
+              >
+              <Icon  
+                name='fontawesome|times'
+                size={30}
+                color='gray'
+                style={styles.modalButtonIcon} />
+            </Button>
+          </View>
         </Modalbox>
 
         <View style={styles.headerContainer}>

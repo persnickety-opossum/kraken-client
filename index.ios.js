@@ -43,12 +43,13 @@ var persnickety = React.createClass({
       venueImg: require('image!icon-venue'),
       venueClicked: 'map',
       fromUserTab: false,
-      venueLongitude: 0,
-      venueLatitude: 0
+      venueLongitude: -122.408955,
+      venueLatitude: 37.783585
     }
   },
   componentWillMount: function() {
     this.eventEmitter = new EventEmitter();
+    this.getInitialLocation();
   },
   componentDidMount: function() {
     this.addListenerOn(this.eventEmitter, 'annotationTapped', this.selectVenue);
@@ -62,6 +63,25 @@ var persnickety = React.createClass({
 
   setUserState(userId) {
     this.setState({userId: userId});
+  },
+
+  getInitialLocation: function () {
+    var context = this;
+    var latitude;
+    var longitude;
+    navigator.geolocation.getCurrentPosition(
+      (initialPosition) =>  {
+        context.setState({
+          venueLatitude: initialPosition.coords.latitude,
+          venueLongitude: initialPosition.coords.longitude
+        });
+      },
+      (error) => {
+        context.setState({
+          venueLatitude: 37.783585,
+          venueLongitude: -122.408955
+        });
+    });
   },
 
   selectVenue: function(eventObj) {
