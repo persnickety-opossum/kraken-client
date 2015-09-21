@@ -206,7 +206,7 @@ var MapTab = React.createClass({
             height: 47,
             width: 44
           };
-        } else if (attendees > 0) {
+        } else if (attendees > 1) {
           venue.annotationImage = {
             url: 'image!marker-2',
             height: 27,
