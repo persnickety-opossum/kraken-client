@@ -1,13 +1,13 @@
 # Persnickety Opossum #
 
 ## Heading ##
- > Name TBD
+ > Kraken
 
 ## Sub-Heading ##
  > A social app that encourages spontaneity by displaying the most active local venues/events in real time.
 
 ## Summary ##
- > The product will allow users to see a map displaying the activity/vibe level of which venues have the most people there in real time. On each venue’s page, users have the ability to check-in and rate a venue, join the conversation, take videos and pictures, and direct message other users.
+ > The product will allow users to see a map displaying the activity/vibe level of which venues have the most people there in real time. On each venue’s page, users have the ability to check-in and rate a venue, join the conversation, and take videos and pictures.
 
 ## Problem ##
  > How often have you (and friends) wanted to go out, but weren’t sure what to do or where to go near you or at a certain location? How many people are at a venue/event, and what is the current vibe? What are people saying and seeing at a venue/event?
