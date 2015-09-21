@@ -177,7 +177,6 @@ var MapTab = React.createClass({
 
   _handleResponse: function (venues, inDb) {
     var context = this;
-    console.log(venues);
     venues.forEach(function (venue) {
       venue.rightCalloutAccessory = {
         url: 'image!arrow',
@@ -229,7 +228,6 @@ var MapTab = React.createClass({
         };
         venue.comments = [];
         context.setState({searchPins: context.state.searchPins.concat(venue)});
-        console.log(context.state.searchPins);
       }
     });
     context._displayPins();
