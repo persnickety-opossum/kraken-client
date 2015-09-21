@@ -42,7 +42,9 @@ var persnickety = React.createClass({
       venue: 'default venue',
       venueImg: require('image!icon-venue'),
       venueClicked: 'map',
-      fromUserTab: false
+      fromUserTab: false,
+      venueLongitude: 0,
+      venueLatitude: 0
     }
   },
   componentWillMount: function() {
@@ -69,6 +71,8 @@ var persnickety = React.createClass({
       this.setState({fromUserTab: false});
     }
     var venue = eventObj.venue;
+    this.setState({venueLatitude: +venue.latitude, venueLongitude: +venue.longitude});
+
     // Listen to socket for media updates
     var context = this;
     socket.removeAllListeners();
@@ -99,7 +103,7 @@ var persnickety = React.createClass({
       context.eventEmitter.emit('refreshUserView');
     }
     if (tabName === 'map') {
-      context.eventEmitter.emit('refreshMap');
+      context.eventEmitter.emit('refreshMap', this.state.venueLatitude, this.state.venueLongitude);
     }
     this.setState({
       selectedTab: tabName

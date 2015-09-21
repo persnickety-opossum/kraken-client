@@ -41,7 +41,8 @@ var MapTab = React.createClass({
       annotations: [],
       autocomplete: false,
       mapStyle: ['asset://styles/emerald-v8.json', 'asset://styles/dark-v8.json', 'asset://styles/light-v8.json', 'asset://styles/mapbox-streets-v8.json', 'asset://styles/satellite-v8.json'],
-      currentMap: 1
+      currentMap: 1,
+      showMap: true
     };
   },
 
@@ -95,7 +96,7 @@ var MapTab = React.createClass({
               this.eventEmitter.emit('annotationTapped', { venue: json});
             })
             .then(() => this.setState({searchPins: []}))
-            .then(() => this.setState({venuePins: []}))
+            .then(() => this.setState({venuePins: [], annotations: []}))
             .then(() => this._venueQuery(config.serverURL + '/api/venues', true))
             .catch(function(err) {
               console.log('error');
@@ -149,53 +150,29 @@ var MapTab = React.createClass({
 
   componentDidMount: function() {
     var context = this;
-    this.addListenerOn(this.eventEmitter, 'refreshMap', function() {
+    this.addListenerOn(this.eventEmitter, 'refreshMap', function(latitude, longitude) {
+      context.setState({showMap: false});
+      context.setState({center: {
+        latitude: latitude,
+        longitude: longitude
+      }});
       var annotations = context.state.annotations;
       var length = annotations.length;
-      console.log(annotations);
-      for (var i = 0; i < length; i++) {
-        context.removeAnnotation(mapRef, 0);
-      }
-      //setTimeout(function() {
-        context.setState({annotations: [], venuePins: [], searchPins: []}, function() {
-          context._venueQuery(config.serverURL + '/api/venues', true);
-        });
-      //}, 1000);
+      context.setState({annotations: [], venuePins: [], searchPins: []}, function() {
+        context._venueQuery(config.serverURL + '/api/venues', true);
+      });
     });
   },
 
   // helper function to fetch venue data from server
   _venueQuery: function(url, inDB) {
+    this.setState({showMap: true});
     fetch(url)
       .then(response => response.json())
       .then(json => this._handleResponse(json, inDB))
       .catch(function(err) {
         console.log(err);
       });  
-  },
-
-  // helper function to update center of map
-  _currentLocation: function() {
-    navigator.geolocation.getCurrentPosition(
-      (initialPosition) =>  this.setState({
-        geolocation: initialPosition,
-        center: {
-          latitude: initialPosition.coords.latitude,
-          longitude: initialPosition.coords.longitude
-        }
-      }),
-      (error) => {
-        this.setState({
-          center: {
-            latitude: 37.783585,
-            longitude: -122.408955
-          }
-        });
-        alert(error.message);
-      },
-      {enableHighAccuracy: true, timeout: 20000, maximumAge: 1000}
-    );
-    //this.setState({user: this.props.user});
   },
 
   _handleResponse: function (venues, inDb) {
@@ -253,9 +230,7 @@ var MapTab = React.createClass({
         context.setState({searchPins: context.state.searchPins.concat(venue)});
       }
     });
-    this.setState({annotations: venues});
-    this._displayPins();
-
+    context._displayPins();
   },
 
   _displayPins: function () {
@@ -268,7 +243,32 @@ var MapTab = React.createClass({
         setTimeout(context.selectAnnotationAnimated.bind(context, mapRef, 0), 1000);
       }
       this.setState({autocomplete: false});
+      context.render();
     });
+  },
+
+  // helper function to update center of map
+  _currentLocation: function() {
+    navigator.geolocation.getCurrentPosition(
+      (initialPosition) =>  this.setState({
+        geolocation: initialPosition,
+        center: {
+          latitude: initialPosition.coords.latitude,
+          longitude: initialPosition.coords.longitude
+        }
+      }),
+      (error) => {
+        this.setState({
+          center: {
+            latitude: 37.783585,
+            longitude: -122.408955
+          }
+        });
+        alert(error.message);
+      },
+      {enableHighAccuracy: true, timeout: 20000, maximumAge: 1000}
+    );
+    //this.setState({user: this.props.user});
   },
 
   // update autocomplete by querying data as search text changes
@@ -296,7 +296,20 @@ var MapTab = React.createClass({
   },
   // method for recentering and reset zoom level based on current location 
   _onCenterPressed: function () {
-    this.setCenterCoordinateZoomLevelAnimated(mapRef, this.state.center.latitude, this.state.center.longitude, 15);
+    var context = this;
+    var latitude;
+    var longitude;
+    navigator.geolocation.getCurrentPosition(
+      (initialPosition) =>  {
+        latitude = initialPosition.coords.latitude;
+        longitude = initialPosition.coords.longitude;
+        context.setCenterCoordinateZoomLevelAnimated(mapRef, latitude, longitude, 15);
+      },
+      (error) => {
+        latitude = 37.783585;
+        longitude = -122.408955;
+        this.setCenterCoordinateZoomLevelAnimated(mapRef, latitude, longitude, 15);
+    });
   },
 
   // method for changing style of map on button press - NOT in working state because new map style covers old pins
@@ -310,33 +323,34 @@ var MapTab = React.createClass({
 
   // map view render
   render: function() {
+    var map = this.state.showMap ? <MapboxGLMap
+      style={styles.map}
+      direction={0}
+      rotateEnabled={true}
+      scrollEnabled={true}
+      zoomEnabled={true}
+      showsUserLocation={true}
+      ref={mapRef}
+      accessToken={'pk.eyJ1IjoibWFyeW1hc29uIiwiYSI6IjM1NGVhNWZmNzQ5Yjk5NTczMDFhMzc3Zjg2ZGEyYzI0In0.7IdD26iFQhD2b6LbTIw_Sw'}
+      styleURL={'asset://styles/light-v8.json'}
+      centerCoordinate={this.state.center}
+      userLocationVisible={true}
+      zoomLevel={this.state.zoom}
+      onRegionChange={this.onRegionChange}
+      onRegionWillChange={this.onRegionWillChange}
+      annotations={this.state.annotations}
+      onOpenAnnotation={this.onOpenAnnotation}
+      onRightAnnotationTapped={this.onRightAnnotationTapped}
+      onUpdateUserLocation={this.onUpdateUserLocation}/> : null;
+
     return (
       <View style={styles.container}>
       <View style={styles.headerContainer}>
         <Image style={styles.logo}
           source={require('image!tab-logo')} />
-
       </View>
-        <MapboxGLMap
-          style={styles.map}
-          direction={0}
-          rotateEnabled={true}
-          scrollEnabled={true}
-          zoomEnabled={true}
-          showsUserLocation={true}
-          ref={mapRef}
-          accessToken={'pk.eyJ1IjoibWFyeW1hc29uIiwiYSI6IjM1NGVhNWZmNzQ5Yjk5NTczMDFhMzc3Zjg2ZGEyYzI0In0.7IdD26iFQhD2b6LbTIw_Sw'}
-          styleURL={'asset://styles/light-v8.json'}
-          centerCoordinate={this.state.center}
-          userLocationVisible={true}
-          zoomLevel={this.state.zoom}
-          onRegionChange={this.onRegionChange}
-          onRegionWillChange={this.onRegionWillChange}
-          annotations={this.state.annotations}
-          onOpenAnnotation={this.onOpenAnnotation}
-          onRightAnnotationTapped={this.onRightAnnotationTapped}
-          onUpdateUserLocation={this.onUpdateUserLocation} />
 
+      {map}
 
       <View style={styles.autocompleteContainer}>
         <AutoComplete
