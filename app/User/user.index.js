@@ -6,6 +6,7 @@ var DeviceUUID = require("react-native-device-uuid");
 var Display = require('react-native-device-display');
 var EventEmitter = require('EventEmitter');
 var Subscribable = require('Subscribable');
+var RefreshableListView = require('react-native-refreshable-listview');
 var {
   StyleSheet,
   Text,
@@ -21,7 +22,6 @@ var {
 } = React;
 
 var ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
-var RefreshableListView = require('react-native-refreshable-listview');
 
 var UserTab = React.createClass({
   mixins: [Subscribable.Mixin],
@@ -31,7 +31,7 @@ var UserTab = React.createClass({
       scalesPageToFit: true,
       userComments: [],
       dataSource: ds.cloneWithRows([]),
-      //medium: []
+      medium: []
     };
   },
 
@@ -85,11 +85,11 @@ var UserTab = React.createClass({
             break;
           }
         }
+        this.setState({userComments: comments, dataSource: ds.cloneWithRows(comments)});
         for (var i = 0; i < venues.length; i++) {
           context.fetchMedia(venues[i], i, comments);
         }
-        this.setState({userComments: comments, dataSource: ds.cloneWithRows(comments)}, function() {
-        });
+
       })
   },
 
@@ -97,7 +97,7 @@ var UserTab = React.createClass({
     var context = this;
     var route;
     if (venue) route = config.serverURL + '/api/media?venue=' + venue._id;
-    //else route = config.serverURL + '/api/media?venue=' + this.state.venue._id;
+    else route = config.serverURL + '/api/media?venue=' + this.state.venue._id;
     fetch(route, {
       method: 'get',
     })
