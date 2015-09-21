@@ -1,4 +1,4 @@
-# TBD - What's Kraken
+# Kraken
 
 > To be added - description:
   > View 1:
