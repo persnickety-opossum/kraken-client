@@ -13,17 +13,17 @@
  > How often have you (and friends) wanted to go out, but weren’t sure what to do or where to go near you or at a certain location? How many people are at a venue/event, and what is the current vibe? What are people saying and seeing at a venue/event?
 
 ## Solution ##
- > Our app can quickly and effectively display the atmosphere/vibe within a close proximity on a map. Selecting a venue will display the current activity and general vibe. Users can get insight into what’s happening at the venue via video/photo streams and comments from users who are actually at the venue.
+ > Our app can quickly and effectively display the atmosphere/vibe within a close proximity on a map. Selecting a venue will display the current activity and general vibe. Users can get insight into what’s happening at the venue via video/photo streams and comments from other users.
 
 ## Quote from You ##
- > “Life’s too short to end up at Sad Bar”
+ > “Life is too short to end up at empty venues!"
 
 ## How to Get Started ##
- > Open the app to see a map of all the venues and associated activity levels in your area.  Tap a venue to join the conversation or tap “New Venue” to create a new venue at your location.
+ > Open the app to see a map of all the venues and associated activity levels in your area.  Tap a venue to see the venue's page and start chatting.
 
 ## Customer Quote ##
  > “I was always ending up at Sad Bar, now I have better things to do!”
 
 ## Closing and Call to Action ##
- > Download our app today and never end up at Sad Bar again! 
+ > Download our app today for free and never go anywhere alone again!
 
