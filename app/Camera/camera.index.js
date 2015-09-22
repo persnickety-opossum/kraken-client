@@ -114,13 +114,13 @@ var KrakenCam = React.createClass({
 
         <Text style={styles.counter}>{this.state.counter}</Text>
 
-        <Button
+        <Button style={styles.iconCamera}
           onPress={this._takePicture}
           icon='camera-retro' />
-        <RecordButton
+        <RecordButton style={styles.iconRecord}
           onPress={this._record} 
           isRecording={this.state.isRecording} />
-        <Button
+        <Button style={styles.iconSwitch}
            onPress={this._switchCamera}
            icon='undo' />
       </Camera>

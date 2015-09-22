@@ -15,13 +15,14 @@ module.exports = StyleSheet.create({
   },
   iconContainer: {
     flex: 0,
-    marginLeft: 5,
+    padding: 15,
+    borderRadius: 37,
     marginBottom: 5,
+    marginLeft: 5
   },
   icon: {
-    height: 45,
-    width: 45,
-    marginRight: 15
+    height: 44,
+    width: 44,
   },
   counter: {
     position: 'absolute',
@@ -29,6 +30,20 @@ module.exports = StyleSheet.create({
     color: 'white',
     width: Display.width,
     textAlign: 'center'
+  },
+  iconCamera: {
+    backgroundColor: '#66D9EF',
+  },
+  iconSwitch: {
+    padding: 0,
+    top: 30,
+    right: 10,
+    position: 'absolute',
+    width: 44,
+    height: 44,
+  },
+  iconRecord: {
+    backgroundColor: '#F92672',
   }
 });
 
