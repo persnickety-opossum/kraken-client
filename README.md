@@ -8,11 +8,7 @@ within their vicinity based on anonymous crowdsourced ratings and comments
   - __Development Team Members__: Darryl Blake, Daniel Friedenbach, Corey Hsu, Chris Tsang
 
 ## Screenshots
-![Kraken Screenshots](https://github.com/darrylblake/Kraken-Client/blob/master/screenshots.png)
+![Kraken Screenshots](https://github.com/persnickety-opossum/Native/blob/master/screenshots.png)
 
 ## Roadmap
 View the project roadmap [here](https://github.com/persnickety-opossum/persnickety-opossum/issues)
-
-
-## Contributing
-See [CONTRIBUTING.md](CONTRIBUTING.md) for contribution guidelines.
