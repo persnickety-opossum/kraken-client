@@ -12,14 +12,14 @@ var RecordButton = React.createClass({
   render() {
     if (!this.props.isRecording) {
       return (
-        <Button 
+        <Button style={this.props.style}
           onPress={this.props.onPress}
           icon='video-camera' />
       );
     }
     else {
       return (
-        <Button 
+        <Button style={this.props.style}
           onPress={this.props.onPress}
           icon='stop' />
       );

@@ -1,55 +1,14 @@
 # Kraken
-
-> To be added - description:
-  > View 1:
-  > View 2:
+An iOS application for venue/event discovery, providing users with real-time feedback on activity and general vibe
+within their vicinity based on anonymous crowdsourced ratings and comments
 
 ## Team
-
   - __Product Owner__: Corey Hsu
   - __Scrum Master__: Daniel Friedenbach, Chris Tsang
   - __Development Team Members__: Darryl Blake, Daniel Friedenbach, Corey Hsu, Chris Tsang
 
-## Table of Contents
+## Screenshots
+![Kraken Screenshots](https://github.com/persnickety-opossum/Native/blob/master/screenshots.png)
 
-1. [Usage](#Usage)
-1. [Requirements](#requirements)
-1. [Development](#development)
-    1. [Installing Dependencies](#installing-dependencies)
-    1. [Tasks](#tasks)
-1. [Team](#team)
-1. [Contributing](#contributing)
-
-## Usage
-
-> Some usage instructions
-
-## Requirements
-
-- Node 0.10.x
-- Express 4.13.x
-- Mongo
-- Mongoose
-
-## Development
-
-
-
-### Installing Dependencies
-
-From within the root directory:
-
-```sh
-npm install -g bower
-npm install
-bower install
-```
-
-### Roadmap
-
+## Roadmap
 View the project roadmap [here](https://github.com/persnickety-opossum/persnickety-opossum/issues)
-
-
-## Contributing
-
-See [CONTRIBUTING.md](CONTRIBUTING.md) for contribution guidelines.
