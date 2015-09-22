@@ -13,7 +13,7 @@ var Button = React.createClass({
     return (
       <TouchableHighlight
         onPress={this.props.onPress}
-        style={[styles.iconContainer, this.props.extraStyle]}>
+        style={[styles.iconContainer, this.props.extraStyle, this.props.style]}>
         <Icon  
           name={fontAwesome}
           size={this.props.size || 45}
