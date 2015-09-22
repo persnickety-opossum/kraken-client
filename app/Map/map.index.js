@@ -1,4 +1,4 @@
-'use strict';
+// 'use strict';
 
 // require modules
 var React = require('react-native');
@@ -233,6 +233,7 @@ var MapTab = React.createClass({
     context._displayPins();
   },
 
+  // helper function to refresh display of all pins on map
   _displayPins: function () {
     var context = this;
     var pins = this.state.searchPins.concat(this.state.venuePins);
