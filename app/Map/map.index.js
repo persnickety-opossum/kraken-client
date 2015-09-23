@@ -179,9 +179,9 @@ var MapTab = React.createClass({
     var context = this;
     venues.forEach(function (venue) {
       venue.rightCalloutAccessory = {
-        url: 'image!arrow',
-        height: 25,
-        width: 25
+        url: 'image!tab-venue',
+        height: 45,
+        width: 45
       };
       venue.subtitle = venue.description;
       if(inDb) {
