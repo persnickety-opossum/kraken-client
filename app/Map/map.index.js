@@ -113,28 +113,28 @@ var MapTab = React.createClass({
   componentWillMount: function() {
     var context = this;
     this.eventEmitter = this.props.eventEmitter;
-    // Get Device UUID
+    // Device UUID is used to uniquely identify users
     DeviceUUID.getUUID().then((uuid) => {
       return uuid;
     })
-      .then((uuid) => {
-        fetch(config.serverURL + '/api/users/', {
-          method: 'POST',
-          headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({token: uuid})
-        }) // no ;
-          .then(response => response.json())
-          .then(json => context.setState({user: json._id}, function() {
-            context.eventEmitter.emit('userFound', context.state.user);
-            return;
-          }));
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    .then((uuid) => {
+      fetch(config.serverURL + '/api/users/', {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({token: uuid})
+      }) // no ;
+      .then(response => response.json())
+      .then(json => context.setState({user: json._id}, function() {
+        context.eventEmitter.emit('userFound', context.state.user);
+        return;
+      }));
+    })
+    .catch((err) => {
+      console.log(err);
+    });
 
     this._currentLocation();
 
@@ -168,11 +168,11 @@ var MapTab = React.createClass({
   _venueQuery: function(url, inDB) {
     this.setState({showMap: true});
     fetch(url)
-      .then(response => response.json())
-      .then(json => this._handleResponse(json, inDB))
-      .catch(function(err) {
-        console.log(err);
-      });  
+    .then(response => response.json())
+    .then(json => this._handleResponse(json, inDB))
+    .catch(function(err) {
+      console.log(err);
+    });
   },
 
   _handleResponse: function (venues, inDb) {
@@ -277,10 +277,12 @@ var MapTab = React.createClass({
     this.setState({ searchString: text });
     this.setState({searchPins: []});
     fetch(config.serverURL + '/api/search/query/'+this.state.searchString+'/'+this.state.latitude+','+this.state.longitude)
-      .then(response => response.json())
-      .then(json => this.setState({autoSearch: json.map(function(search) {
+    .then(response => response.json())
+    .then(json => this.setState({
+      autoSearch: json.map(function(search) {
         return search.title;
-      })}));
+      })
+    }));
   },
 
   // search based on autocomplete selection
@@ -310,7 +312,8 @@ var MapTab = React.createClass({
         latitude = 37.783585;
         longitude = -122.408955;
         this.setCenterCoordinateZoomLevelAnimated(mapRef, latitude, longitude, 15);
-    });
+      }
+    );
   },
 
   // method for changing style of map on button press - NOT in working state because new map style covers old pins
@@ -324,7 +327,8 @@ var MapTab = React.createClass({
 
   // map view render
   render: function() {
-    var map = this.state.showMap ? <MapboxGLMap
+    var map = this.state.showMap ?
+    <MapboxGLMap
       style={styles.map}
       direction={0}
       rotateEnabled={true}
