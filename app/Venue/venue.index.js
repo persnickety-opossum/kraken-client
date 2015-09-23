@@ -104,7 +104,9 @@ var VenueTab = React.createClass({
       method: 'get',
     })
     .then(response => {
-      context.setState({media: JSON.parse(response._bodyInit).reverse()});
+      context.setState({
+        media: JSON.parse(response._bodyInit).reverse()
+      });
     });
   },
 
@@ -127,6 +129,8 @@ var VenueTab = React.createClass({
     var lat1 = current.latitude;
     var lat2 = venue.latitude;
 
+    // haversine formula script, (c) Chris Veness (MIT License)
+    // www.movable-type.co.uk/scripts/latlong.html
     var R = 6371000; // metres
     var φ1 = lat1.toRadians();
     var φ2 = lat2.toRadians();
@@ -139,7 +143,6 @@ var VenueTab = React.createClass({
     var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
 
     return R * c;
-
   },
 
   componentWillReceiveProps: function(nextProps) {
@@ -150,11 +153,6 @@ var VenueTab = React.createClass({
       this.setState({fromUserTab: true});
     }
 
-    // socket.on('media-' + venue.id, function (data) {
-    //   alert('media updated!');
-    //   socket.emit('my other event', { my: 'data' });
-    // });
-
     var venueChanged = this.state.venue._id !== nextProps.venue._id;
 
     if (nextProps.geolocation) {
@@ -163,23 +161,23 @@ var VenueTab = React.createClass({
     }
     if (venueChanged) {
       fetch(route)
-        .then(response => response.json())
-        .then(json => {
-          json.comments.reverse();
-          for (var i = 0; i < json.comments.length; i++) {
-            json.comments[i].datetime = moment(json.comments[i].datetime).fromNow(true);
-          }
-          this.setState({
-            venue: json,
-            dataSource: ds.cloneWithRows(json.comments),
-            // Sets atVenue to true if user is within 100 metres
-            atVenue: distance < 100,
-            attendeeCount: Object.keys(json.attendees).length
-          }, function() {
-            context.getOverallRating();
-            context.fetchMedia(venue);
-          });
-        })
+      .then(response => response.json())
+      .then(json => {
+        json.comments.reverse();
+        for (var i = 0; i < json.comments.length; i++) {
+          json.comments[i].datetime = moment(json.comments[i].datetime).fromNow(true);
+        }
+        this.setState({
+          venue: json,
+          dataSource: ds.cloneWithRows(json.comments),
+          // Sets atVenue to true if user is within 100 metres
+          atVenue: distance < 100,
+          attendeeCount: Object.keys(json.attendees).length
+        }, function() {
+          context.getOverallRating();
+          context.fetchMedia(venue);
+        });
+      })
     } else {
       this.setState({
         atVenue: distance < 100
@@ -194,29 +192,26 @@ var VenueTab = React.createClass({
     var venue = this.state.venue;
     var route = config.serverURL + '/api/venues/' + venue._id;
     fetch(route)
-      .then(response => response.json())
-      .then(json => {
-        json.comments.reverse();
-        for (var i = 0; i < json.comments.length; i++) {
-          json.comments[i].datetime = moment(json.comments[i].datetime).fromNow();
-        }
-        context.setState({
-          venue: json,
-          dataSource: ds.cloneWithRows(json.comments),
-          // Sets atVenue to true if user is within 100 metres
-          attendeeCount: Object.keys(json.attendees).length
-        });
-        //context.fetchMedia();
-      })
+    .then(response => response.json())
+    .then(json => {
+      json.comments.reverse();
+      for (var i = 0; i < json.comments.length; i++) {
+        json.comments[i].datetime = moment(json.comments[i].datetime).fromNow();
+      }
+      context.setState({
+        venue: json,
+        dataSource: ds.cloneWithRows(json.comments),
+        attendeeCount: Object.keys(json.attendees).length
+      });
+      //context.fetchMedia();
+    })
   },
   
   componentWillMount: function() {
     this.fetchMedia(); // Initially load media
     this.eventEmitter = this.props.eventEmitter;
     var context = this;
-    // retrieve user id, may be replaced with device UUID in the future
-    var context = this;
-    // Get Device UUID
+    // Device UUID is used to uniquely identify users
     DeviceUUID.getUUID().then((uuid) => {
       return uuid;
     })
@@ -397,52 +392,52 @@ var VenueTab = React.createClass({
       this.setState({commentColor: '#000000'});
     }
     fetch(route)
-      .then(response => response.json())
-      .then(res => {
-        res.comments.reverse();
-        for (var i = 0; i < res.comments.length; i++) {
-          if (res.comments[i].creator === context.state.user) {
-            userAlreadyPosted = true;
-            icon = res.comments[i].icon;
-            color = res.comments[i].color;
-            break;
-          }
+    .then(response => response.json())
+    .then(res => {
+      res.comments.reverse();
+      for (var i = 0; i < res.comments.length; i++) {
+        if (res.comments[i].creator === context.state.user) {
+          userAlreadyPosted = true;
+          icon = res.comments[i].icon;
+          color = res.comments[i].color;
+          break;
         }
-        if (userAlreadyPosted === false) {
-          icon = context.getRandomIcon();
-          color = context.getRandomColor();
-        }
-        if (this.state.text) {
-          var content = this.state.text;
-          var creator = this.state.user;
-          var venue = this.state.venue._id;
-          var datetime = new Date().toISOString();
-          var atVenue = this.state.atVenue;
-          var flags = [];
-          fetch(config.serverURL + '/api/comments/', {
-            method: 'post',
-            headers: {
-              'Accept': 'application/json',
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-              content: content,
-              creator: creator,
-              venue: venue,
-              datetime: datetime,
-              atVenue: atVenue,
-              icon: icon,
-              color: color,
-              flags: flags
-            })
+      }
+      if (userAlreadyPosted === false) {
+        icon = context.getRandomIcon();
+        color = context.getRandomColor();
+      }
+      if (this.state.text) {
+        var content = this.state.text;
+        var creator = this.state.user;
+        var venue = this.state.venue._id;
+        var datetime = new Date().toISOString();
+        var atVenue = this.state.atVenue;
+        var flags = [];
+        fetch(config.serverURL + '/api/comments/', {
+          method: 'post',
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            content: content,
+            creator: creator,
+            venue: venue,
+            datetime: datetime,
+            atVenue: atVenue,
+            icon: icon,
+            color: color,
+            flags: flags
           })
-            .then(function(res) {
-              context.setState({text: ''});
-              context.fetchVenue();
-              return res.json();
-            })
-        }
-      })
+        })
+        .then(function(res) {
+          context.setState({text: ''});
+          context.fetchVenue();
+          return res.json();
+        });
+      }
+    });
   },
 
   slidingComplete(voteValue, venue) {
@@ -466,9 +461,9 @@ var VenueTab = React.createClass({
         venue: json,
         attendeeCount: Object.keys(json.attendees).length
       },
-        function() {
-          this.getOverallRating();
-        });
+      function() {
+        this.getOverallRating();
+      });
     });
   },
 
@@ -528,7 +523,6 @@ var VenueTab = React.createClass({
 
   render() {
     var venue = this.props.venue;
-    var THUMB_URLS = ['sneakers', 'pool_party', 'http://img2.wikia.nocookie.net/__cb20140311041907/villains/images/b/bb/The_Kraken.jpg', 'http://vignette2.wikia.nocookie.net/reddits-world/images/8/8e/Kraken_v2_by_elmisa-d70nmt4.jpg/revision/latest?cb=20140922042121', 'http://orig11.deviantart.net/ccd8/f/2011/355/0/c/kraken_by_elmisa-d4ju669.jpg', 'http://orig14.deviantart.net/40df/f/2014/018/d/4/the_kraken_by_alexstoneart-d72o83n.jpg', 'http://orig10.deviantart.net/bf30/f/2010/332/f/5/kraken_by_mabuart-d33tchk.jpg', 'http://static.comicvine.com/uploads/original/12/120846/2408132-kraken_by_neo_br.jpg', 'https://upload.wikimedia.org/wikipedia/commons/9/9d/Colossal_octopus_by_Pierre_Denys_de_Montfort.jpg', 'http://www.wallpaper4me.com/images/wallpapers/deathbykraken-39598.jpeg', 'http://img06.deviantart.net/3c5b/i/2012/193/d/9/kraken__work_in_progress_by_rkarl-d56zu66.jpg', 'http://i.gr-assets.com/images/S/photo.goodreads.com/hostedimages/1393990556r/8792967._SY540_.jpg', 'http://static.fjcdn.com/pictures/Kraken+found+on+tumblr_5b3d72_4520925.jpg'];
     var address = this.formatAddress();
 
     return (
@@ -734,19 +728,19 @@ var MyRefreshingIndicator = React.createClass({
         <Animated.Image
           source={require('image!pin')}
           style={[
-              styles.refreshImage,
-              {transform: [
-                {rotate: this.state.angle.interpolate({
-                  inputRange: [0, 360],
-                  outputRange: ['0deg', '360deg']
-                })},
-              ]}]}>
+            styles.refreshImage,
+            {transform: [
+              {rotate: this.state.angle.interpolate({
+                inputRange: [0, 360],
+                outputRange: ['0deg', '360deg']
+              })},
+            ]}
+          ]}>
         </Animated.Image>
       </View>
     )
   },
 });
-
 
 var Thumb = React.createClass({
   shouldComponentUpdate: function(nextProps, nextState) {
@@ -774,7 +768,8 @@ var Thumb = React.createClass({
           paused={true}
           resizeMode="cover"
           repeat={true}
-          style={styles.thumbVideo} />
+          style={styles.thumbVideo}
+        />
       )
     } else { //if image
       return (

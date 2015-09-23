@@ -8,11 +8,12 @@ var EventEmitter = require('EventEmitter');
 var Subscribable = require('Subscribable');
 var moment = require('moment');
 moment().format();
-var Display = require('react-native-device-display');
 var config = require('../config');
 var DeviceUUID = require("react-native-device-uuid");
 var { Icon, } = require('react-native-icons');
 var AutoComplete = require('react-native-autocomplete');
+
+var styles = require('./styles');
 
 // require React Native modules
 var {
@@ -110,31 +111,30 @@ var MapTab = React.createClass({
   },
 
   componentWillMount: function() {
-    // retrieve user id, may be replaced with device UUID in the future
     var context = this;
     this.eventEmitter = this.props.eventEmitter;
-    // Get Device UUID
+    // Device UUID is used to uniquely identify users
     DeviceUUID.getUUID().then((uuid) => {
       return uuid;
     })
-      .then((uuid) => {
-        fetch(config.serverURL + '/api/users/', {
-          method: 'POST',
-          headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({token: uuid})
-        }) // no ;
-          .then(response => response.json())
-          .then(json => context.setState({user: json._id}, function() {
-            context.eventEmitter.emit('userFound', context.state.user);
-            return;
-          }));
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    .then((uuid) => {
+      fetch(config.serverURL + '/api/users/', {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({token: uuid})
+      }) // no ;
+      .then(response => response.json())
+      .then(json => context.setState({user: json._id}, function() {
+        context.eventEmitter.emit('userFound', context.state.user);
+        return;
+      }));
+    })
+    .catch((err) => {
+      console.log(err);
+    });
 
     this._currentLocation();
 
@@ -168,11 +168,11 @@ var MapTab = React.createClass({
   _venueQuery: function(url, inDB) {
     this.setState({showMap: true});
     fetch(url)
-      .then(response => response.json())
-      .then(json => this._handleResponse(json, inDB))
-      .catch(function(err) {
-        console.log(err);
-      });  
+    .then(response => response.json())
+    .then(json => this._handleResponse(json, inDB))
+    .catch(function(err) {
+      console.log(err);
+    });
   },
 
   _handleResponse: function (venues, inDb) {
@@ -277,10 +277,12 @@ var MapTab = React.createClass({
     this.setState({ searchString: text });
     this.setState({searchPins: []});
     fetch(config.serverURL + '/api/search/query/'+this.state.searchString+'/'+this.state.latitude+','+this.state.longitude)
-      .then(response => response.json())
-      .then(json => this.setState({autoSearch: json.map(function(search) {
+    .then(response => response.json())
+    .then(json => this.setState({
+      autoSearch: json.map(function(search) {
         return search.title;
-      })}));
+      })
+    }));
   },
 
   // search based on autocomplete selection
@@ -310,7 +312,8 @@ var MapTab = React.createClass({
         latitude = 37.783585;
         longitude = -122.408955;
         this.setCenterCoordinateZoomLevelAnimated(mapRef, latitude, longitude, 15);
-    });
+      }
+    );
   },
 
   // method for changing style of map on button press - NOT in working state because new map style covers old pins
@@ -324,7 +327,8 @@ var MapTab = React.createClass({
 
   // map view render
   render: function() {
-    var map = this.state.showMap ? <MapboxGLMap
+    var map = this.state.showMap ?
+    <MapboxGLMap
       style={styles.map}
       direction={0}
       rotateEnabled={true}
@@ -407,75 +411,6 @@ var MapTab = React.createClass({
       </View>
     );
   }
-});
-
-var styles = StyleSheet.create({
-
-  // main view container
-  container: {
-    flexDirection: 'column',
-    flex: 1,
-  },
-  // map view
-  map: {
-    flex: 5,
-    top: 30
-  },
-  // main logo
-  logo: {
-  },
-
-  autocompleteContainer: {
-    position: 'absolute',
-    top: 60,
-    width: Display.width,
-    paddingTop: 5,
-    paddingBottom: 6,
-    backgroundColor: '#CCC',
-  },
-  autocomplete: {
-    width: Display.width * 0.95,
-    marginLeft: Display.width * 0.025,
-    height: 36,
-    padding: 4,
-    fontSize: 16,
-    color: '#8C8C8C',
-    borderRadius: 10,
-    backgroundColor: 'white'
-  },
-  // header container and children
-  headerContainer: {
-    justifyContent: 'center',
-    width: Display.width,
-    height: 76,
-    alignItems: 'center',
-    backgroundColor: "#47b3c8",
-  },
-  // search bar
-  searchContainer: {
-    position: 'absolute',
-    top: 90,
-    flexDirection: 'row',
-    alignItems: 'center',
-    alignSelf: 'stretch'
-  },
-  venueName: {
-    flex: 1,
-    fontFamily: 'Avenir',
-    fontSize: 20,
-    textAlign: 'center',
-    marginRight: 30,
-    padding: 10,
-    color: 'white',
-  },
-  // center button
-  button: {
-    height: 40,
-    width: 40,
-    position: 'absolute',
-    bottom: 50,
-    right: 40
-  },
 });
 
 module.exports = MapTab;
